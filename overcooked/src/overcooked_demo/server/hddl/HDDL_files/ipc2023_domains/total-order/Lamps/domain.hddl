@@ -1,0 +1,208 @@
+(define (domain game)
+(:requirements :hierarchy :typing :equality)
+
+
+(:types coord status direction - object)
+(:constants Y N - status U D L R - direction)
+
+
+(:task play    :parameters ())
+(:task turn    :parameters ())
+
+(:task propagate_up    :parameters (?x ?y - coord ?s - status))
+(:task propagate_down  :parameters (?x ?y - coord ?s - status))
+(:task propagate_left  :parameters (?x ?y - coord ?s - status))
+(:task propagate_right :parameters (?x ?y - coord ?s - status))
+
+
+(:predicates
+	(on ?x ?y - coord ?s - status)
+	(next ?x ?y - coord)
+	(max ?x - coord)
+	(min ?x - coord)
+)
+
+(:method do_play
+  :parameters ()
+  :task (play)
+  :ordered-subtasks (and
+	(turn)
+	(play)
+  )
+)
+
+(:method end_game
+  :parameters ()
+  :task (play)
+  :ordered-subtasks (and
+  )
+)
+
+(:method do_turn
+  :parameters (?x ?y - coord ?s1 ?s2 - status)
+  :task (turn)
+  :ordered-subtasks (and
+	(flip ?x ?y ?s1 ?s2)
+	(propagate_up ?x ?y ?s1)
+	(propagate_down ?x ?y ?s1)
+	(propagate_left ?x ?y ?s1)
+	(propagate_right ?x ?y ?s1)
+  )
+)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; propagating up
+(:method propagate_up_do
+  :parameters (?x ?y ?xx - coord ?s1 ?s2 - status)
+  :task (propagate_up ?x ?y ?s1)
+  :precondition (and
+	(next ?x ?xx)
+	(on ?xx ?y ?s1)
+  )
+  :ordered-subtasks (and
+	(flip ?xx ?y ?s1 ?s2)
+	(propagate_up ?xx ?y ?s1)
+  )
+)
+
+(:method propagate_up_end_field
+  :parameters (?x ?y - coord ?s - status)
+  :task (propagate_up ?x ?y ?s)
+  :precondition (and
+	(max ?x)
+  )
+  :ordered-subtasks (and
+  )
+)
+
+(:method propagate_up_end_different
+  :parameters (?x ?y ?xx - coord ?s - status)
+  :task (propagate_up ?x ?y ?s)
+  :precondition (and
+	(next ?x ?xx)
+	(not (on ?xx ?y ?s))
+  )
+  :ordered-subtasks (and
+  )
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; propagating down
+(:method propagate_down_do
+  :parameters (?x ?y ?xx - coord ?s1 ?s2 - status)
+  :task (propagate_down ?x ?y ?s1)
+  :precondition (and
+	(next ?xx ?x)
+	(on ?xx ?y ?s1)
+  )
+  :ordered-subtasks (and
+	(flip ?xx ?y ?s1 ?s2)
+	(propagate_down ?xx ?y ?s1)
+  )
+)
+
+(:method propagate_down_end_field
+  :parameters (?x ?y - coord ?s - status)
+  :task (propagate_down ?x ?y ?s)
+  :precondition (and
+	(min ?x)
+  )
+  :ordered-subtasks (and
+  )
+)
+
+(:method propagate_down_end_different
+  :parameters (?x ?y ?xx - coord ?s - status)
+  :task (propagate_down ?x ?y ?s)
+  :precondition (and
+	(next ?xx ?x)
+	(not (on ?xx ?y ?s))
+  )
+  :ordered-subtasks (and
+  )
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; propagating left
+(:method propagate_left_do
+  :parameters (?x ?y ?yy - coord ?s1 ?s2 - status)
+  :task (propagate_left ?x ?y ?s1)
+  :precondition (and
+	(next ?y ?yy)
+	(on ?x ?yy ?s1)
+  )
+  :ordered-subtasks (and
+	(flip ?x ?yy ?s1 ?s2)
+	(propagate_left ?x ?yy ?s1)
+  )
+)
+
+(:method propagate_left_end_field
+  :parameters (?x ?y - coord ?s - status)
+  :task (propagate_left ?x ?y ?s)
+  :precondition (and
+	(max ?y)
+  )
+  :ordered-subtasks (and
+  )
+)
+
+(:method propagate_left_end_different
+  :parameters (?x ?y ?yy - coord ?s - status)
+  :task (propagate_left ?x ?y ?s)
+  :precondition (and
+	(next ?y ?yy)
+	(not (on ?x ?yy ?s))
+  )
+  :ordered-subtasks (and
+  )
+)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; propagating left
+(:method propagate_right_do
+  :parameters (?x ?y ?yy - coord ?s1 ?s2 - status)
+  :task (propagate_right ?x ?y ?s1)
+  :precondition (and
+	(next ?yy ?y)
+	(on ?x ?yy ?s1)
+  )
+  :ordered-subtasks (and
+	(flip ?x ?yy ?s1 ?s2)
+	(propagate_right ?x ?yy ?s1)
+  )
+)
+
+(:method propagate_right_end_field
+  :parameters (?x ?y - coord ?s - status)
+  :task (propagate_right ?x ?y ?s)
+  :precondition (and
+	(min ?y)
+  )
+  :ordered-subtasks (and
+  )
+)
+
+(:method propagate_right_end_different
+  :parameters (?x ?y ?yy - coord ?s - status)
+  :task (propagate_right ?x ?y ?s)
+  :precondition (and
+	(next ?yy ?y)
+	(not (on ?x ?yy ?s))
+  )
+  :ordered-subtasks (and
+  )
+)
+
+;;;;;;;;;;;;;;;;;; the only action
+
+(:action flip
+	:parameters (?x ?y - coord ?s1 ?s2 - status)
+	:precondition (and
+		(on ?x ?y ?s1)
+		(not (= ?s1 ?s2))
+	)
+	:effect (and
+		(not (on ?x ?y ?s1))
+		(on ?x ?y ?s2)
+	)
+)
+
+
+)

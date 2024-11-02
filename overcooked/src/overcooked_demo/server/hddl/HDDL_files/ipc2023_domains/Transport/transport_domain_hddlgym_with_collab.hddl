@@ -1,0 +1,215 @@
+(define (domain transport_collab)
+  (:requirements :negative-preconditions :hierarchy :typing)
+  (:types
+        location target locatable - object
+        vehicle package - locatable
+        vehicle - agent
+        capacity-number - object
+  )
+ 
+  (:predicates 
+     (road ?l1 ?l2 - location)
+     (next ?l1 ?l2 - location)
+     (at ?x - locatable ?v - location)
+     (in ?x - package ?v - vehicle)
+     (capacity ?v - vehicle ?s1 - capacity-number)
+     (capacity-predecessor ?s1 ?s2 - capacity-number)
+     (collab-agent ?a1 ?a2 - agent)
+  )
+
+  (:task deliver 
+    :parameters (?p - package ?l - location)
+    :effect (at ?p ?l))
+  (:task get-to 
+    :parameters (?v - vehicle ?l - location)
+    :effect (at ?v ?l))
+  (:task load 
+    :parameters (?v - vehicle ?l - location ?p - package)
+    :effect (in ?p ?v))
+  (:task unload 
+    :parameters (?v - vehicle ?l - location ?p - package)
+    :effect (not (in ?p ?v)))
+  (:task transfer 
+    :parameters (?v1 ?v2 - vehicle ?p - package)
+    :effect (and
+      (in ?p ?v2)
+      (not (in ?p ?v1))))
+
+  (:method m-deliver
+    :parameters (?p - package ?l1 ?l2 - location ?v - vehicle)
+    :task (deliver ?p ?l2)
+    :precondition (at ?p ?l1)
+    :ordered-subtasks (and
+      (get-to ?v ?l1)
+      (load ?v ?l1 ?p)
+      (get-to ?v ?l2)
+      (unload ?v ?l2 ?p))
+  )
+
+  (:method m-deliver-collab
+    :parameters (?p - package ?l1 ?lmid1 ?lmid2 ?l2 - location ?v1 ?v2 - vehicle)
+    :task (deliver ?p ?l2)
+    :precondition (and
+        (at ?p ?l1)
+        (collab-agent ?v1 ?v2)
+        (next ?lmid1 ?lmid2))
+    :subtasks (and
+        (t1 (get-to ?v1 ?l1))
+        (t2 (load ?v1 ?l1 ?p))
+        (t3 (get-to ?v1 ?lmid1))
+        (t4 (get-to ?v2 ?lmid2))
+        (t5 (transfer ?v1 ?v2 ?p))
+        (t6 (get-to ?v2 ?l2))
+        (t7 (unload ?v2 ?l2 ?p))
+    )
+    :ordering (and
+        (< t1 t2)
+        (< t2 t3)
+        (< t4 t5)
+        (< t3 t5)
+        (< t5 t6)
+        (< t6 t7))
+  )
+
+  (:method m-transfer-collab
+    :parameters (?v1 ?v2 - vehicle ?l1 ?l2 - location ?p - package ?s1 ?s2 - capacity-number)
+    :task (transfer ?v1 ?v2 ?p)
+    :precondition (and
+        (collab-agent ?v1 ?v2)
+        (in ?p ?v1)
+        (at ?v1 ?l1)
+        (at ?v2 ?l2)
+        (next ?l1 ?l2)
+        (capacity-predecessor ?s1 ?s2)
+        (capacity ?v2 ?s2)
+        )
+    :subtasks (transfer-package ?p ?v1 ?v2 ?l1 ?l2 ?s1 ?s2)
+    )
+
+  (:method m-unload
+    :parameters (?v - vehicle ?l - location ?p - package ?s1 ?s2 - capacity-number)
+    :task (unload ?v ?l ?p)
+    :precondition (and
+        (at ?v ?l)
+        (in ?p ?v)
+        (capacity-predecessor ?s1 ?s2)
+        (capacity ?v ?s1))
+    :subtasks (drop ?v ?l ?p ?s1 ?s2)
+  )
+
+  (:method m-load
+    :parameters (?v - vehicle ?l - location ?p - package ?s1 ?s2 - capacity-number)
+    :task (load ?v ?l ?p)
+    :precondition (and
+        (at ?v ?l)
+        (at ?p ?l)
+        (not (in ?p ?v))
+        (capacity-predecessor ?s1 ?s2)
+        (capacity ?v ?s2))
+    :subtasks (pick-up ?v ?l ?p ?s1 ?s2)
+  )
+  
+  (:method m-drive-to
+    :parameters (?v - vehicle ?l1 ?l2 - location)
+    :task (get-to ?v ?l2)
+    :precondition (and
+        (at ?v ?l1)
+        (road ?l1 ?l2))
+    :subtasks (and
+        (drive ?v ?l1 ?l2))
+  )
+
+  (:method m-drive-to-via
+    :parameters (?v - vehicle ?l1 ?l2 ?l3 - location)
+    :task (get-to ?v ?l3)
+    :precondition (and
+        (at ?v ?l1)
+        (road ?l1 ?l2))
+    :ordered-subtasks (and
+        (get-to ?v ?l2)
+        (drive ?v ?l2 ?l3))
+  )
+
+  (:method m-i-am-there
+    :parameters (?v - vehicle ?l - location)
+    :task (get-to ?v ?l)
+    :precondition (and
+        (at ?v ?l))
+    :subtasks (and
+        (noop ?v ?l))
+  )
+  
+  (:action drive
+    :parameters (?v - vehicle ?l1 ?l2 - location)
+    :precondition (and
+        (at ?v ?l1)
+        (road ?l1 ?l2))
+    :effect (and
+        (not (at ?v ?l1))
+        (at ?v ?l2))
+  )
+
+  (:action noop
+    :parameters (?v - vehicle ?l2 - location)
+    :precondition (at ?v ?l2)
+    :effect ()
+  )
+
+ (:action pick-up
+    :parameters (?v - vehicle ?l - location ?p - package ?s1 ?s2 - capacity-number)
+    :precondition (and
+        (at ?v ?l)
+        (at ?p ?l)
+        (capacity-predecessor ?s1 ?s2)
+        (capacity ?v ?s2)
+      )
+    :effect (and
+        (not (at ?p ?l))
+        (in ?p ?v)
+        (capacity ?v ?s1)
+        (not (capacity ?v ?s2))
+      )
+  )
+
+  (:action drop
+    :parameters (?v - vehicle ?l - location ?p - package ?s1 ?s2 - capacity-number)
+    :precondition (and
+        (at ?v ?l)
+        (in ?p ?v)
+        (capacity-predecessor ?s1 ?s2)
+        (capacity ?v ?s1)
+      )
+    :effect (and
+        (not (in ?p ?v))
+        (at ?p ?l)
+        (capacity ?v ?s2)
+        (not (capacity ?v ?s1))
+      )
+  )
+  (:action transfer-package
+    :parameters (?p - package ?v1 ?v2 - vehicle ?l1 ?l2 - location ?s1 ?s2 - capacity-number)
+    :precondition (and
+        (collab-agent ?v1 ?v2)
+        (in ?p ?v1)
+        (at ?v1 ?l1)
+        (at ?v2 ?l2)
+        (next ?l1 ?l2)
+        (capacity-predecessor ?s1 ?s2)
+        (capacity ?v2 ?s2)
+        )
+    :effect (and
+        (not (in ?p ?v1))
+        (in ?p ?v2)
+        (capacity ?v2 ?s1)
+        (not (capacity ?v2 ?s2))
+        (capacity ?v1 ?s2)
+        (not (capacity ?v1 ?s1))
+        )
+  )
+
+  (:action none
+    :parameters (?a - agent)
+    :precondition ()
+    :effect ())
+
+)

@@ -1,0 +1,38 @@
+(define (problem tiling-1)
+  (:domain tiling)
+  (:objects
+    n0 n1 n2 n3 - number
+	IGN red green - colour
+  )
+  (:init
+    (next n0 n1)
+    (next n1 n2)
+    ;(next n2 n3)
+	(min n0)
+	(max n2)
+	(cur_colour_next IGN)
+	(isIGN IGN)
+	(colok IGN red)
+	(colok IGN green)
+	(colok red red)
+	(colok green green)
+	(tile red red red green n1)
+	(tile red green red green n1)
+	(tile red red green red n1)
+	(tile green red green red n1)
+  )
+  (:htn
+    :tasks (and
+      ;(deleting n0)
+      ;(checking n0)
+      ;(stepping n0)
+      (rows n0)
+      (start_line n0)
+      (start_line n1)
+      ;(start_line n2)
+    )
+  )
+  (:goal (and
+    ;(on l0 l0 N)
+  ))
+)

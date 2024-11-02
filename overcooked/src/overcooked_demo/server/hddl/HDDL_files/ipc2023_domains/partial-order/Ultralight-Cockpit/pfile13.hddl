@@ -1,0 +1,227 @@
+
+(define (problem pilotfit)
+    (:domain lowfuel)
+    (:objects
+		; ----- cabin accessories
+		fireExtinguisher - FireExtinguisher
+		; ----- aircraft parts
+		magnetos - Magnetos 
+		engine - Engine
+		fuelGauge - FuelGauge
+		master - Master
+		mixtureControl - MixtureControl
+		throttle - Throttle
+		heater - CabinHeater
+		cabin - Cabin
+		airvent - Airvent
+		flaps - Flaps
+		landingGear - LandingGear
+		safetyBelt - SafetyBelt
+		stick - Stick
+		trim - Trim
+		aileron - Aileron
+		rudder - Rudder
+		electricalSystem - ElectricalSystem		
+		nose - Nose
+		; ----- message to the ATC
+		mayday - MaydayMessage
+		fireOnStartMessage - FireOnStartMessage 
+		electricalFireOnGroundMessage - ElectricalFireOnGroundMessage 
+		electricalFireOnFlightMessage - ElectricalFireOnFlightMessage 
+		cabinFireOnFlightMessage - CabinFireOnFlightMessage
+		; ----- control parameters			 
+		heading - Heading
+        pitchRate - PitchRate
+        correctCruisingAirSpeed - Airspeed
+		speedZeroKmh - AirspeedHalt
+		airspeed120kmh - AirspeedForLanding
+		airspeed100kmh - AirspeedOnFinal
+		airspeed125kmh - AirSpeedFlyOver
+		groundSpeed90kmh - GroundSpeedTakeoff
+		speed115kmh - AirspeedTakeOffClimb
+		minAltitude150ft - AltitudeTakeOffClimb
+        propellerRatio - PropellerRatio
+        cruisingAltitude - Altitude
+		altitude150ft - AltitudeFlyOver
+		power3000rpm - PowerBeforeLanding
+		altitude30ft - LandingAltitude1
+		altitude2ft - LandingAltitude2
+		thrustLevel - Thrust
+		throttleRatioTakeOffClimb - ThrottleRatioTakeOffClimb
+		; ----- Parts positions
+		flapsOnPositionOne - FlapsPositionOne
+		flapsLandingPosition - FlapsLandingPosition
+		flapsPositionUp - FlapsPositionUp
+		stickBackwards - StickLandingPosition
+		aileronNeutralPosition - AileronNeutralPosition
+		rudderOppositePosition - RudderOppositePosition
+		trimNeutral - TrimAfterLandingPosition
+		noseDown - NoseDown
+		noseLiftedSlightly - NoseLiftedSlightly
+		; ----- External conditions & locations
+		windSpeedCondition - WindSpeedCondition
+		windDirectionCondition - WindDirectionCondition
+		headingCondition - HeadingCondition
+		airspeedCondition - AirspeedCondition
+        aerodrome1 - LandingSpot
+runwayAerodrome1 - Runway
+aerodrome1SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome1SlopeCondition - LandingSpotSlopeCondition
+aerodrome1ObstructionCondition - LandingSpotObstructionCondition
+aerodrome2 - LandingSpot
+runwayAerodrome2 - Runway
+aerodrome2SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome2SlopeCondition - LandingSpotSlopeCondition
+aerodrome2ObstructionCondition - LandingSpotObstructionCondition
+aerodrome3 - LandingSpot
+runwayAerodrome3 - Runway
+aerodrome3SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome3SlopeCondition - LandingSpotSlopeCondition
+aerodrome3ObstructionCondition - LandingSpotObstructionCondition
+aerodrome4 - LandingSpot
+runwayAerodrome4 - Runway
+aerodrome4SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome4SlopeCondition - LandingSpotSlopeCondition
+aerodrome4ObstructionCondition - LandingSpotObstructionCondition
+aerodrome5 - LandingSpot
+runwayAerodrome5 - Runway
+aerodrome5SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome5SlopeCondition - LandingSpotSlopeCondition
+aerodrome5ObstructionCondition - LandingSpotObstructionCondition
+aerodrome6 - LandingSpot
+runwayAerodrome6 - Runway
+aerodrome6SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome6SlopeCondition - LandingSpotSlopeCondition
+aerodrome6ObstructionCondition - LandingSpotObstructionCondition
+aerodrome7 - LandingSpot
+runwayAerodrome7 - Runway
+aerodrome7SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome7SlopeCondition - LandingSpotSlopeCondition
+aerodrome7ObstructionCondition - LandingSpotObstructionCondition
+aerodrome8 - LandingSpot
+runwayAerodrome8 - Runway
+aerodrome8SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome8SlopeCondition - LandingSpotSlopeCondition
+aerodrome8ObstructionCondition - LandingSpotObstructionCondition
+aerodrome9 - LandingSpot
+runwayAerodrome9 - Runway
+aerodrome9SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome9SlopeCondition - LandingSpotSlopeCondition
+aerodrome9ObstructionCondition - LandingSpotObstructionCondition
+aerodrome10 - LandingSpot
+runwayAerodrome10 - Runway
+aerodrome10SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome10SlopeCondition - LandingSpotSlopeCondition
+aerodrome10ObstructionCondition - LandingSpotObstructionCondition
+aerodrome11 - LandingSpot
+runwayAerodrome11 - Runway
+aerodrome11SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome11SlopeCondition - LandingSpotSlopeCondition
+aerodrome11ObstructionCondition - LandingSpotObstructionCondition
+aerodrome12 - LandingSpot
+runwayAerodrome12 - Runway
+aerodrome12SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome12SlopeCondition - LandingSpotSlopeCondition
+aerodrome12ObstructionCondition - LandingSpotObstructionCondition
+aerodrome13 - LandingSpot
+runwayAerodrome13 - Runway
+aerodrome13SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome13SlopeCondition - LandingSpotSlopeCondition
+aerodrome13ObstructionCondition - LandingSpotObstructionCondition
+    )	
+    (:htn
+        :tasks(and (precautionary_land))
+        :ordering()
+        :constraints()
+    )
+    (:init
+        ; turned on during in-flight
+		(p_isOn engine)
+		(p_isOn mixtureControl)
+		(p_pilotInAirplane)
+		(p_isOn fuelGauge)
+		(p_isOn magnetos)
+		(p_isOn master)
+		(p_isOpen throttle)
+		(p_isOn heater)
+		;(not (p_isOpen airvent))
+		(p_extinguisherExist fireExtinguisher)	
+		; flight phases	
+		(p_landingSpotClear aerodrome1)
+		;(not (p_reachable aerodrome1))
+		(p_acceptableLandingCondition aerodrome1SurfaceCondition aerodrome1)
+		(p_acceptableLandingCondition aerodrome1SlopeCondition aerodrome1)
+		(p_acceptableLandingCondition aerodrome1ObstructionCondition aerodrome1)
+        (p_landingSpotClear aerodrome1)
+;(not (p_reachable aerodrome1))
+(p_acceptableLandingCondition aerodrome1SurfaceCondition aerodrome1)
+(p_acceptableLandingCondition aerodrome1SlopeCondition aerodrome1)
+;(not (p_acceptableLandingCondition aerodrome1ObstructionCondition aerodrome1))
+(p_landingSpotClear aerodrome2)
+(p_reachable aerodrome2)
+(p_acceptableLandingCondition aerodrome2SurfaceCondition aerodrome2)
+(p_acceptableLandingCondition aerodrome2SlopeCondition aerodrome2)
+(p_acceptableLandingCondition aerodrome2ObstructionCondition aerodrome2)
+;(not (p_landingSpotClear aerodrome3))
+;(not (p_reachable aerodrome3))
+(p_acceptableLandingCondition aerodrome3SurfaceCondition aerodrome3)
+;(not (p_acceptableLandingCondition aerodrome3SlopeCondition aerodrome3))
+;(not (p_acceptableLandingCondition aerodrome3ObstructionCondition aerodrome3))
+(p_landingSpotClear aerodrome4)
+;(not (p_reachable aerodrome4))
+;(not (p_acceptableLandingCondition aerodrome4SurfaceCondition aerodrome4))
+(p_acceptableLandingCondition aerodrome4SlopeCondition aerodrome4)
+(p_acceptableLandingCondition aerodrome4ObstructionCondition aerodrome4)
+;(not (p_landingSpotClear aerodrome5))
+;(not (p_reachable aerodrome5))
+;(not (p_acceptableLandingCondition aerodrome5SurfaceCondition aerodrome5))
+(p_acceptableLandingCondition aerodrome5SlopeCondition aerodrome5)
+;(not (p_acceptableLandingCondition aerodrome5ObstructionCondition aerodrome5))
+(p_landingSpotClear aerodrome6)
+;(not (p_reachable aerodrome6))
+(p_acceptableLandingCondition aerodrome6SurfaceCondition aerodrome6)
+(p_acceptableLandingCondition aerodrome6SlopeCondition aerodrome6)
+;(not (p_acceptableLandingCondition aerodrome6ObstructionCondition aerodrome6))
+(p_landingSpotClear aerodrome7)
+(p_reachable aerodrome7)
+(p_acceptableLandingCondition aerodrome7SurfaceCondition aerodrome7)
+(p_acceptableLandingCondition aerodrome7SlopeCondition aerodrome7)
+(p_acceptableLandingCondition aerodrome7ObstructionCondition aerodrome7)
+(p_landingSpotClear aerodrome8)
+;(not (p_reachable aerodrome8))
+(p_acceptableLandingCondition aerodrome8SurfaceCondition aerodrome8)
+(p_acceptableLandingCondition aerodrome8SlopeCondition aerodrome8)
+(p_acceptableLandingCondition aerodrome8ObstructionCondition aerodrome8)
+;(not (p_landingSpotClear aerodrome9))
+(p_reachable aerodrome9)
+;(not (p_acceptableLandingCondition aerodrome9SurfaceCondition aerodrome9))
+;(not (p_acceptableLandingCondition aerodrome9SlopeCondition aerodrome9))
+;(not (p_acceptableLandingCondition aerodrome9ObstructionCondition aerodrome9))
+(p_landingSpotClear aerodrome10)
+;(not (p_reachable aerodrome10))
+(p_acceptableLandingCondition aerodrome10SurfaceCondition aerodrome10)
+(p_acceptableLandingCondition aerodrome10SlopeCondition aerodrome10)
+(p_acceptableLandingCondition aerodrome10ObstructionCondition aerodrome10)
+;(not (p_landingSpotClear aerodrome11))
+;(not (p_reachable aerodrome11))
+;(not (p_acceptableLandingCondition aerodrome11SurfaceCondition aerodrome11))
+(p_acceptableLandingCondition aerodrome11SlopeCondition aerodrome11)
+(p_acceptableLandingCondition aerodrome11ObstructionCondition aerodrome11)
+(p_landingSpotClear aerodrome12)
+;(not (p_reachable aerodrome12))
+;(not (p_acceptableLandingCondition aerodrome12SurfaceCondition aerodrome12))
+(p_acceptableLandingCondition aerodrome12SlopeCondition aerodrome12)
+(p_acceptableLandingCondition aerodrome12ObstructionCondition aerodrome12)
+;(not (p_landingSpotClear aerodrome13))
+(p_reachable aerodrome13)
+;(not (p_acceptableLandingCondition aerodrome13SurfaceCondition aerodrome13))
+;(not (p_acceptableLandingCondition aerodrome13SlopeCondition aerodrome13))
+(p_acceptableLandingCondition aerodrome13ObstructionCondition aerodrome13)
+    )
+    (:goal
+		(and
+			(p_airplaneLanded)
+		)
+	)
+)
+    

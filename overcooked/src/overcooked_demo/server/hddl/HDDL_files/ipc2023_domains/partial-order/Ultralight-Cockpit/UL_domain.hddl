@@ -1,0 +1,1171 @@
+;Header and description
+;taken from Pooley Private Pilots Manual
+
+; conventions for predicates use p_
+; before methods use m_
+
+(define (domain UL_domain)
+
+    (:requirements :negative-preconditions :typing :hierarchy :method-preconditions)
+
+    (:types 
+        Accessories EngineControl Communications Location AircraftPart ControlParameter Condition - object
+		Magnetos Engine MixtureControl FuelGauge Master Throttle CabinHeater Airvent Cabin LandingGear Flaps SafetyBelt Stick Trim Aileron Rudder ElectricalSystem Nose - AircraftPart		
+		; AircraftPart: anything that cannot be detached
+		; Accessories: anything that is detachable
+		FireExtinguisher - Accessories
+		Message - Communications
+		MaydayMessage FireOnStartMessage ElectricalFireOnGroundMessage ElectricalFireOnFlightMessage CabinFireOnFlightMessage - Message
+		LandingSpot Runway - Location
+		YawRate PitchRate RollRate Heading Altitude Airspeed GroundSpeedTakeoff PropellerRatio Power ThrottleRatio - ControlParameter
+		FlapsPositionOne FlapsLandingPosition FlapsPositionUp StickLandingPosition TrimAfterLandingPosition AileronNeutralPosition RudderOppositePosition NoseDown NoseLiftedSlightly - Position
+		AirspeedForLanding AirspeedHalt AirspeedOnFinal AirSpeedFlyOver AirspeedTakeOffClimb - Airspeed
+		Thrust PowerBeforeLanding - Power
+		LandingAltitude1 LandingAltitude2 AltitudeFlyOver AltitudeTakeOffClimb - Altitude
+		ThrottleRatioTakeOffClimb - ThrottleRatio
+		WindSpeedCondition WindDirectionCondition HeadingCondition AirspeedCondition LandingSpotSurfaceCondition LandingSpotSlopeCondition LandingSpotObstructionCondition - Condition
+    )		
+					
+    (:predicates ;todo: define predicates here
+		(p_isOpen ?part - AircraftPart)
+		(p_isOn ?part - AircraftPart)
+		(p_isOnFire ?part - AircraftPart)
+		(p_fail ?part - AircraftPart)
+		(p_isIdle ?part - AircraftPart)
+		(p_isExtended ?part - AircraftPart)
+		(p_isChecked ?part - AircraftPart)
+		(p_pushedToFull ?part - AircraftPart)
+		(p_partAtPosition ?part - AircraftPart ?position - Position)		
+		(p_conditionChecked ?condition - Condition)
+		(p_atcInformed ?message - Message)
+		(p_extinguisherExist ?extinguisher - FireExtinguisher)
+		(p_landingSpotClear ?landingSpot - LandingSpot)
+		(p_nearestLandingSpot ?landingSpot - LandingSpot)
+		(p_at ?location - Location)
+		(p_flownOver ?location - Location)
+		(p_landingSpotChecked ?landingSpot - LandingSpot)
+		(p_controlParameterReached ?controlParameter - ControlParameter)
+		(p_controlParameterIncreased ?controlParameter - ControlParameter)
+		(p_isInHorizontalFlight ?pitchRate - PitchRate)
+		(p_isPropellerAdjusted ?propellerRatio - PropellerRatio)
+		(p_reachable ?landingSpot - LandingSpot)
+		(p_acceptableLandingCondition ?condition - Condition ?landingSpot - LandingSpot)
+		(p_isTrimmed)
+		(p_engineRestartTried)
+		(p_hugeLossInAltitude)
+		(p_isNoseDown)
+		(p_isFlightLeveled)
+		(p_isStalling)
+		(p_isSpinning)
+		(p_brakeReleased)
+		(p_airplaneLanded)
+		(p_pilotInAirplane)
+		(p_veryLowAltitude)
+		(p_inflightAltitude)
+
+    )
+	
+		
+
+; ***** Beginning of task declaration
+
+; ----- Emergency drills -----
+
+	(:task align_airplane
+		:parameters(?heading - Heading ?pitchRate - PitchRate)
+	)
+	
+	(:task check_landing_conditions
+		:parameters(?windSpeedCondition - WindSpeedCondition ?windDirectionCondition - WindDirectionCondition
+					?headingCondition -HeadingCondition ?airspeedCondition - AirspeedCondition)
+	)
+
+	(:task climb_to_take_off
+		:parameters(?airspeedFollowingTakeOff - Airspeed)
+	)	
+	
+	(:task complete_take_off
+		:parameters(?airspeedFollowingTakeOff - Airspeed)
+	)
+		
+	(:task cruise_flight
+		:parameters(?cruisingAltitude - Altitude ?propellerRatio - PropellerRatio ?correctAirSpeed - Airspeed)
+	)	
+	
+	(:task evacuate_during_fire 
+		:parameters(?aerodrome - LandingSpot)
+	)
+	
+	(:task evacuate_bring_extinguisher 
+		:parameters(?extinguisher - FireExtinguisher)
+	)
+
+	(:task execute_landing_while_engine_failure
+        :parameters ()
+    )
+	
+	(:task extinguish_cabin_fire
+		:parameters(?cabin ?airvent - AircraftPart)
+	)	
+	
+	(:task keep_engine_cut_off_mixture
+		:parameters(?engine - AircraftPart ?mixtureControl - AircraftPart)
+	)
+
+	(:task land
+		:parameters(?landingSpot - LandingSpot)
+	)
+	
+	(:task land_during_fire
+		:parameters(?landingSpot - LandingSpot)
+	)
+	
+    (:task react_to_engine_failure
+        :parameters ()
+    )
+
+	(:task recover_from_spin_stall
+		:parameters()
+	)
+	
+	
+	(:task restart_engine_in_flight_or_land
+        :parameters ()
+    )
+
+	(:task observe_landing_site
+		:parameters(?landingSpot - LandingSpot)
+	)
+	
+	(:task perform_on_base_leg
+		:parameters()
+	)
+	
+	(:task perform_on_final
+		:parameters()
+	)
+	
+	(:task perform_during_landing
+		:parameters()
+	)
+	
+	(:task perform_after_landing
+		:parameters()
+	)
+	
+	(:task perform_emergency_landing
+		:parameters()
+	)
+
+	(:task perform_fly_over
+		:parameters(?airspeedFlyOver - AirSpeedFlyOver ?altitudeFlyOver - AltitudeFlyOver 
+					 ?landingSpot - LandingSpot)
+	)
+	
+	(:task precautionary_land
+		:parameters()
+	)
+	
+	(:task prepare_landing_while_engine_failure
+        :parameters ()
+    )
+	
+	(:task start_take_off
+		:parameters(?runway - Runway)
+	)
+	
+	; ***** End of task declaration
+
+
+	(:task small_task
+		:parameters(?landingSpot - LandingSpot)
+	)
+
+	(:method m_small_task
+		:parameters (?landingSpot - LandingSpot)
+		:task (small_task ?landingSpot)
+		:precondition (and 
+
+		)
+		:subtasks (and
+			(t1 (nop))
+		)
+	)
+	
+	(:method m_small_task_2 ;different methods cannot have the same input and same parameters, even if the precondition is different
+		:parameters (?landingSpot - LandingSpot ?engine - Engine)
+		:task (small_task ?landingSpot)
+		:precondition (and 
+			(p_airplaneLanded)
+		
+		)
+		:subtasks (and
+			(t1 (nop2))
+		)
+	)
+	
+	(:action nop
+        :parameters ()
+        :precondition ()
+        :effect ()
+    )
+	
+	(:action nop2
+        :parameters ()
+        :precondition ()
+        :effect ()
+    )
+
+	(:method m_after_landing
+        :parameters (?flapsPosition - FlapsPositionOne ?flaps - Flaps 
+					?airspeed - AirspeedHalt ?fuelGauge - FuelGauge 
+					?trim - Trim ?trimNeutral - TrimAfterLandingPosition
+					?engine - Engine)
+        :task (perform_after_landing)
+        :precondition (and
+            (p_airplaneLanded)
+        )
+        :subtasks (and
+            (task1 (adjust_part_to_position ?flaps ?flapsPosition))
+            (task2 (brake_to ?airspeed))
+            (task3 (turn_off ?fuelGauge))
+            (task4 (retract ?flaps))
+            (task5 (adjust_part_to_position ?trim ?trimNeutral))
+            (task6 (turn_off ?engine))
+        )
+		:ordering (and
+			(< task1 task2) 
+			(< task2 task3) 
+			(< task3 task4) 
+			(< task4 task5) 	
+			(< task5 task6) 			
+		)
+    )
+
+	;Cruising
+	(:method m_align_airplane
+        :parameters (?heading - Heading ?pitchRate - PitchRate ?cruisingAltitude - Altitude)
+        :task (align_airplane ?heading ?pitchRate)
+        :precondition (and
+			(not (p_airplaneLanded))
+		)
+        :subtasks
+        (and
+            (task1 (bring_into_horizontal_flight ?pitchRate))
+            (task2 (set_course ?heading)) 
+        )
+        :ordering(and
+            (< task1 task2)
+        )
+    )
+
+	(:method m_check_landing_conditions
+        :parameters (?windSpeedCondition - WindSpeedCondition ?windDirectionCondition - WindDirectionCondition 
+					 ?headingCondition - HeadingCondition ?airspeedCondition - AirspeedCondition)
+        :task (check_landing_conditions ?windSpeedCondition ?windDirectionCondition ?headingCondition ?airspeedCondition)
+        :precondition ( )
+        :subtasks(and
+            (task1 (check_condition ?windDirectionCondition))
+			(task2 (check_condition ?windSpeedCondition))
+            (task3 (check_condition ?headingCondition))
+            (task4 (check_condition ?airspeedCondition))
+        )
+    )
+
+	(:method m_climb_to_take_off
+        :parameters (?airspeedTakeOffClimb - AirspeedTakeOffClimb ?altitudeTakeOffClimb - AltitudeTakeOffClimb
+					 ?throttleRatioTakeOffClimb - ThrottleRatioTakeOffClimb ?airspeedFollowingTakeOff - Airspeed)
+        :task(climb_to_take_off ?airspeedFollowingTakeOff)
+        :precondition ( )
+        :subtasks(and
+            (task1 (adjust_control_parameter ?airspeedTakeOffClimb))
+            (task2 (adjust_control_parameter ?altitudeTakeOffClimb))
+            (task3 (adjust_control_parameter ?throttleRatioTakeOffClimb))
+            (task4 (adjust_control_parameter ?airspeedFollowingTakeOff))
+        )
+        :ordering(and
+            (< task1 task2)
+			(< task2 task3)
+			(< task3 task4)
+        )
+    )
+	
+	(:method m_complete_take_off
+        :parameters (?runway - Runway ?groundSpeed - GroundSpeedTakeoff
+					 ?throttle - Throttle ?airspeedFollowingTakeOff - Airspeed
+					 ?landingGear - LandingGear ?flaps - Flaps
+					 ?flapsPosition - FlapsPositionUp)
+        :task (complete_take_off ?airspeedFollowingTakeOff)
+        :precondition (and
+			(p_at ?runway)
+			(p_brakeReleased)
+			(p_pushedToFull ?throttle)
+			(not (p_isNoseDown))
+			(p_controlParameterReached ?groundSpeed)
+        )
+        :subtasks(and
+            (task1 (climb_to_take_off ?airspeedFollowingTakeOff))
+            (task2 (retract ?landingGear))
+            (task3 (adjust_part_to_position ?flaps ?flapsPosition))
+        )
+        :ordering(and
+			(< task1 task2)
+            (< task1 task3)
+        )
+    )
+	
+	;Cruising
+    (:method m_cruise_flight
+        :parameters (?pitchRate - PitchRate ?heading - Heading ?correctAirSpeed - Airspeed ?propellerRatio - PropellerRatio ?cruisingAltitude - Altitude)
+        :task (cruise_flight ?cruisingAltitude ?propellerRatio ?correctAirSpeed)
+        :precondition (and
+            (p_controlParameterReached ?cruisingAltitude)
+        )
+        :subtasks
+        (and
+            (task1 (align_airplane ?heading ?pitchRate))
+            (task2 (adjust_control_parameter ?correctAirSpeed)) 
+            (task3 (adjust_control_parameter ?propellerRatio)) 
+        )
+        :ordering(and
+            (< task1 task2)
+			(< task1 task3)
+		)
+	)
+	
+	(:method m_during_landing
+        :parameters (?altitude1 - LandingAltitude1 ?engine - Engine
+					 ?airspeed - AirspeedOnFinal ?altitude2 - LandingAltitude2 
+					 ?stick - Stick ?stickPosition - StickLandingPosition)
+        :task (perform_during_landing)
+        :precondition (and
+			(p_controlParameterReached ?airspeed)
+		)
+        :subtasks(and
+            (task1 (adjust_control_parameter ?altitude1))
+            (task2 (reduce_to_idle ?engine))
+            (task3 (maintain_control_parameter ?airspeed))
+            (task4 (adjust_control_parameter ?altitude2))
+            (task5 (adjust_part_to_position ?stick ?stickPosition))
+			(task6 (touch_ground))
+        )
+		:ordering(and
+			(< task1 task2) 
+			(< task2 task3) 
+			(< task3 task4) 
+			(< task4 task5) 
+			(< task5 task6)
+		)
+    )
+	
+	(:method m_evacuate_engine_fire_start
+		:parameters (?engine - Engine ?mixtureControl - MixtureControl
+					?fuelGauge - FuelGauge ?magnetos - Magnetos
+					?master - Master ?extinguisher - FireExtinguisher
+					?message - FireOnStartMessage ?aerodrome - LandingSpot)
+		:task (evacuate_during_fire ?aerodrome)
+		:precondition (and 
+			(p_airplaneLanded)
+			(p_pilotInAirplane)
+			(p_isOnFire ?engine)
+			(p_isOn ?engine)
+			(p_isOn ?mixtureControl)
+			(p_isOn ?fuelGauge)
+			(p_isOn ?magnetos)
+			(p_isOn ?master)
+			(p_extinguisherExist ?extinguisher)
+		)
+		:subtasks (and
+			(task1 (keep_engine_cut_off_mixture ?engine ?mixtureControl))
+			(task2 (turn_off ?fuelGauge))
+			(task3 (turn_off ?magnetos))
+			(task4 (inform_ATC ?message))
+			(task5 (turn_off ?master))
+			(task6 (evacuate_bring_extinguisher ?extinguisher))
+		)
+		:ordering (and
+			(< task1 task2)
+			(< task2 task3)
+			(< task3 task4)
+			(< task4 task5)
+			(< task5 task6)
+		)
+	)
+	
+	(:method m_evacuate_bring_extinguisher
+		:parameters (?extinguisher - FireExtinguisher ?aerodrome - LandingSpot)
+		:task (evacuate_bring_extinguisher ?extinguisher)
+		:precondition(and 
+			(p_extinguisherExist ?extinguisher)
+			(p_airplaneLanded)
+		)
+		:subtasks(and
+			(task1 (evacuate))
+			(task2 (bringExtinguisher ?extinguisher))
+		)
+		:ordering (and
+			(< task1 task2)
+		)
+	)
+
+	(:method m_evacuate_engine_fire_flight
+		:parameters (?engine - Engine ?mixtureControl - MixtureControl 
+					 ?throttle - Throttle ?magnetos - Magnetos  
+					 ?fuelGauge - FuelGauge ?heater - CabinHeater 
+					 ?aerodrome - LandingSpot ?message - MaydayMessage)
+		:task (evacuate_during_fire ?aerodrome)
+		:precondition (and
+			(p_pilotInAirplane)
+			(p_isOnFire ?engine)	
+			(p_isOn ?engine)
+			(p_isOn ?mixtureControl)
+			(p_isOpen ?throttle)
+			(p_isOn ?magnetos)
+			(p_isOn ?fuelGauge)
+		)
+		:subtasks (and
+			(task1 (keep_engine_cut_off_mixture ?engine ?mixtureControl))
+			(task2 (close ?throttle))
+			(task3 (turn_off ?magnetos))
+			(task4 (turn_off ?fuelGauge))
+			(task5 (turn_off ?heater))
+			(task6 (inform_ATC ?message))
+			(task7 (land ?aerodrome))
+		)
+		:ordering (and
+			(< task1 task2)
+			(< task2 task3)
+			(< task3 task4)
+			(< task4 task5)
+			(< task5 task6)
+			(< task6 task7)
+		)
+	)
+	
+	(:method m_evacuate_electrical_fire_ground
+		:parameters(?engine - Engine ?message - ElectricalFireOnGroundMessage 
+					?master - Master ?extinguisher - FireExtinguisher
+					?electricalSystem - ElectricalSystem ?aerodrome - LandingSpot)
+		:task (evacuate_during_fire ?aerodrome)
+		:precondition (and
+			(p_pilotInAirplane)
+			(p_airplaneLanded)
+			(p_isOnFire ?electricalSystem)
+			(p_isOn ?engine)
+			(p_isOn ?master)
+			(p_extinguisherExist ?extinguisher)
+		)
+		:subtasks (and
+			(task1 (turn_off ?engine))
+			(task2 (inform_ATC ?message))		
+			(task3 (turn_off ?master))
+			(task4 (evacuate_bring_extinguisher ?extinguisher))
+		)
+		:ordering (and
+			(< task1 task4)
+			(< task2 task4)
+			(< task3 task4)
+		)
+	)
+	
+	; EngineFailure
+	(:method m_execute_landing_while_engine_failure_at_very_low_altitude
+        :parameters (?engine - Engine ?landingSpot - LandingSpot 
+					 ?airspeed - AirspeedHalt)
+        :task (execute_landing_while_engine_failure)
+        :precondition (and
+            (p_fail ?engine)
+			(p_veryLowAltitude)
+        )
+        :subtasks(and 
+			(task1 (land ?landingSpot)) 
+			(task2 (brake_to ?airspeed))
+        )
+        :ordering(and
+            (< task1 task2)
+        )
+    )
+	
+	; EngineFailure
+    (:method m_execute_landing_while_engine_failure
+        :parameters (?engine - Engine ?landingSpot - LandingSpot 
+					 ?airspeed - AirspeedHalt)
+        :task (execute_landing_while_engine_failure)
+        :precondition (and
+            (p_fail ?engine)
+        )
+        :subtasks(and 
+			(task1 (get_to_nearest_landing_spot ?landingSpot)) 
+			(task2 (land ?landingSpot)) 
+			(task3 (brake_to ?airspeed))
+        )
+        :ordering(and
+            (< task1 task2)
+			(< task2 task3)
+        )
+    )
+	
+	(:method m_extinguish_cabin_fire
+		:parameters (?extinguisher - FireExtinguisher ?cabin - AircraftPart ?airvent - AircraftPart)
+		:task (extinguish_cabin_fire ?cabin ?airvent)
+		:precondition(and 
+			(p_isOnFire ?cabin)
+			(not (p_isOpen ?airvent))
+			(p_extinguisherExist ?extinguisher)
+		)
+		:subtasks(and
+			(task1 (extinguishFire ?extinguisher ?cabin)) 
+			(task2 (open ?airvent))
+		)
+	)
+
+	(:method m_keep_engine_cut_off_mixture
+		:parameters (?engine - AircraftPart ?mixtureControl - AircraftPart)
+		:task (keep_engine_cut_off_mixture ?engine ?mixtureControl)
+		:precondition(and 
+			(p_isOn ?engine)
+			(p_isOn ?mixtureControl)
+		)
+		:subtasks(and
+			(task1 (keep_engine_turning ?engine)) 
+			(task2 (turn_off ?mixtureControl))
+		)
+	)
+	
+	; Landing
+	(:method m_land
+        :parameters (?landingSpot - LandingSpot)
+        :task (land ?landingSpot)
+        :precondition (and
+            (p_landingSpotClear ?landingSpot)
+        )
+        :subtasks(and
+            (task1 (perform_on_base_leg))
+            (task2 (perform_on_final))
+            (task3 (perform_during_landing))
+            (task4 (perform_after_landing))
+        )
+		:ordering(and
+			(< task1 task2) 
+			(< task2 task3) 
+			(< task3 task4) 
+		)
+    )
+	
+	(:method m_land_electrical_fire_flight
+		:parameters(?message - ElectricalFireOnFlightMessage ?master - Master 
+					?heater - CabinHeater ?landingSpot - LandingSpot
+					?electricalSystem - ElectricalSystem)
+		:task (land_during_fire ?landingSpot)
+		:precondition (and
+			(p_pilotInAirplane)
+			(p_landingSpotClear ?landingSpot)
+			(p_isOnFire ?electricalSystem)
+		)
+		:subtasks (and
+			(task1 (inform_ATC ?message))		
+			(task2 (turn_off ?master))
+			(task3 (turn_off ?heater))
+			(task4 (land ?landingSpot)) 
+		)
+		:ordering (and
+			(< task1 task4)
+			(< task2 task4)
+			(< task3 task4)
+		)
+	)
+	
+	(:method m_land_cabin_fire_flight
+		:parameters(?message - CabinFireOnFlightMessage ?extinguisher - FireExtinguisher 
+					?airvent - Airvent ?cabin - Cabin 
+					?landingSpot - LandingSpot)
+		:task (land_during_fire ?landingSpot) 
+		:precondition (and
+			(p_pilotInAirplane)
+			(p_extinguisherExist ?extinguisher)
+			(p_isOnFire ?cabin)
+			(p_landingSpotClear ?landingSpot)
+		)
+		:subtasks (and
+			(task1 (extinguish_cabin_fire ?cabin ?airvent))
+			(task2 (inform_ATC ?message))	
+			(task3 (land ?landingSpot))
+		)
+		:ordering (and
+			(< task1 task3)
+			(< task2 task3)
+		)
+	)	
+	
+	(:method m_observe_landing_site
+        :parameters (?landingSpotSurfaceCondition - LandingSpotSurfaceCondition
+					 ?landingSpotSlopeCondition - LandingSpotSlopeCondition
+					 ?landingSpotObstructionCondition - LandingSpotObstructionCondition
+					 ?landingSpot - LandingSpot)
+        :task (observe_landing_site ?landingSpot)
+        :precondition ()
+        :subtasks(and
+            (task1 (check_condition ?landingSpotSurfaceCondition))
+            (task2 (check_condition ?landingSpotSlopeCondition))
+            (task3 (check_condition ?landingSpotObstructionCondition))
+        )
+    )
+	
+
+	(:method m_perform_fly_over
+        :parameters (?airspeedFlyOver - AirSpeedFlyOver ?altitudeFlyOver - AltitudeFlyOver 
+					 ?landingSpot - LandingSpot)
+        :task (perform_fly_over ?airspeedFlyOver ?altitudeFlyOver ?landingSpot)
+        :precondition (and
+			(p_reachable ?landingSpot)
+		)
+        :subtasks(and
+            (task1 (adjust_control_parameter ?airspeedFlyOver))
+            (task2 (adjust_control_parameter ?altitudeFlyOver))
+			(task3 (fly_over ?landingSpot))
+        )
+		:ordering(and
+			(< task1 task3)
+			(< task2 task3)
+		)
+    )
+	
+	(:method m_abort_fly_over
+        :parameters (?airspeedFlyOver - AirSpeedFlyOver ?altitudeFlyOver - AltitudeFlyOver 
+					 ?landingSpot - LandingSpot ?cruisingAltitude - Altitude 
+					 ?propellerRatio - PropellerRatio ?correctAirSpeed - Airspeed)
+        :task (perform_fly_over ?airspeedFlyOver ?altitudeFlyOver ?landingSpot)
+        :precondition (and
+			(not (p_reachable ?landingSpot))
+		)
+        :subtasks(and
+			(task1 (cruise_flight ?cruisingAltitude ?propellerRatio ?correctAirSpeed))
+        )
+		:ordering()
+    )
+	
+	(:method m_perform_on_base_leg
+        :parameters (?airspeed - AirspeedForLanding ?power - PowerBeforeLanding 
+					 ?flaps - Flaps ?flapsPosition - FlapsPositionOne)
+        :task (perform_on_base_leg)
+        :precondition ()
+        :subtasks (and
+            (task1 (adjust_control_parameter ?power))
+            (task2 (adjust_control_parameter ?airspeed))
+            (task3 (adjust_part_to_position ?flaps ?flapsPosition))
+        )
+    )
+	
+	(:method m_perform_on_final
+        :parameters (?airspeed - AirspeedOnFinal ?flapsLandingPosition - FlapsLandingPosition 
+					 ?flaps - Flaps ?landingSpot - LandingSpot)
+        :task (perform_on_final)
+        :precondition ()
+        :subtasks (and
+            (task1 (adjust_control_parameter ?airspeed))
+            (task2 (adjust_part_to_position ?flaps ?flapsLandingPosition))
+            (task3 (check_landing_site ?landingSpot))
+        )
+		:ordering(and
+			(< task1 task2) 
+		)
+    )
+	
+	; Precautionary_landing
+	(:method m_precautionary_landing
+        :parameters (?windSpeedCondition - WindSpeedCondition ?windDirectionCondition - WindDirectionCondition 
+					 ?headingCondition - HeadingCondition ?airspeedCondition - AirspeedCondition
+					 ?landingSpot - LandingSpot ?airspeedFlyOver - AirSpeedFlyOver
+					 ?altitudeFlyOver - AltitudeFlyOver)
+        :task(precautionary_land)
+        :precondition ( )
+        :subtasks(and
+            (task1 (check_landing_conditions ?windSpeedCondition ?windDirectionCondition ?headingCondition ?airspeedCondition))
+            (task2 (check_landing_site ?landingSpot)) 
+            (task3 (perform_fly_over ?airspeedFlyOver ?altitudeFlyOver ?landingSpot))
+            (task4 (observe_landing_site ?landingSpot))
+            (task5 (land ?landingSpot))
+        )
+        :ordering(and
+            (< task1 task2)
+			(< task2 task3)
+			(< task3 task4)
+			(< task4 task5)
+        )
+    )
+	
+	; EngineFailure
+	(:method m_perform_emergency_landing
+        :parameters (?landingSpot - LandingSpot ?airspeed - AirspeedHalt)
+        :task (perform_emergency_landing)
+        :precondition (and
+            (p_inflightAltitude)
+        )
+        :subtasks(and
+			(task1 (prepare_landing_while_engine_failure))
+            (task2 (get_to_nearest_landing_spot ?landingSpot)) 
+			(task3 (land ?landingSpot)) 
+			(task4 (brake_to ?airspeed))
+        )
+        :ordering(and
+            (< task1 task2)
+			(< task2 task3)			
+			(< task3 task4)
+        )
+    )
+	
+	; EngineFailure
+    (:method m_prepare_landing_while_engine_failure
+        :parameters (?engine - Engine ?master - Master ?magnetos - Magnetos 
+					 ?fuelGauge - FuelGauge ?flaps - Flaps ?landingGear - LandingGear 
+					 ?safetyBelt - SafetyBelt ?airspeed - AirspeedForLanding)
+        :task (prepare_landing_while_engine_failure )
+        :precondition (and
+            (p_fail ?engine)
+            ;(not(p_isEngineRestartPossible))
+        )
+        :subtasks
+        (and
+            (task1 (adjust_control_parameter ?airspeed))
+            (task2 (turn_off ?master))
+            (task3 (turn_off ?magnetos))
+            (task4 (turn_off ?fuelGauge))
+            (task5 (extend ?flaps))
+            (task6 (extend ?landingGear))
+            (task7 (check ?safetyBelt))
+        )
+    )
+	
+	; EngineFailure
+    (:method m_react_to_engine_failure_during_take_off_run
+        :parameters (?throttle - Throttle ?magnetos - Magnetos ?master - Master ?engine - Engine ?airspeed - AirspeedHalt)
+        :task (react_to_engine_failure)
+        :precondition (and
+			(p_fail ?engine)
+			(not (p_inflightAltitude))
+			(p_airplaneLanded)
+		)
+        :subtasks
+        (and
+            (task1 (reduce_to_idle ?throttle))
+            (task2 (turn_off ?magnetos))
+            (task3 (turn_off ?master))
+            (task4 (brake_to ?airspeed))
+        )
+        :ordering(and
+            (< task1 task4) 
+			(< task2 task4)
+			(< task3 task4)
+        )
+    )
+		
+	; EngineFailure
+	(:method m_react_to_engine_failure_during_take_off
+        :parameters (?engine - Engine )
+        :task (react_to_engine_failure)
+        :precondition (and
+            (p_fail ?engine)
+			(not (p_inflightAltitude))
+			(not (p_airplaneLanded))
+        )
+        :subtasks
+        (and
+            (task1 (prepare_landing_while_engine_failure))
+            (task2 (execute_landing_while_engine_failure))
+        )
+        :ordering(and
+            (< task1 task2)
+        )
+    )
+	
+	; EngineFailure
+	(:method m_react_to_engine_failure_in_flight
+        :parameters (?engine - Engine ?airspeed - AirspeedForLanding)
+        :task (react_to_engine_failure)
+        :precondition (and
+            (p_fail ?engine)
+			(p_inflightAltitude)
+        )
+        :subtasks(and
+            (task1 (adjust_control_parameter ?airspeed))
+            (task2 (trim_airplane))
+            (task3 (restart_engine_in_flight_or_land))
+        )
+        :ordering(and
+            (< task1 task3) 
+			(< task2 task3) 
+        )
+    )
+	
+	; EngineFailure
+	(:method m_restart_engine_in_flight
+        :parameters (?engine - Engine ?master - Master ?magnetos - Magnetos ?fuelGauge - FuelGauge)
+        :task (restart_engine_in_flight_or_land)
+        :precondition (and
+            (p_inflightAltitude)
+        )
+        :subtasks
+        (and
+            (task1 (check_isOn ?master))
+            (task2 (check_isOn ?magnetos))
+            (task3 (check_isOn ?fuelGauge))
+            (task4 (try_restart_engine))
+        )
+
+        :ordering(and
+            (< task1 task4) 
+			(< task2 task4) 
+			(< task3 task4) 
+        )
+    )
+
+	(:method m_recover_from_spin
+        :parameters (?throttle - Throttle ?aileron - Aileron ?aileronNeutral - AileronNeutralPosition
+					 ?rudder - Rudder ?rudderOppositePosition - RudderOppositePosition
+					 ?nose - Nose ?noseDown - NoseDown)
+        :task (recover_from_spin_stall)
+        :precondition (and
+			(p_isSpinning)
+		)
+        :subtasks(and
+            (task1 (reduce_to_idle ?throttle))
+            (task2 (adjust_part_to_position ?aileron ?aileronNeutral))
+			(task3 (adjust_part_to_position ?nose ?noseDown))
+            (task4 (adjust_part_to_position ?rudder ?rudderOppositePosition))
+            (task5 (maintain_level_flight))
+        )  
+		:ordering(and
+			(< task1 task2)
+			(< task2 task3)
+			(< task3 task4)
+			(< task4 task5)
+		)
+    )
+	
+	; Stall and spin recovery
+	(:method m_recover_from_stall
+        :parameters(?thrustLevel - Thrust ?nose - Nose ?noseDown - NoseDown)
+        :task (recover_from_spin_stall)
+        :precondition (and
+			(p_isStalling)
+		)
+        :subtasks(and
+			(task1 (adjust_part_to_position ?nose ?noseDown))
+            (task2 (increase_control_parameter ?thrustLevel))
+        )
+        :ordering(and
+            (< task1 task2)
+        )
+    )	
+	
+	; Takeoff
+	(:method m_start_take_off
+        :parameters(?runway - Runway ?throttle - Throttle ?groundSpeed - GroundSpeedTakeoff
+					?nose - Nose ?noseLiftedSlightly - NoseLiftedSlightly
+		)
+        :task(start_take_off ?runway)
+        :precondition (and
+            (p_airplaneLanded)
+        )
+        :subtasks(and
+            (task1 (drive_to ?runway))
+            (task2 (release_brake))
+            (task3 (push_to_full ?throttle))
+			(task4 (adjust_part_to_position ?nose ?noseLiftedSlightly))
+            (task5 (adjust_control_parameter ?groundSpeed))
+        )
+        :ordering(and
+            (< task1 task2)
+			(< task2 task3)
+			(< task3 task4)
+			(< task4 task5)
+        )
+    )
+	
+	
+	;***** End of method definitions *****
+
+
+	;***** Beginning of action definitions *****		
+	
+	(:action adjust_control_parameter
+        :parameters (?controlParameter - ControlParameter)
+        :precondition ( )
+        :effect (and
+            (p_controlParameterReached ?controlParameter)
+        )
+    )
+	
+	(:action adjust_part_to_position
+        :parameters (?part - AircraftPart ?position - Position)
+        :precondition ( )
+        :effect (and
+            (p_partAtPosition ?part ?position)
+        )
+    )
+
+	(:action brake_to
+        :parameters (?endSpeed - Airspeed)
+        :precondition (and
+            (p_airplaneLanded)
+        )
+        :effect (and
+            (p_controlParameterReached ?endSpeed)
+        )
+    )
+	
+	(:action bringExtinguisher
+		:parameters (?extinguisher - FireExtinguisher)
+		:precondition (and (p_extinguisherExist ?extinguisher))
+		:effect (and
+			(not (p_extinguisherExist ?extinguisher))
+		)	
+	)
+	
+	(:action bring_into_horizontal_flight
+        :parameters (?pitchRate - PitchRate)
+        :precondition ( )
+        :effect (and
+            (p_isInHorizontalFlight ?pitchRate)
+        )
+    )
+	
+	(:action check
+        :parameters (?part - AircraftPart)
+        :precondition ()
+        :effect (and
+            (p_isChecked ?part)
+        )
+    )
+	
+	(:action check_condition 
+        :parameters (?condition - Condition)
+        :precondition ()
+        :effect (and
+            (p_conditionChecked ?condition)
+        )
+    )
+	
+	(:action check_isOn
+        :parameters (?part - AircraftPart)
+        :precondition (and
+			(p_isOn ?part)
+		)
+        :effect ( )
+    )
+	
+	(:action check_landing_site
+        :parameters (?landingSpot - LandingSpot)
+        :precondition ()
+        :effect (and
+			(p_landingSpotChecked ?landingSpot)
+		)
+    )
+	
+	(:action confirm_loss_of_altitude 
+        :parameters ()
+        :precondition (;and
+			;(p_hugeLossInAltitude)
+		)
+        :effect (and
+            (p_isStalling)
+        )
+    )
+	
+	(:action close
+		:parameters (?part - AircraftPart)
+		:precondition ()
+		:effect (and
+			(not (p_isOpen ?part))
+		)	
+	)	
+	
+
+	
+	(:action evacuate
+		:parameters ()
+		:precondition (and (p_airplaneLanded))
+		:effect (and
+			(not (p_pilotInAirplane))
+		)	
+	)
+	
+	(:action drive_to
+        :parameters (?runway - Runway)
+        :precondition (and
+			(p_airplaneLanded)
+		)
+        :effect (and
+            (p_at ?runway)
+        )
+    )
+	
+	(:action extinguishFire
+		:parameters (?extinguisher - FireExtinguisher ?cabin - AircraftPart)
+		:precondition (and 
+			(p_extinguisherExist ?extinguisher)
+			(p_isOnFire ?cabin)
+		)
+		:effect (and
+			(not (p_isOnFire ?cabin))
+		)	
+	)
+	
+	(:action extend
+        :parameters (?part - AircraftPart)
+        :precondition ( )
+        :effect (and
+            (p_isExtended ?part)
+        )
+    )
+	
+	(:action fly_over 
+        :parameters (?location - Location)
+        :precondition ()
+        :effect (and
+            (p_flownOver ?location)
+        )
+    )
+	
+	(:action get_to_nearest_landing_spot
+        :parameters (?landingSpot - LandingSpot)
+        :precondition (and
+			(not (p_veryLowAltitude))
+			(p_nearestLandingSpot ?landingSpot)
+		)
+        :effect (and
+            (p_at ?landingSpot)
+        )
+    )
+	
+	(:action increase_control_parameter
+        :parameters (?controlParameter - ControlParameter)
+        :precondition ( )
+        :effect (and
+            (p_controlParameterIncreased ?controlParameter)
+        )
+    )
+	
+	
+	(:action inform_ATC
+		:parameters (?message - Message)
+		:precondition ()
+		:effect (and
+			(p_atcInformed ?message)
+		)	
+	)
+	
+	(:action keep_engine_turning 
+		:parameters (?engine - Engine)
+		:precondition (and 
+			(p_isOn ?engine))
+		:effect (and
+			(p_isOn ?engine)
+		)	
+	) 
+	
+	(:action maintain_control_parameter
+        :parameters (?controlParameter - ControlParameter)
+        :precondition (and
+			(p_controlParameterReached ?controlParameter)
+		)
+        :effect (and
+            (p_controlParameterReached ?controlParameter)
+        )
+    )
+	
+	(:action maintain_level_flight
+        :parameters ()
+        :precondition (and
+            (not(p_isFlightLeveled))
+        )
+        :effect (and
+            (p_isFlightLeveled)
+        )
+    )
+	
+	(:action open
+		:parameters (?part - AircraftPart)
+		:precondition ()
+		:effect (and
+			(p_isOpen ?part)
+		)	
+	)
+	
+	(:action push_to_full
+        :parameters (?part - AircraftPart)
+        :precondition ()
+        :effect (and
+            (p_pushedToFull ?part)
+        )
+    )
+	
+	(:action reduce_to_idle
+        :parameters (?part - AircraftPart)
+        :precondition ()
+        :effect (and
+            (p_isIdle ?part)
+        )
+    )
+	
+	(:action retract
+        :parameters (?part - AircraftPart)
+        :precondition ( )
+        :effect (and
+            (not (p_isExtended ?part))
+        )
+    )
+	
+	(:action release_brake
+        :parameters ()
+        :precondition ()
+        :effect (and
+            (p_brakeReleased)
+        )
+    )
+	
+	(:action set_course
+        :parameters (?heading - Heading)
+        :precondition ( )
+        :effect (and
+            (p_controlParameterReached ?heading)
+        )
+    )
+	
+	(:action touch_ground
+        :parameters ()
+        :precondition ()
+        :effect (and
+            (p_airplaneLanded)
+        )
+    )
+	
+	(:action trim_airplane
+        :parameters ()
+        :precondition ()
+        :effect (and
+            (p_isTrimmed)
+        )
+    )
+	
+	
+	(:action try_restart_engine
+        :parameters ()
+        :precondition ()
+        :effect (and
+            (p_engineRestartTried)
+        )
+    )
+	
+	(:action turn_off
+		:parameters (?part - AircraftPart)
+		:precondition ()
+		:effect (and
+			(not (p_isOn ?part))
+		)	
+	)
+	
+	;***** End of action definitions ****
+
+)
+

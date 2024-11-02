@@ -1,0 +1,2092 @@
+
+(define (problem pilotfit)
+    (:domain lowfuel)
+    (:objects
+		; ----- cabin accessories
+		fireExtinguisher - FireExtinguisher
+		; ----- aircraft parts
+		magnetos - Magnetos 
+		engine - Engine
+		fuelGauge - FuelGauge
+		master - Master
+		mixtureControl - MixtureControl
+		throttle - Throttle
+		heater - CabinHeater
+		cabin - Cabin
+		airvent - Airvent
+		flaps - Flaps
+		landingGear - LandingGear
+		safetyBelt - SafetyBelt
+		stick - Stick
+		trim - Trim
+		aileron - Aileron
+		rudder - Rudder
+		electricalSystem - ElectricalSystem		
+		nose - Nose
+		; ----- message to the ATC
+		mayday - MaydayMessage
+		fireOnStartMessage - FireOnStartMessage 
+		electricalFireOnGroundMessage - ElectricalFireOnGroundMessage 
+		electricalFireOnFlightMessage - ElectricalFireOnFlightMessage 
+		cabinFireOnFlightMessage - CabinFireOnFlightMessage
+		; ----- control parameters			 
+		heading - Heading
+        pitchRate - PitchRate
+        correctCruisingAirSpeed - Airspeed
+		speedZeroKmh - AirspeedHalt
+		airspeed120kmh - AirspeedForLanding
+		airspeed100kmh - AirspeedOnFinal
+		airspeed125kmh - AirSpeedFlyOver
+		groundSpeed90kmh - GroundSpeedTakeoff
+		speed115kmh - AirspeedTakeOffClimb
+		minAltitude150ft - AltitudeTakeOffClimb
+        propellerRatio - PropellerRatio
+        cruisingAltitude - Altitude
+		altitude150ft - AltitudeFlyOver
+		power3000rpm - PowerBeforeLanding
+		altitude30ft - LandingAltitude1
+		altitude2ft - LandingAltitude2
+		thrustLevel - Thrust
+		throttleRatioTakeOffClimb - ThrottleRatioTakeOffClimb
+		; ----- Parts positions
+		flapsOnPositionOne - FlapsPositionOne
+		flapsLandingPosition - FlapsLandingPosition
+		flapsPositionUp - FlapsPositionUp
+		stickBackwards - StickLandingPosition
+		aileronNeutralPosition - AileronNeutralPosition
+		rudderOppositePosition - RudderOppositePosition
+		trimNeutral - TrimAfterLandingPosition
+		noseDown - NoseDown
+		noseLiftedSlightly - NoseLiftedSlightly
+		; ----- External conditions & locations
+		windSpeedCondition - WindSpeedCondition
+		windDirectionCondition - WindDirectionCondition
+		headingCondition - HeadingCondition
+		airspeedCondition - AirspeedCondition
+        aerodrome1 - LandingSpot
+runwayAerodrome1 - Runway
+aerodrome1SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome1SlopeCondition - LandingSpotSlopeCondition
+aerodrome1ObstructionCondition - LandingSpotObstructionCondition
+aerodrome2 - LandingSpot
+runwayAerodrome2 - Runway
+aerodrome2SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome2SlopeCondition - LandingSpotSlopeCondition
+aerodrome2ObstructionCondition - LandingSpotObstructionCondition
+aerodrome3 - LandingSpot
+runwayAerodrome3 - Runway
+aerodrome3SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome3SlopeCondition - LandingSpotSlopeCondition
+aerodrome3ObstructionCondition - LandingSpotObstructionCondition
+aerodrome4 - LandingSpot
+runwayAerodrome4 - Runway
+aerodrome4SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome4SlopeCondition - LandingSpotSlopeCondition
+aerodrome4ObstructionCondition - LandingSpotObstructionCondition
+aerodrome5 - LandingSpot
+runwayAerodrome5 - Runway
+aerodrome5SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome5SlopeCondition - LandingSpotSlopeCondition
+aerodrome5ObstructionCondition - LandingSpotObstructionCondition
+aerodrome6 - LandingSpot
+runwayAerodrome6 - Runway
+aerodrome6SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome6SlopeCondition - LandingSpotSlopeCondition
+aerodrome6ObstructionCondition - LandingSpotObstructionCondition
+aerodrome7 - LandingSpot
+runwayAerodrome7 - Runway
+aerodrome7SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome7SlopeCondition - LandingSpotSlopeCondition
+aerodrome7ObstructionCondition - LandingSpotObstructionCondition
+aerodrome8 - LandingSpot
+runwayAerodrome8 - Runway
+aerodrome8SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome8SlopeCondition - LandingSpotSlopeCondition
+aerodrome8ObstructionCondition - LandingSpotObstructionCondition
+aerodrome9 - LandingSpot
+runwayAerodrome9 - Runway
+aerodrome9SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome9SlopeCondition - LandingSpotSlopeCondition
+aerodrome9ObstructionCondition - LandingSpotObstructionCondition
+aerodrome10 - LandingSpot
+runwayAerodrome10 - Runway
+aerodrome10SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome10SlopeCondition - LandingSpotSlopeCondition
+aerodrome10ObstructionCondition - LandingSpotObstructionCondition
+aerodrome11 - LandingSpot
+runwayAerodrome11 - Runway
+aerodrome11SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome11SlopeCondition - LandingSpotSlopeCondition
+aerodrome11ObstructionCondition - LandingSpotObstructionCondition
+aerodrome12 - LandingSpot
+runwayAerodrome12 - Runway
+aerodrome12SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome12SlopeCondition - LandingSpotSlopeCondition
+aerodrome12ObstructionCondition - LandingSpotObstructionCondition
+aerodrome13 - LandingSpot
+runwayAerodrome13 - Runway
+aerodrome13SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome13SlopeCondition - LandingSpotSlopeCondition
+aerodrome13ObstructionCondition - LandingSpotObstructionCondition
+aerodrome14 - LandingSpot
+runwayAerodrome14 - Runway
+aerodrome14SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome14SlopeCondition - LandingSpotSlopeCondition
+aerodrome14ObstructionCondition - LandingSpotObstructionCondition
+aerodrome15 - LandingSpot
+runwayAerodrome15 - Runway
+aerodrome15SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome15SlopeCondition - LandingSpotSlopeCondition
+aerodrome15ObstructionCondition - LandingSpotObstructionCondition
+aerodrome16 - LandingSpot
+runwayAerodrome16 - Runway
+aerodrome16SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome16SlopeCondition - LandingSpotSlopeCondition
+aerodrome16ObstructionCondition - LandingSpotObstructionCondition
+aerodrome17 - LandingSpot
+runwayAerodrome17 - Runway
+aerodrome17SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome17SlopeCondition - LandingSpotSlopeCondition
+aerodrome17ObstructionCondition - LandingSpotObstructionCondition
+aerodrome18 - LandingSpot
+runwayAerodrome18 - Runway
+aerodrome18SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome18SlopeCondition - LandingSpotSlopeCondition
+aerodrome18ObstructionCondition - LandingSpotObstructionCondition
+aerodrome19 - LandingSpot
+runwayAerodrome19 - Runway
+aerodrome19SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome19SlopeCondition - LandingSpotSlopeCondition
+aerodrome19ObstructionCondition - LandingSpotObstructionCondition
+aerodrome20 - LandingSpot
+runwayAerodrome20 - Runway
+aerodrome20SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome20SlopeCondition - LandingSpotSlopeCondition
+aerodrome20ObstructionCondition - LandingSpotObstructionCondition
+aerodrome21 - LandingSpot
+runwayAerodrome21 - Runway
+aerodrome21SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome21SlopeCondition - LandingSpotSlopeCondition
+aerodrome21ObstructionCondition - LandingSpotObstructionCondition
+aerodrome22 - LandingSpot
+runwayAerodrome22 - Runway
+aerodrome22SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome22SlopeCondition - LandingSpotSlopeCondition
+aerodrome22ObstructionCondition - LandingSpotObstructionCondition
+aerodrome23 - LandingSpot
+runwayAerodrome23 - Runway
+aerodrome23SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome23SlopeCondition - LandingSpotSlopeCondition
+aerodrome23ObstructionCondition - LandingSpotObstructionCondition
+aerodrome24 - LandingSpot
+runwayAerodrome24 - Runway
+aerodrome24SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome24SlopeCondition - LandingSpotSlopeCondition
+aerodrome24ObstructionCondition - LandingSpotObstructionCondition
+aerodrome25 - LandingSpot
+runwayAerodrome25 - Runway
+aerodrome25SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome25SlopeCondition - LandingSpotSlopeCondition
+aerodrome25ObstructionCondition - LandingSpotObstructionCondition
+aerodrome26 - LandingSpot
+runwayAerodrome26 - Runway
+aerodrome26SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome26SlopeCondition - LandingSpotSlopeCondition
+aerodrome26ObstructionCondition - LandingSpotObstructionCondition
+aerodrome27 - LandingSpot
+runwayAerodrome27 - Runway
+aerodrome27SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome27SlopeCondition - LandingSpotSlopeCondition
+aerodrome27ObstructionCondition - LandingSpotObstructionCondition
+aerodrome28 - LandingSpot
+runwayAerodrome28 - Runway
+aerodrome28SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome28SlopeCondition - LandingSpotSlopeCondition
+aerodrome28ObstructionCondition - LandingSpotObstructionCondition
+aerodrome29 - LandingSpot
+runwayAerodrome29 - Runway
+aerodrome29SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome29SlopeCondition - LandingSpotSlopeCondition
+aerodrome29ObstructionCondition - LandingSpotObstructionCondition
+aerodrome30 - LandingSpot
+runwayAerodrome30 - Runway
+aerodrome30SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome30SlopeCondition - LandingSpotSlopeCondition
+aerodrome30ObstructionCondition - LandingSpotObstructionCondition
+aerodrome31 - LandingSpot
+runwayAerodrome31 - Runway
+aerodrome31SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome31SlopeCondition - LandingSpotSlopeCondition
+aerodrome31ObstructionCondition - LandingSpotObstructionCondition
+aerodrome32 - LandingSpot
+runwayAerodrome32 - Runway
+aerodrome32SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome32SlopeCondition - LandingSpotSlopeCondition
+aerodrome32ObstructionCondition - LandingSpotObstructionCondition
+aerodrome33 - LandingSpot
+runwayAerodrome33 - Runway
+aerodrome33SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome33SlopeCondition - LandingSpotSlopeCondition
+aerodrome33ObstructionCondition - LandingSpotObstructionCondition
+aerodrome34 - LandingSpot
+runwayAerodrome34 - Runway
+aerodrome34SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome34SlopeCondition - LandingSpotSlopeCondition
+aerodrome34ObstructionCondition - LandingSpotObstructionCondition
+aerodrome35 - LandingSpot
+runwayAerodrome35 - Runway
+aerodrome35SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome35SlopeCondition - LandingSpotSlopeCondition
+aerodrome35ObstructionCondition - LandingSpotObstructionCondition
+aerodrome36 - LandingSpot
+runwayAerodrome36 - Runway
+aerodrome36SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome36SlopeCondition - LandingSpotSlopeCondition
+aerodrome36ObstructionCondition - LandingSpotObstructionCondition
+aerodrome37 - LandingSpot
+runwayAerodrome37 - Runway
+aerodrome37SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome37SlopeCondition - LandingSpotSlopeCondition
+aerodrome37ObstructionCondition - LandingSpotObstructionCondition
+aerodrome38 - LandingSpot
+runwayAerodrome38 - Runway
+aerodrome38SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome38SlopeCondition - LandingSpotSlopeCondition
+aerodrome38ObstructionCondition - LandingSpotObstructionCondition
+aerodrome39 - LandingSpot
+runwayAerodrome39 - Runway
+aerodrome39SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome39SlopeCondition - LandingSpotSlopeCondition
+aerodrome39ObstructionCondition - LandingSpotObstructionCondition
+aerodrome40 - LandingSpot
+runwayAerodrome40 - Runway
+aerodrome40SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome40SlopeCondition - LandingSpotSlopeCondition
+aerodrome40ObstructionCondition - LandingSpotObstructionCondition
+aerodrome41 - LandingSpot
+runwayAerodrome41 - Runway
+aerodrome41SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome41SlopeCondition - LandingSpotSlopeCondition
+aerodrome41ObstructionCondition - LandingSpotObstructionCondition
+aerodrome42 - LandingSpot
+runwayAerodrome42 - Runway
+aerodrome42SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome42SlopeCondition - LandingSpotSlopeCondition
+aerodrome42ObstructionCondition - LandingSpotObstructionCondition
+aerodrome43 - LandingSpot
+runwayAerodrome43 - Runway
+aerodrome43SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome43SlopeCondition - LandingSpotSlopeCondition
+aerodrome43ObstructionCondition - LandingSpotObstructionCondition
+aerodrome44 - LandingSpot
+runwayAerodrome44 - Runway
+aerodrome44SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome44SlopeCondition - LandingSpotSlopeCondition
+aerodrome44ObstructionCondition - LandingSpotObstructionCondition
+aerodrome45 - LandingSpot
+runwayAerodrome45 - Runway
+aerodrome45SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome45SlopeCondition - LandingSpotSlopeCondition
+aerodrome45ObstructionCondition - LandingSpotObstructionCondition
+aerodrome46 - LandingSpot
+runwayAerodrome46 - Runway
+aerodrome46SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome46SlopeCondition - LandingSpotSlopeCondition
+aerodrome46ObstructionCondition - LandingSpotObstructionCondition
+aerodrome47 - LandingSpot
+runwayAerodrome47 - Runway
+aerodrome47SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome47SlopeCondition - LandingSpotSlopeCondition
+aerodrome47ObstructionCondition - LandingSpotObstructionCondition
+aerodrome48 - LandingSpot
+runwayAerodrome48 - Runway
+aerodrome48SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome48SlopeCondition - LandingSpotSlopeCondition
+aerodrome48ObstructionCondition - LandingSpotObstructionCondition
+aerodrome49 - LandingSpot
+runwayAerodrome49 - Runway
+aerodrome49SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome49SlopeCondition - LandingSpotSlopeCondition
+aerodrome49ObstructionCondition - LandingSpotObstructionCondition
+aerodrome50 - LandingSpot
+runwayAerodrome50 - Runway
+aerodrome50SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome50SlopeCondition - LandingSpotSlopeCondition
+aerodrome50ObstructionCondition - LandingSpotObstructionCondition
+aerodrome51 - LandingSpot
+runwayAerodrome51 - Runway
+aerodrome51SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome51SlopeCondition - LandingSpotSlopeCondition
+aerodrome51ObstructionCondition - LandingSpotObstructionCondition
+aerodrome52 - LandingSpot
+runwayAerodrome52 - Runway
+aerodrome52SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome52SlopeCondition - LandingSpotSlopeCondition
+aerodrome52ObstructionCondition - LandingSpotObstructionCondition
+aerodrome53 - LandingSpot
+runwayAerodrome53 - Runway
+aerodrome53SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome53SlopeCondition - LandingSpotSlopeCondition
+aerodrome53ObstructionCondition - LandingSpotObstructionCondition
+aerodrome54 - LandingSpot
+runwayAerodrome54 - Runway
+aerodrome54SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome54SlopeCondition - LandingSpotSlopeCondition
+aerodrome54ObstructionCondition - LandingSpotObstructionCondition
+aerodrome55 - LandingSpot
+runwayAerodrome55 - Runway
+aerodrome55SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome55SlopeCondition - LandingSpotSlopeCondition
+aerodrome55ObstructionCondition - LandingSpotObstructionCondition
+aerodrome56 - LandingSpot
+runwayAerodrome56 - Runway
+aerodrome56SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome56SlopeCondition - LandingSpotSlopeCondition
+aerodrome56ObstructionCondition - LandingSpotObstructionCondition
+aerodrome57 - LandingSpot
+runwayAerodrome57 - Runway
+aerodrome57SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome57SlopeCondition - LandingSpotSlopeCondition
+aerodrome57ObstructionCondition - LandingSpotObstructionCondition
+aerodrome58 - LandingSpot
+runwayAerodrome58 - Runway
+aerodrome58SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome58SlopeCondition - LandingSpotSlopeCondition
+aerodrome58ObstructionCondition - LandingSpotObstructionCondition
+aerodrome59 - LandingSpot
+runwayAerodrome59 - Runway
+aerodrome59SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome59SlopeCondition - LandingSpotSlopeCondition
+aerodrome59ObstructionCondition - LandingSpotObstructionCondition
+aerodrome60 - LandingSpot
+runwayAerodrome60 - Runway
+aerodrome60SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome60SlopeCondition - LandingSpotSlopeCondition
+aerodrome60ObstructionCondition - LandingSpotObstructionCondition
+aerodrome61 - LandingSpot
+runwayAerodrome61 - Runway
+aerodrome61SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome61SlopeCondition - LandingSpotSlopeCondition
+aerodrome61ObstructionCondition - LandingSpotObstructionCondition
+aerodrome62 - LandingSpot
+runwayAerodrome62 - Runway
+aerodrome62SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome62SlopeCondition - LandingSpotSlopeCondition
+aerodrome62ObstructionCondition - LandingSpotObstructionCondition
+aerodrome63 - LandingSpot
+runwayAerodrome63 - Runway
+aerodrome63SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome63SlopeCondition - LandingSpotSlopeCondition
+aerodrome63ObstructionCondition - LandingSpotObstructionCondition
+aerodrome64 - LandingSpot
+runwayAerodrome64 - Runway
+aerodrome64SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome64SlopeCondition - LandingSpotSlopeCondition
+aerodrome64ObstructionCondition - LandingSpotObstructionCondition
+aerodrome65 - LandingSpot
+runwayAerodrome65 - Runway
+aerodrome65SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome65SlopeCondition - LandingSpotSlopeCondition
+aerodrome65ObstructionCondition - LandingSpotObstructionCondition
+aerodrome66 - LandingSpot
+runwayAerodrome66 - Runway
+aerodrome66SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome66SlopeCondition - LandingSpotSlopeCondition
+aerodrome66ObstructionCondition - LandingSpotObstructionCondition
+aerodrome67 - LandingSpot
+runwayAerodrome67 - Runway
+aerodrome67SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome67SlopeCondition - LandingSpotSlopeCondition
+aerodrome67ObstructionCondition - LandingSpotObstructionCondition
+aerodrome68 - LandingSpot
+runwayAerodrome68 - Runway
+aerodrome68SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome68SlopeCondition - LandingSpotSlopeCondition
+aerodrome68ObstructionCondition - LandingSpotObstructionCondition
+aerodrome69 - LandingSpot
+runwayAerodrome69 - Runway
+aerodrome69SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome69SlopeCondition - LandingSpotSlopeCondition
+aerodrome69ObstructionCondition - LandingSpotObstructionCondition
+aerodrome70 - LandingSpot
+runwayAerodrome70 - Runway
+aerodrome70SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome70SlopeCondition - LandingSpotSlopeCondition
+aerodrome70ObstructionCondition - LandingSpotObstructionCondition
+aerodrome71 - LandingSpot
+runwayAerodrome71 - Runway
+aerodrome71SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome71SlopeCondition - LandingSpotSlopeCondition
+aerodrome71ObstructionCondition - LandingSpotObstructionCondition
+aerodrome72 - LandingSpot
+runwayAerodrome72 - Runway
+aerodrome72SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome72SlopeCondition - LandingSpotSlopeCondition
+aerodrome72ObstructionCondition - LandingSpotObstructionCondition
+aerodrome73 - LandingSpot
+runwayAerodrome73 - Runway
+aerodrome73SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome73SlopeCondition - LandingSpotSlopeCondition
+aerodrome73ObstructionCondition - LandingSpotObstructionCondition
+aerodrome74 - LandingSpot
+runwayAerodrome74 - Runway
+aerodrome74SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome74SlopeCondition - LandingSpotSlopeCondition
+aerodrome74ObstructionCondition - LandingSpotObstructionCondition
+aerodrome75 - LandingSpot
+runwayAerodrome75 - Runway
+aerodrome75SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome75SlopeCondition - LandingSpotSlopeCondition
+aerodrome75ObstructionCondition - LandingSpotObstructionCondition
+aerodrome76 - LandingSpot
+runwayAerodrome76 - Runway
+aerodrome76SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome76SlopeCondition - LandingSpotSlopeCondition
+aerodrome76ObstructionCondition - LandingSpotObstructionCondition
+aerodrome77 - LandingSpot
+runwayAerodrome77 - Runway
+aerodrome77SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome77SlopeCondition - LandingSpotSlopeCondition
+aerodrome77ObstructionCondition - LandingSpotObstructionCondition
+aerodrome78 - LandingSpot
+runwayAerodrome78 - Runway
+aerodrome78SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome78SlopeCondition - LandingSpotSlopeCondition
+aerodrome78ObstructionCondition - LandingSpotObstructionCondition
+aerodrome79 - LandingSpot
+runwayAerodrome79 - Runway
+aerodrome79SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome79SlopeCondition - LandingSpotSlopeCondition
+aerodrome79ObstructionCondition - LandingSpotObstructionCondition
+aerodrome80 - LandingSpot
+runwayAerodrome80 - Runway
+aerodrome80SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome80SlopeCondition - LandingSpotSlopeCondition
+aerodrome80ObstructionCondition - LandingSpotObstructionCondition
+aerodrome81 - LandingSpot
+runwayAerodrome81 - Runway
+aerodrome81SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome81SlopeCondition - LandingSpotSlopeCondition
+aerodrome81ObstructionCondition - LandingSpotObstructionCondition
+aerodrome82 - LandingSpot
+runwayAerodrome82 - Runway
+aerodrome82SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome82SlopeCondition - LandingSpotSlopeCondition
+aerodrome82ObstructionCondition - LandingSpotObstructionCondition
+aerodrome83 - LandingSpot
+runwayAerodrome83 - Runway
+aerodrome83SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome83SlopeCondition - LandingSpotSlopeCondition
+aerodrome83ObstructionCondition - LandingSpotObstructionCondition
+aerodrome84 - LandingSpot
+runwayAerodrome84 - Runway
+aerodrome84SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome84SlopeCondition - LandingSpotSlopeCondition
+aerodrome84ObstructionCondition - LandingSpotObstructionCondition
+aerodrome85 - LandingSpot
+runwayAerodrome85 - Runway
+aerodrome85SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome85SlopeCondition - LandingSpotSlopeCondition
+aerodrome85ObstructionCondition - LandingSpotObstructionCondition
+aerodrome86 - LandingSpot
+runwayAerodrome86 - Runway
+aerodrome86SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome86SlopeCondition - LandingSpotSlopeCondition
+aerodrome86ObstructionCondition - LandingSpotObstructionCondition
+aerodrome87 - LandingSpot
+runwayAerodrome87 - Runway
+aerodrome87SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome87SlopeCondition - LandingSpotSlopeCondition
+aerodrome87ObstructionCondition - LandingSpotObstructionCondition
+aerodrome88 - LandingSpot
+runwayAerodrome88 - Runway
+aerodrome88SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome88SlopeCondition - LandingSpotSlopeCondition
+aerodrome88ObstructionCondition - LandingSpotObstructionCondition
+aerodrome89 - LandingSpot
+runwayAerodrome89 - Runway
+aerodrome89SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome89SlopeCondition - LandingSpotSlopeCondition
+aerodrome89ObstructionCondition - LandingSpotObstructionCondition
+aerodrome90 - LandingSpot
+runwayAerodrome90 - Runway
+aerodrome90SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome90SlopeCondition - LandingSpotSlopeCondition
+aerodrome90ObstructionCondition - LandingSpotObstructionCondition
+aerodrome91 - LandingSpot
+runwayAerodrome91 - Runway
+aerodrome91SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome91SlopeCondition - LandingSpotSlopeCondition
+aerodrome91ObstructionCondition - LandingSpotObstructionCondition
+aerodrome92 - LandingSpot
+runwayAerodrome92 - Runway
+aerodrome92SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome92SlopeCondition - LandingSpotSlopeCondition
+aerodrome92ObstructionCondition - LandingSpotObstructionCondition
+aerodrome93 - LandingSpot
+runwayAerodrome93 - Runway
+aerodrome93SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome93SlopeCondition - LandingSpotSlopeCondition
+aerodrome93ObstructionCondition - LandingSpotObstructionCondition
+aerodrome94 - LandingSpot
+runwayAerodrome94 - Runway
+aerodrome94SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome94SlopeCondition - LandingSpotSlopeCondition
+aerodrome94ObstructionCondition - LandingSpotObstructionCondition
+aerodrome95 - LandingSpot
+runwayAerodrome95 - Runway
+aerodrome95SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome95SlopeCondition - LandingSpotSlopeCondition
+aerodrome95ObstructionCondition - LandingSpotObstructionCondition
+aerodrome96 - LandingSpot
+runwayAerodrome96 - Runway
+aerodrome96SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome96SlopeCondition - LandingSpotSlopeCondition
+aerodrome96ObstructionCondition - LandingSpotObstructionCondition
+aerodrome97 - LandingSpot
+runwayAerodrome97 - Runway
+aerodrome97SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome97SlopeCondition - LandingSpotSlopeCondition
+aerodrome97ObstructionCondition - LandingSpotObstructionCondition
+aerodrome98 - LandingSpot
+runwayAerodrome98 - Runway
+aerodrome98SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome98SlopeCondition - LandingSpotSlopeCondition
+aerodrome98ObstructionCondition - LandingSpotObstructionCondition
+aerodrome99 - LandingSpot
+runwayAerodrome99 - Runway
+aerodrome99SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome99SlopeCondition - LandingSpotSlopeCondition
+aerodrome99ObstructionCondition - LandingSpotObstructionCondition
+aerodrome100 - LandingSpot
+runwayAerodrome100 - Runway
+aerodrome100SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome100SlopeCondition - LandingSpotSlopeCondition
+aerodrome100ObstructionCondition - LandingSpotObstructionCondition
+aerodrome101 - LandingSpot
+runwayAerodrome101 - Runway
+aerodrome101SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome101SlopeCondition - LandingSpotSlopeCondition
+aerodrome101ObstructionCondition - LandingSpotObstructionCondition
+aerodrome102 - LandingSpot
+runwayAerodrome102 - Runway
+aerodrome102SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome102SlopeCondition - LandingSpotSlopeCondition
+aerodrome102ObstructionCondition - LandingSpotObstructionCondition
+aerodrome103 - LandingSpot
+runwayAerodrome103 - Runway
+aerodrome103SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome103SlopeCondition - LandingSpotSlopeCondition
+aerodrome103ObstructionCondition - LandingSpotObstructionCondition
+aerodrome104 - LandingSpot
+runwayAerodrome104 - Runway
+aerodrome104SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome104SlopeCondition - LandingSpotSlopeCondition
+aerodrome104ObstructionCondition - LandingSpotObstructionCondition
+aerodrome105 - LandingSpot
+runwayAerodrome105 - Runway
+aerodrome105SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome105SlopeCondition - LandingSpotSlopeCondition
+aerodrome105ObstructionCondition - LandingSpotObstructionCondition
+aerodrome106 - LandingSpot
+runwayAerodrome106 - Runway
+aerodrome106SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome106SlopeCondition - LandingSpotSlopeCondition
+aerodrome106ObstructionCondition - LandingSpotObstructionCondition
+aerodrome107 - LandingSpot
+runwayAerodrome107 - Runway
+aerodrome107SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome107SlopeCondition - LandingSpotSlopeCondition
+aerodrome107ObstructionCondition - LandingSpotObstructionCondition
+aerodrome108 - LandingSpot
+runwayAerodrome108 - Runway
+aerodrome108SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome108SlopeCondition - LandingSpotSlopeCondition
+aerodrome108ObstructionCondition - LandingSpotObstructionCondition
+aerodrome109 - LandingSpot
+runwayAerodrome109 - Runway
+aerodrome109SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome109SlopeCondition - LandingSpotSlopeCondition
+aerodrome109ObstructionCondition - LandingSpotObstructionCondition
+aerodrome110 - LandingSpot
+runwayAerodrome110 - Runway
+aerodrome110SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome110SlopeCondition - LandingSpotSlopeCondition
+aerodrome110ObstructionCondition - LandingSpotObstructionCondition
+aerodrome111 - LandingSpot
+runwayAerodrome111 - Runway
+aerodrome111SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome111SlopeCondition - LandingSpotSlopeCondition
+aerodrome111ObstructionCondition - LandingSpotObstructionCondition
+aerodrome112 - LandingSpot
+runwayAerodrome112 - Runway
+aerodrome112SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome112SlopeCondition - LandingSpotSlopeCondition
+aerodrome112ObstructionCondition - LandingSpotObstructionCondition
+aerodrome113 - LandingSpot
+runwayAerodrome113 - Runway
+aerodrome113SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome113SlopeCondition - LandingSpotSlopeCondition
+aerodrome113ObstructionCondition - LandingSpotObstructionCondition
+aerodrome114 - LandingSpot
+runwayAerodrome114 - Runway
+aerodrome114SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome114SlopeCondition - LandingSpotSlopeCondition
+aerodrome114ObstructionCondition - LandingSpotObstructionCondition
+aerodrome115 - LandingSpot
+runwayAerodrome115 - Runway
+aerodrome115SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome115SlopeCondition - LandingSpotSlopeCondition
+aerodrome115ObstructionCondition - LandingSpotObstructionCondition
+aerodrome116 - LandingSpot
+runwayAerodrome116 - Runway
+aerodrome116SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome116SlopeCondition - LandingSpotSlopeCondition
+aerodrome116ObstructionCondition - LandingSpotObstructionCondition
+aerodrome117 - LandingSpot
+runwayAerodrome117 - Runway
+aerodrome117SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome117SlopeCondition - LandingSpotSlopeCondition
+aerodrome117ObstructionCondition - LandingSpotObstructionCondition
+aerodrome118 - LandingSpot
+runwayAerodrome118 - Runway
+aerodrome118SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome118SlopeCondition - LandingSpotSlopeCondition
+aerodrome118ObstructionCondition - LandingSpotObstructionCondition
+aerodrome119 - LandingSpot
+runwayAerodrome119 - Runway
+aerodrome119SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome119SlopeCondition - LandingSpotSlopeCondition
+aerodrome119ObstructionCondition - LandingSpotObstructionCondition
+aerodrome120 - LandingSpot
+runwayAerodrome120 - Runway
+aerodrome120SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome120SlopeCondition - LandingSpotSlopeCondition
+aerodrome120ObstructionCondition - LandingSpotObstructionCondition
+aerodrome121 - LandingSpot
+runwayAerodrome121 - Runway
+aerodrome121SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome121SlopeCondition - LandingSpotSlopeCondition
+aerodrome121ObstructionCondition - LandingSpotObstructionCondition
+aerodrome122 - LandingSpot
+runwayAerodrome122 - Runway
+aerodrome122SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome122SlopeCondition - LandingSpotSlopeCondition
+aerodrome122ObstructionCondition - LandingSpotObstructionCondition
+aerodrome123 - LandingSpot
+runwayAerodrome123 - Runway
+aerodrome123SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome123SlopeCondition - LandingSpotSlopeCondition
+aerodrome123ObstructionCondition - LandingSpotObstructionCondition
+aerodrome124 - LandingSpot
+runwayAerodrome124 - Runway
+aerodrome124SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome124SlopeCondition - LandingSpotSlopeCondition
+aerodrome124ObstructionCondition - LandingSpotObstructionCondition
+aerodrome125 - LandingSpot
+runwayAerodrome125 - Runway
+aerodrome125SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome125SlopeCondition - LandingSpotSlopeCondition
+aerodrome125ObstructionCondition - LandingSpotObstructionCondition
+aerodrome126 - LandingSpot
+runwayAerodrome126 - Runway
+aerodrome126SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome126SlopeCondition - LandingSpotSlopeCondition
+aerodrome126ObstructionCondition - LandingSpotObstructionCondition
+aerodrome127 - LandingSpot
+runwayAerodrome127 - Runway
+aerodrome127SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome127SlopeCondition - LandingSpotSlopeCondition
+aerodrome127ObstructionCondition - LandingSpotObstructionCondition
+aerodrome128 - LandingSpot
+runwayAerodrome128 - Runway
+aerodrome128SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome128SlopeCondition - LandingSpotSlopeCondition
+aerodrome128ObstructionCondition - LandingSpotObstructionCondition
+aerodrome129 - LandingSpot
+runwayAerodrome129 - Runway
+aerodrome129SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome129SlopeCondition - LandingSpotSlopeCondition
+aerodrome129ObstructionCondition - LandingSpotObstructionCondition
+aerodrome130 - LandingSpot
+runwayAerodrome130 - Runway
+aerodrome130SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome130SlopeCondition - LandingSpotSlopeCondition
+aerodrome130ObstructionCondition - LandingSpotObstructionCondition
+aerodrome131 - LandingSpot
+runwayAerodrome131 - Runway
+aerodrome131SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome131SlopeCondition - LandingSpotSlopeCondition
+aerodrome131ObstructionCondition - LandingSpotObstructionCondition
+aerodrome132 - LandingSpot
+runwayAerodrome132 - Runway
+aerodrome132SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome132SlopeCondition - LandingSpotSlopeCondition
+aerodrome132ObstructionCondition - LandingSpotObstructionCondition
+aerodrome133 - LandingSpot
+runwayAerodrome133 - Runway
+aerodrome133SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome133SlopeCondition - LandingSpotSlopeCondition
+aerodrome133ObstructionCondition - LandingSpotObstructionCondition
+aerodrome134 - LandingSpot
+runwayAerodrome134 - Runway
+aerodrome134SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome134SlopeCondition - LandingSpotSlopeCondition
+aerodrome134ObstructionCondition - LandingSpotObstructionCondition
+aerodrome135 - LandingSpot
+runwayAerodrome135 - Runway
+aerodrome135SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome135SlopeCondition - LandingSpotSlopeCondition
+aerodrome135ObstructionCondition - LandingSpotObstructionCondition
+aerodrome136 - LandingSpot
+runwayAerodrome136 - Runway
+aerodrome136SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome136SlopeCondition - LandingSpotSlopeCondition
+aerodrome136ObstructionCondition - LandingSpotObstructionCondition
+aerodrome137 - LandingSpot
+runwayAerodrome137 - Runway
+aerodrome137SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome137SlopeCondition - LandingSpotSlopeCondition
+aerodrome137ObstructionCondition - LandingSpotObstructionCondition
+aerodrome138 - LandingSpot
+runwayAerodrome138 - Runway
+aerodrome138SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome138SlopeCondition - LandingSpotSlopeCondition
+aerodrome138ObstructionCondition - LandingSpotObstructionCondition
+aerodrome139 - LandingSpot
+runwayAerodrome139 - Runway
+aerodrome139SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome139SlopeCondition - LandingSpotSlopeCondition
+aerodrome139ObstructionCondition - LandingSpotObstructionCondition
+aerodrome140 - LandingSpot
+runwayAerodrome140 - Runway
+aerodrome140SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome140SlopeCondition - LandingSpotSlopeCondition
+aerodrome140ObstructionCondition - LandingSpotObstructionCondition
+aerodrome141 - LandingSpot
+runwayAerodrome141 - Runway
+aerodrome141SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome141SlopeCondition - LandingSpotSlopeCondition
+aerodrome141ObstructionCondition - LandingSpotObstructionCondition
+aerodrome142 - LandingSpot
+runwayAerodrome142 - Runway
+aerodrome142SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome142SlopeCondition - LandingSpotSlopeCondition
+aerodrome142ObstructionCondition - LandingSpotObstructionCondition
+aerodrome143 - LandingSpot
+runwayAerodrome143 - Runway
+aerodrome143SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome143SlopeCondition - LandingSpotSlopeCondition
+aerodrome143ObstructionCondition - LandingSpotObstructionCondition
+aerodrome144 - LandingSpot
+runwayAerodrome144 - Runway
+aerodrome144SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome144SlopeCondition - LandingSpotSlopeCondition
+aerodrome144ObstructionCondition - LandingSpotObstructionCondition
+aerodrome145 - LandingSpot
+runwayAerodrome145 - Runway
+aerodrome145SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome145SlopeCondition - LandingSpotSlopeCondition
+aerodrome145ObstructionCondition - LandingSpotObstructionCondition
+aerodrome146 - LandingSpot
+runwayAerodrome146 - Runway
+aerodrome146SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome146SlopeCondition - LandingSpotSlopeCondition
+aerodrome146ObstructionCondition - LandingSpotObstructionCondition
+aerodrome147 - LandingSpot
+runwayAerodrome147 - Runway
+aerodrome147SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome147SlopeCondition - LandingSpotSlopeCondition
+aerodrome147ObstructionCondition - LandingSpotObstructionCondition
+aerodrome148 - LandingSpot
+runwayAerodrome148 - Runway
+aerodrome148SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome148SlopeCondition - LandingSpotSlopeCondition
+aerodrome148ObstructionCondition - LandingSpotObstructionCondition
+aerodrome149 - LandingSpot
+runwayAerodrome149 - Runway
+aerodrome149SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome149SlopeCondition - LandingSpotSlopeCondition
+aerodrome149ObstructionCondition - LandingSpotObstructionCondition
+aerodrome150 - LandingSpot
+runwayAerodrome150 - Runway
+aerodrome150SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome150SlopeCondition - LandingSpotSlopeCondition
+aerodrome150ObstructionCondition - LandingSpotObstructionCondition
+aerodrome151 - LandingSpot
+runwayAerodrome151 - Runway
+aerodrome151SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome151SlopeCondition - LandingSpotSlopeCondition
+aerodrome151ObstructionCondition - LandingSpotObstructionCondition
+aerodrome152 - LandingSpot
+runwayAerodrome152 - Runway
+aerodrome152SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome152SlopeCondition - LandingSpotSlopeCondition
+aerodrome152ObstructionCondition - LandingSpotObstructionCondition
+aerodrome153 - LandingSpot
+runwayAerodrome153 - Runway
+aerodrome153SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome153SlopeCondition - LandingSpotSlopeCondition
+aerodrome153ObstructionCondition - LandingSpotObstructionCondition
+aerodrome154 - LandingSpot
+runwayAerodrome154 - Runway
+aerodrome154SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome154SlopeCondition - LandingSpotSlopeCondition
+aerodrome154ObstructionCondition - LandingSpotObstructionCondition
+aerodrome155 - LandingSpot
+runwayAerodrome155 - Runway
+aerodrome155SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome155SlopeCondition - LandingSpotSlopeCondition
+aerodrome155ObstructionCondition - LandingSpotObstructionCondition
+aerodrome156 - LandingSpot
+runwayAerodrome156 - Runway
+aerodrome156SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome156SlopeCondition - LandingSpotSlopeCondition
+aerodrome156ObstructionCondition - LandingSpotObstructionCondition
+aerodrome157 - LandingSpot
+runwayAerodrome157 - Runway
+aerodrome157SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome157SlopeCondition - LandingSpotSlopeCondition
+aerodrome157ObstructionCondition - LandingSpotObstructionCondition
+aerodrome158 - LandingSpot
+runwayAerodrome158 - Runway
+aerodrome158SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome158SlopeCondition - LandingSpotSlopeCondition
+aerodrome158ObstructionCondition - LandingSpotObstructionCondition
+aerodrome159 - LandingSpot
+runwayAerodrome159 - Runway
+aerodrome159SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome159SlopeCondition - LandingSpotSlopeCondition
+aerodrome159ObstructionCondition - LandingSpotObstructionCondition
+aerodrome160 - LandingSpot
+runwayAerodrome160 - Runway
+aerodrome160SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome160SlopeCondition - LandingSpotSlopeCondition
+aerodrome160ObstructionCondition - LandingSpotObstructionCondition
+aerodrome161 - LandingSpot
+runwayAerodrome161 - Runway
+aerodrome161SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome161SlopeCondition - LandingSpotSlopeCondition
+aerodrome161ObstructionCondition - LandingSpotObstructionCondition
+aerodrome162 - LandingSpot
+runwayAerodrome162 - Runway
+aerodrome162SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome162SlopeCondition - LandingSpotSlopeCondition
+aerodrome162ObstructionCondition - LandingSpotObstructionCondition
+aerodrome163 - LandingSpot
+runwayAerodrome163 - Runway
+aerodrome163SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome163SlopeCondition - LandingSpotSlopeCondition
+aerodrome163ObstructionCondition - LandingSpotObstructionCondition
+aerodrome164 - LandingSpot
+runwayAerodrome164 - Runway
+aerodrome164SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome164SlopeCondition - LandingSpotSlopeCondition
+aerodrome164ObstructionCondition - LandingSpotObstructionCondition
+aerodrome165 - LandingSpot
+runwayAerodrome165 - Runway
+aerodrome165SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome165SlopeCondition - LandingSpotSlopeCondition
+aerodrome165ObstructionCondition - LandingSpotObstructionCondition
+aerodrome166 - LandingSpot
+runwayAerodrome166 - Runway
+aerodrome166SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome166SlopeCondition - LandingSpotSlopeCondition
+aerodrome166ObstructionCondition - LandingSpotObstructionCondition
+aerodrome167 - LandingSpot
+runwayAerodrome167 - Runway
+aerodrome167SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome167SlopeCondition - LandingSpotSlopeCondition
+aerodrome167ObstructionCondition - LandingSpotObstructionCondition
+aerodrome168 - LandingSpot
+runwayAerodrome168 - Runway
+aerodrome168SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome168SlopeCondition - LandingSpotSlopeCondition
+aerodrome168ObstructionCondition - LandingSpotObstructionCondition
+aerodrome169 - LandingSpot
+runwayAerodrome169 - Runway
+aerodrome169SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome169SlopeCondition - LandingSpotSlopeCondition
+aerodrome169ObstructionCondition - LandingSpotObstructionCondition
+aerodrome170 - LandingSpot
+runwayAerodrome170 - Runway
+aerodrome170SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome170SlopeCondition - LandingSpotSlopeCondition
+aerodrome170ObstructionCondition - LandingSpotObstructionCondition
+aerodrome171 - LandingSpot
+runwayAerodrome171 - Runway
+aerodrome171SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome171SlopeCondition - LandingSpotSlopeCondition
+aerodrome171ObstructionCondition - LandingSpotObstructionCondition
+aerodrome172 - LandingSpot
+runwayAerodrome172 - Runway
+aerodrome172SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome172SlopeCondition - LandingSpotSlopeCondition
+aerodrome172ObstructionCondition - LandingSpotObstructionCondition
+aerodrome173 - LandingSpot
+runwayAerodrome173 - Runway
+aerodrome173SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome173SlopeCondition - LandingSpotSlopeCondition
+aerodrome173ObstructionCondition - LandingSpotObstructionCondition
+aerodrome174 - LandingSpot
+runwayAerodrome174 - Runway
+aerodrome174SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome174SlopeCondition - LandingSpotSlopeCondition
+aerodrome174ObstructionCondition - LandingSpotObstructionCondition
+aerodrome175 - LandingSpot
+runwayAerodrome175 - Runway
+aerodrome175SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome175SlopeCondition - LandingSpotSlopeCondition
+aerodrome175ObstructionCondition - LandingSpotObstructionCondition
+aerodrome176 - LandingSpot
+runwayAerodrome176 - Runway
+aerodrome176SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome176SlopeCondition - LandingSpotSlopeCondition
+aerodrome176ObstructionCondition - LandingSpotObstructionCondition
+aerodrome177 - LandingSpot
+runwayAerodrome177 - Runway
+aerodrome177SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome177SlopeCondition - LandingSpotSlopeCondition
+aerodrome177ObstructionCondition - LandingSpotObstructionCondition
+aerodrome178 - LandingSpot
+runwayAerodrome178 - Runway
+aerodrome178SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome178SlopeCondition - LandingSpotSlopeCondition
+aerodrome178ObstructionCondition - LandingSpotObstructionCondition
+aerodrome179 - LandingSpot
+runwayAerodrome179 - Runway
+aerodrome179SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome179SlopeCondition - LandingSpotSlopeCondition
+aerodrome179ObstructionCondition - LandingSpotObstructionCondition
+aerodrome180 - LandingSpot
+runwayAerodrome180 - Runway
+aerodrome180SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome180SlopeCondition - LandingSpotSlopeCondition
+aerodrome180ObstructionCondition - LandingSpotObstructionCondition
+aerodrome181 - LandingSpot
+runwayAerodrome181 - Runway
+aerodrome181SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome181SlopeCondition - LandingSpotSlopeCondition
+aerodrome181ObstructionCondition - LandingSpotObstructionCondition
+aerodrome182 - LandingSpot
+runwayAerodrome182 - Runway
+aerodrome182SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome182SlopeCondition - LandingSpotSlopeCondition
+aerodrome182ObstructionCondition - LandingSpotObstructionCondition
+aerodrome183 - LandingSpot
+runwayAerodrome183 - Runway
+aerodrome183SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome183SlopeCondition - LandingSpotSlopeCondition
+aerodrome183ObstructionCondition - LandingSpotObstructionCondition
+aerodrome184 - LandingSpot
+runwayAerodrome184 - Runway
+aerodrome184SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome184SlopeCondition - LandingSpotSlopeCondition
+aerodrome184ObstructionCondition - LandingSpotObstructionCondition
+aerodrome185 - LandingSpot
+runwayAerodrome185 - Runway
+aerodrome185SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome185SlopeCondition - LandingSpotSlopeCondition
+aerodrome185ObstructionCondition - LandingSpotObstructionCondition
+aerodrome186 - LandingSpot
+runwayAerodrome186 - Runway
+aerodrome186SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome186SlopeCondition - LandingSpotSlopeCondition
+aerodrome186ObstructionCondition - LandingSpotObstructionCondition
+aerodrome187 - LandingSpot
+runwayAerodrome187 - Runway
+aerodrome187SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome187SlopeCondition - LandingSpotSlopeCondition
+aerodrome187ObstructionCondition - LandingSpotObstructionCondition
+aerodrome188 - LandingSpot
+runwayAerodrome188 - Runway
+aerodrome188SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome188SlopeCondition - LandingSpotSlopeCondition
+aerodrome188ObstructionCondition - LandingSpotObstructionCondition
+aerodrome189 - LandingSpot
+runwayAerodrome189 - Runway
+aerodrome189SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome189SlopeCondition - LandingSpotSlopeCondition
+aerodrome189ObstructionCondition - LandingSpotObstructionCondition
+aerodrome190 - LandingSpot
+runwayAerodrome190 - Runway
+aerodrome190SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome190SlopeCondition - LandingSpotSlopeCondition
+aerodrome190ObstructionCondition - LandingSpotObstructionCondition
+aerodrome191 - LandingSpot
+runwayAerodrome191 - Runway
+aerodrome191SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome191SlopeCondition - LandingSpotSlopeCondition
+aerodrome191ObstructionCondition - LandingSpotObstructionCondition
+aerodrome192 - LandingSpot
+runwayAerodrome192 - Runway
+aerodrome192SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome192SlopeCondition - LandingSpotSlopeCondition
+aerodrome192ObstructionCondition - LandingSpotObstructionCondition
+aerodrome193 - LandingSpot
+runwayAerodrome193 - Runway
+aerodrome193SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome193SlopeCondition - LandingSpotSlopeCondition
+aerodrome193ObstructionCondition - LandingSpotObstructionCondition
+aerodrome194 - LandingSpot
+runwayAerodrome194 - Runway
+aerodrome194SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome194SlopeCondition - LandingSpotSlopeCondition
+aerodrome194ObstructionCondition - LandingSpotObstructionCondition
+aerodrome195 - LandingSpot
+runwayAerodrome195 - Runway
+aerodrome195SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome195SlopeCondition - LandingSpotSlopeCondition
+aerodrome195ObstructionCondition - LandingSpotObstructionCondition
+aerodrome196 - LandingSpot
+runwayAerodrome196 - Runway
+aerodrome196SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome196SlopeCondition - LandingSpotSlopeCondition
+aerodrome196ObstructionCondition - LandingSpotObstructionCondition
+aerodrome197 - LandingSpot
+runwayAerodrome197 - Runway
+aerodrome197SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome197SlopeCondition - LandingSpotSlopeCondition
+aerodrome197ObstructionCondition - LandingSpotObstructionCondition
+aerodrome198 - LandingSpot
+runwayAerodrome198 - Runway
+aerodrome198SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome198SlopeCondition - LandingSpotSlopeCondition
+aerodrome198ObstructionCondition - LandingSpotObstructionCondition
+aerodrome199 - LandingSpot
+runwayAerodrome199 - Runway
+aerodrome199SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome199SlopeCondition - LandingSpotSlopeCondition
+aerodrome199ObstructionCondition - LandingSpotObstructionCondition
+aerodrome200 - LandingSpot
+runwayAerodrome200 - Runway
+aerodrome200SurfaceCondition - LandingSpotSurfaceCondition
+aerodrome200SlopeCondition - LandingSpotSlopeCondition
+aerodrome200ObstructionCondition - LandingSpotObstructionCondition
+    )	
+    (:htn
+        :tasks(and (precautionary_land))
+        :ordering()
+        :constraints()
+    )
+    (:init
+        ; turned on during in-flight
+		(p_isOn engine)
+		(p_isOn mixtureControl)
+		(p_pilotInAirplane)
+		(p_isOn fuelGauge)
+		(p_isOn magnetos)
+		(p_isOn master)
+		(p_isOpen throttle)
+		(p_isOn heater)
+		;;;;(not (p_isOpen airvent))
+		(p_extinguisherExist fireExtinguisher)	
+		; flight phases	
+        (p_landingSpotClear aerodrome1)
+;;;(not (p_reachable aerodrome1))
+;;;(not (p_acceptableLandingCondition aerodrome1SurfaceCondition aerodrome1))
+;;;(not (p_acceptableLandingCondition aerodrome1SlopeCondition aerodrome1))
+(p_acceptableLandingCondition aerodrome1ObstructionCondition aerodrome1)
+(p_landingSpotClear aerodrome2)
+(p_reachable aerodrome2)
+(p_acceptableLandingCondition aerodrome2SurfaceCondition aerodrome2)
+;;;(not (p_acceptableLandingCondition aerodrome2SlopeCondition aerodrome2))
+(p_acceptableLandingCondition aerodrome2ObstructionCondition aerodrome2)
+(p_landingSpotClear aerodrome3)
+(p_reachable aerodrome3)
+;;;(not (p_acceptableLandingCondition aerodrome3SurfaceCondition aerodrome3))
+(p_acceptableLandingCondition aerodrome3SlopeCondition aerodrome3)
+(p_acceptableLandingCondition aerodrome3ObstructionCondition aerodrome3)
+(p_landingSpotClear aerodrome4)
+(p_reachable aerodrome4)
+;;;(not (p_acceptableLandingCondition aerodrome4SurfaceCondition aerodrome4))
+(p_acceptableLandingCondition aerodrome4SlopeCondition aerodrome4)
+(p_acceptableLandingCondition aerodrome4ObstructionCondition aerodrome4)
+;;;(not (p_landingSpotClear aerodrome5))
+;;;(not (p_reachable aerodrome5))
+;;;(not (p_acceptableLandingCondition aerodrome5SurfaceCondition aerodrome5))
+(p_acceptableLandingCondition aerodrome5SlopeCondition aerodrome5)
+(p_acceptableLandingCondition aerodrome5ObstructionCondition aerodrome5)
+;;;(not (p_landingSpotClear aerodrome6))
+;;;(not (p_reachable aerodrome6))
+;;;(not (p_acceptableLandingCondition aerodrome6SurfaceCondition aerodrome6))
+(p_acceptableLandingCondition aerodrome6SlopeCondition aerodrome6)
+(p_acceptableLandingCondition aerodrome6ObstructionCondition aerodrome6)
+;;;(not (p_landingSpotClear aerodrome7))
+(p_reachable aerodrome7)
+;;;(not (p_acceptableLandingCondition aerodrome7SurfaceCondition aerodrome7))
+;;;(not (p_acceptableLandingCondition aerodrome7SlopeCondition aerodrome7))
+(p_acceptableLandingCondition aerodrome7ObstructionCondition aerodrome7)
+;;;(not (p_landingSpotClear aerodrome8))
+(p_reachable aerodrome8)
+;;;(not (p_acceptableLandingCondition aerodrome8SurfaceCondition aerodrome8))
+;;;(not (p_acceptableLandingCondition aerodrome8SlopeCondition aerodrome8))
+;;;(not (p_acceptableLandingCondition aerodrome8ObstructionCondition aerodrome8))
+(p_landingSpotClear aerodrome9)
+(p_reachable aerodrome9)
+;;;(not (p_acceptableLandingCondition aerodrome9SurfaceCondition aerodrome9))
+(p_acceptableLandingCondition aerodrome9SlopeCondition aerodrome9)
+;;;(not (p_acceptableLandingCondition aerodrome9ObstructionCondition aerodrome9))
+(p_landingSpotClear aerodrome10)
+(p_reachable aerodrome10)
+(p_acceptableLandingCondition aerodrome10SurfaceCondition aerodrome10)
+(p_acceptableLandingCondition aerodrome10SlopeCondition aerodrome10)
+;;;(not (p_acceptableLandingCondition aerodrome10ObstructionCondition aerodrome10))
+(p_landingSpotClear aerodrome11)
+(p_reachable aerodrome11)
+(p_acceptableLandingCondition aerodrome11SurfaceCondition aerodrome11)
+(p_acceptableLandingCondition aerodrome11SlopeCondition aerodrome11)
+;;;(not (p_acceptableLandingCondition aerodrome11ObstructionCondition aerodrome11))
+;;;(not (p_landingSpotClear aerodrome12))
+(p_reachable aerodrome12)
+(p_acceptableLandingCondition aerodrome12SurfaceCondition aerodrome12)
+(p_acceptableLandingCondition aerodrome12SlopeCondition aerodrome12)
+;;;(not (p_acceptableLandingCondition aerodrome12ObstructionCondition aerodrome12))
+(p_landingSpotClear aerodrome13)
+(p_reachable aerodrome13)
+;;;(not (p_acceptableLandingCondition aerodrome13SurfaceCondition aerodrome13))
+(p_acceptableLandingCondition aerodrome13SlopeCondition aerodrome13)
+;;;(not (p_acceptableLandingCondition aerodrome13ObstructionCondition aerodrome13))
+(p_landingSpotClear aerodrome14)
+;;;(not (p_reachable aerodrome14))
+;;;(not (p_acceptableLandingCondition aerodrome14SurfaceCondition aerodrome14))
+(p_acceptableLandingCondition aerodrome14SlopeCondition aerodrome14)
+(p_acceptableLandingCondition aerodrome14ObstructionCondition aerodrome14)
+;;;(not (p_landingSpotClear aerodrome15))
+;;;(not (p_reachable aerodrome15))
+(p_acceptableLandingCondition aerodrome15SurfaceCondition aerodrome15)
+;;;(not (p_acceptableLandingCondition aerodrome15SlopeCondition aerodrome15))
+;;;(not (p_acceptableLandingCondition aerodrome15ObstructionCondition aerodrome15))
+;;;(not (p_landingSpotClear aerodrome16))
+;;;(not (p_reachable aerodrome16))
+;;;(not (p_acceptableLandingCondition aerodrome16SurfaceCondition aerodrome16))
+;;;(not (p_acceptableLandingCondition aerodrome16SlopeCondition aerodrome16))
+(p_acceptableLandingCondition aerodrome16ObstructionCondition aerodrome16)
+(p_landingSpotClear aerodrome17)
+;;;(not (p_reachable aerodrome17))
+;;;(not (p_acceptableLandingCondition aerodrome17SurfaceCondition aerodrome17))
+(p_acceptableLandingCondition aerodrome17SlopeCondition aerodrome17)
+;;;(not (p_acceptableLandingCondition aerodrome17ObstructionCondition aerodrome17))
+(p_landingSpotClear aerodrome18)
+(p_reachable aerodrome18)
+;;;(not (p_acceptableLandingCondition aerodrome18SurfaceCondition aerodrome18))
+(p_acceptableLandingCondition aerodrome18SlopeCondition aerodrome18)
+;;;(not (p_acceptableLandingCondition aerodrome18ObstructionCondition aerodrome18))
+;;;(not (p_landingSpotClear aerodrome19))
+(p_reachable aerodrome19)
+(p_acceptableLandingCondition aerodrome19SurfaceCondition aerodrome19)
+(p_acceptableLandingCondition aerodrome19SlopeCondition aerodrome19)
+(p_acceptableLandingCondition aerodrome19ObstructionCondition aerodrome19)
+(p_landingSpotClear aerodrome20)
+;;;(not (p_reachable aerodrome20))
+(p_acceptableLandingCondition aerodrome20SurfaceCondition aerodrome20)
+;;;(not (p_acceptableLandingCondition aerodrome20SlopeCondition aerodrome20))
+(p_acceptableLandingCondition aerodrome20ObstructionCondition aerodrome20)
+(p_landingSpotClear aerodrome21)
+(p_reachable aerodrome21)
+(p_acceptableLandingCondition aerodrome21SurfaceCondition aerodrome21)
+;;;(not (p_acceptableLandingCondition aerodrome21SlopeCondition aerodrome21))
+(p_acceptableLandingCondition aerodrome21ObstructionCondition aerodrome21)
+;;;(not (p_landingSpotClear aerodrome22))
+;;;(not (p_reachable aerodrome22))
+(p_acceptableLandingCondition aerodrome22SurfaceCondition aerodrome22)
+;;;(not (p_acceptableLandingCondition aerodrome22SlopeCondition aerodrome22))
+;;;(not (p_acceptableLandingCondition aerodrome22ObstructionCondition aerodrome22))
+;;;(not (p_landingSpotClear aerodrome23))
+;;;(not (p_reachable aerodrome23))
+;;;(not (p_acceptableLandingCondition aerodrome23SurfaceCondition aerodrome23))
+(p_acceptableLandingCondition aerodrome23SlopeCondition aerodrome23)
+;;;(not (p_acceptableLandingCondition aerodrome23ObstructionCondition aerodrome23))
+(p_landingSpotClear aerodrome24)
+;;;(not (p_reachable aerodrome24))
+(p_acceptableLandingCondition aerodrome24SurfaceCondition aerodrome24)
+;;;(not (p_acceptableLandingCondition aerodrome24SlopeCondition aerodrome24))
+(p_acceptableLandingCondition aerodrome24ObstructionCondition aerodrome24)
+;;;(not (p_landingSpotClear aerodrome25))
+;;;(not (p_reachable aerodrome25))
+;;;(not (p_acceptableLandingCondition aerodrome25SurfaceCondition aerodrome25))
+(p_acceptableLandingCondition aerodrome25SlopeCondition aerodrome25)
+;;;(not (p_acceptableLandingCondition aerodrome25ObstructionCondition aerodrome25))
+;;;(not (p_landingSpotClear aerodrome26))
+;;;(not (p_reachable aerodrome26))
+;;;(not (p_acceptableLandingCondition aerodrome26SurfaceCondition aerodrome26))
+;;;(not (p_acceptableLandingCondition aerodrome26SlopeCondition aerodrome26))
+;;;(not (p_acceptableLandingCondition aerodrome26ObstructionCondition aerodrome26))
+(p_landingSpotClear aerodrome27)
+(p_reachable aerodrome27)
+;;;(not (p_acceptableLandingCondition aerodrome27SurfaceCondition aerodrome27))
+;;;(not (p_acceptableLandingCondition aerodrome27SlopeCondition aerodrome27))
+(p_acceptableLandingCondition aerodrome27ObstructionCondition aerodrome27)
+(p_landingSpotClear aerodrome28)
+(p_reachable aerodrome28)
+(p_acceptableLandingCondition aerodrome28SurfaceCondition aerodrome28)
+(p_acceptableLandingCondition aerodrome28SlopeCondition aerodrome28)
+(p_acceptableLandingCondition aerodrome28ObstructionCondition aerodrome28)
+;;;(not (p_landingSpotClear aerodrome29))
+(p_reachable aerodrome29)
+;;;(not (p_acceptableLandingCondition aerodrome29SurfaceCondition aerodrome29))
+;;;(not (p_acceptableLandingCondition aerodrome29SlopeCondition aerodrome29))
+(p_acceptableLandingCondition aerodrome29ObstructionCondition aerodrome29)
+(p_landingSpotClear aerodrome30)
+(p_reachable aerodrome30)
+;;;(not (p_acceptableLandingCondition aerodrome30SurfaceCondition aerodrome30))
+(p_acceptableLandingCondition aerodrome30SlopeCondition aerodrome30)
+(p_acceptableLandingCondition aerodrome30ObstructionCondition aerodrome30)
+;;;(not (p_landingSpotClear aerodrome31))
+(p_reachable aerodrome31)
+;;;(not (p_acceptableLandingCondition aerodrome31SurfaceCondition aerodrome31))
+(p_acceptableLandingCondition aerodrome31SlopeCondition aerodrome31)
+;;;(not (p_acceptableLandingCondition aerodrome31ObstructionCondition aerodrome31))
+;;;(not (p_landingSpotClear aerodrome32))
+(p_reachable aerodrome32)
+(p_acceptableLandingCondition aerodrome32SurfaceCondition aerodrome32)
+(p_acceptableLandingCondition aerodrome32SlopeCondition aerodrome32)
+(p_acceptableLandingCondition aerodrome32ObstructionCondition aerodrome32)
+(p_landingSpotClear aerodrome33)
+;;;(not (p_reachable aerodrome33))
+;;;(not (p_acceptableLandingCondition aerodrome33SurfaceCondition aerodrome33))
+(p_acceptableLandingCondition aerodrome33SlopeCondition aerodrome33)
+(p_acceptableLandingCondition aerodrome33ObstructionCondition aerodrome33)
+;;;(not (p_landingSpotClear aerodrome34))
+;;;(not (p_reachable aerodrome34))
+;;;(not (p_acceptableLandingCondition aerodrome34SurfaceCondition aerodrome34))
+;;;(not (p_acceptableLandingCondition aerodrome34SlopeCondition aerodrome34))
+(p_acceptableLandingCondition aerodrome34ObstructionCondition aerodrome34)
+(p_landingSpotClear aerodrome35)
+;;;(not (p_reachable aerodrome35))
+;;;(not (p_acceptableLandingCondition aerodrome35SurfaceCondition aerodrome35))
+;;;(not (p_acceptableLandingCondition aerodrome35SlopeCondition aerodrome35))
+(p_acceptableLandingCondition aerodrome35ObstructionCondition aerodrome35)
+(p_landingSpotClear aerodrome36)
+(p_reachable aerodrome36)
+(p_acceptableLandingCondition aerodrome36SurfaceCondition aerodrome36)
+;;;(not (p_acceptableLandingCondition aerodrome36SlopeCondition aerodrome36))
+;;;(not (p_acceptableLandingCondition aerodrome36ObstructionCondition aerodrome36))
+(p_landingSpotClear aerodrome37)
+;;;(not (p_reachable aerodrome37))
+;;;(not (p_acceptableLandingCondition aerodrome37SurfaceCondition aerodrome37))
+;;;(not (p_acceptableLandingCondition aerodrome37SlopeCondition aerodrome37))
+;;;(not (p_acceptableLandingCondition aerodrome37ObstructionCondition aerodrome37))
+(p_landingSpotClear aerodrome38)
+;;;(not (p_reachable aerodrome38))
+(p_acceptableLandingCondition aerodrome38SurfaceCondition aerodrome38)
+;;;(not (p_acceptableLandingCondition aerodrome38SlopeCondition aerodrome38))
+(p_acceptableLandingCondition aerodrome38ObstructionCondition aerodrome38)
+(p_landingSpotClear aerodrome39)
+(p_reachable aerodrome39)
+;;;(not (p_acceptableLandingCondition aerodrome39SurfaceCondition aerodrome39))
+(p_acceptableLandingCondition aerodrome39SlopeCondition aerodrome39)
+;;;(not (p_acceptableLandingCondition aerodrome39ObstructionCondition aerodrome39))
+(p_landingSpotClear aerodrome40)
+(p_reachable aerodrome40)
+;;;(not (p_acceptableLandingCondition aerodrome40SurfaceCondition aerodrome40))
+;;;(not (p_acceptableLandingCondition aerodrome40SlopeCondition aerodrome40))
+;;;(not (p_acceptableLandingCondition aerodrome40ObstructionCondition aerodrome40))
+;;;(not (p_landingSpotClear aerodrome41))
+;;;(not (p_reachable aerodrome41))
+(p_acceptableLandingCondition aerodrome41SurfaceCondition aerodrome41)
+(p_acceptableLandingCondition aerodrome41SlopeCondition aerodrome41)
+;;;(not (p_acceptableLandingCondition aerodrome41ObstructionCondition aerodrome41))
+;;;(not (p_landingSpotClear aerodrome42))
+(p_reachable aerodrome42)
+;;;(not (p_acceptableLandingCondition aerodrome42SurfaceCondition aerodrome42))
+(p_acceptableLandingCondition aerodrome42SlopeCondition aerodrome42)
+;;;(not (p_acceptableLandingCondition aerodrome42ObstructionCondition aerodrome42))
+;;;(not (p_landingSpotClear aerodrome43))
+(p_reachable aerodrome43)
+;;;(not (p_acceptableLandingCondition aerodrome43SurfaceCondition aerodrome43))
+(p_acceptableLandingCondition aerodrome43SlopeCondition aerodrome43)
+(p_acceptableLandingCondition aerodrome43ObstructionCondition aerodrome43)
+;;;(not (p_landingSpotClear aerodrome44))
+(p_reachable aerodrome44)
+;;;(not (p_acceptableLandingCondition aerodrome44SurfaceCondition aerodrome44))
+;;;(not (p_acceptableLandingCondition aerodrome44SlopeCondition aerodrome44))
+;;;(not (p_acceptableLandingCondition aerodrome44ObstructionCondition aerodrome44))
+(p_landingSpotClear aerodrome45)
+;;;(not (p_reachable aerodrome45))
+;;;(not (p_acceptableLandingCondition aerodrome45SurfaceCondition aerodrome45))
+;;;(not (p_acceptableLandingCondition aerodrome45SlopeCondition aerodrome45))
+;;;(not (p_acceptableLandingCondition aerodrome45ObstructionCondition aerodrome45))
+;;;(not (p_landingSpotClear aerodrome46))
+(p_reachable aerodrome46)
+(p_acceptableLandingCondition aerodrome46SurfaceCondition aerodrome46)
+;;;(not (p_acceptableLandingCondition aerodrome46SlopeCondition aerodrome46))
+(p_acceptableLandingCondition aerodrome46ObstructionCondition aerodrome46)
+(p_landingSpotClear aerodrome47)
+;;;(not (p_reachable aerodrome47))
+(p_acceptableLandingCondition aerodrome47SurfaceCondition aerodrome47)
+;;;(not (p_acceptableLandingCondition aerodrome47SlopeCondition aerodrome47))
+;;;(not (p_acceptableLandingCondition aerodrome47ObstructionCondition aerodrome47))
+(p_landingSpotClear aerodrome48)
+(p_reachable aerodrome48)
+;;;(not (p_acceptableLandingCondition aerodrome48SurfaceCondition aerodrome48))
+;;;(not (p_acceptableLandingCondition aerodrome48SlopeCondition aerodrome48))
+(p_acceptableLandingCondition aerodrome48ObstructionCondition aerodrome48)
+;;;(not (p_landingSpotClear aerodrome49))
+(p_reachable aerodrome49)
+(p_acceptableLandingCondition aerodrome49SurfaceCondition aerodrome49)
+;;;(not (p_acceptableLandingCondition aerodrome49SlopeCondition aerodrome49))
+;;;(not (p_acceptableLandingCondition aerodrome49ObstructionCondition aerodrome49))
+(p_landingSpotClear aerodrome50)
+;;;(not (p_reachable aerodrome50))
+;;;(not (p_acceptableLandingCondition aerodrome50SurfaceCondition aerodrome50))
+(p_acceptableLandingCondition aerodrome50SlopeCondition aerodrome50)
+(p_acceptableLandingCondition aerodrome50ObstructionCondition aerodrome50)
+(p_landingSpotClear aerodrome51)
+(p_reachable aerodrome51)
+;;;(not (p_acceptableLandingCondition aerodrome51SurfaceCondition aerodrome51))
+(p_acceptableLandingCondition aerodrome51SlopeCondition aerodrome51)
+(p_acceptableLandingCondition aerodrome51ObstructionCondition aerodrome51)
+;;;(not (p_landingSpotClear aerodrome52))
+(p_reachable aerodrome52)
+(p_acceptableLandingCondition aerodrome52SurfaceCondition aerodrome52)
+;;;(not (p_acceptableLandingCondition aerodrome52SlopeCondition aerodrome52))
+(p_acceptableLandingCondition aerodrome52ObstructionCondition aerodrome52)
+;;;(not (p_landingSpotClear aerodrome53))
+;;;(not (p_reachable aerodrome53))
+;;;(not (p_acceptableLandingCondition aerodrome53SurfaceCondition aerodrome53))
+;;;(not (p_acceptableLandingCondition aerodrome53SlopeCondition aerodrome53))
+(p_acceptableLandingCondition aerodrome53ObstructionCondition aerodrome53)
+(p_landingSpotClear aerodrome54)
+(p_reachable aerodrome54)
+(p_acceptableLandingCondition aerodrome54SurfaceCondition aerodrome54)
+(p_acceptableLandingCondition aerodrome54SlopeCondition aerodrome54)
+(p_acceptableLandingCondition aerodrome54ObstructionCondition aerodrome54)
+(p_landingSpotClear aerodrome55)
+(p_reachable aerodrome55)
+(p_acceptableLandingCondition aerodrome55SurfaceCondition aerodrome55)
+;;;(not (p_acceptableLandingCondition aerodrome55SlopeCondition aerodrome55))
+;;;(not (p_acceptableLandingCondition aerodrome55ObstructionCondition aerodrome55))
+;;;(not (p_landingSpotClear aerodrome56))
+;;;(not (p_reachable aerodrome56))
+;;;(not (p_acceptableLandingCondition aerodrome56SurfaceCondition aerodrome56))
+(p_acceptableLandingCondition aerodrome56SlopeCondition aerodrome56)
+;;;(not (p_acceptableLandingCondition aerodrome56ObstructionCondition aerodrome56))
+(p_landingSpotClear aerodrome57)
+(p_reachable aerodrome57)
+(p_acceptableLandingCondition aerodrome57SurfaceCondition aerodrome57)
+;;;(not (p_acceptableLandingCondition aerodrome57SlopeCondition aerodrome57))
+(p_acceptableLandingCondition aerodrome57ObstructionCondition aerodrome57)
+;;;(not (p_landingSpotClear aerodrome58))
+;;;(not (p_reachable aerodrome58))
+(p_acceptableLandingCondition aerodrome58SurfaceCondition aerodrome58)
+(p_acceptableLandingCondition aerodrome58SlopeCondition aerodrome58)
+;;;(not (p_acceptableLandingCondition aerodrome58ObstructionCondition aerodrome58))
+;;;(not (p_landingSpotClear aerodrome59))
+;;;(not (p_reachable aerodrome59))
+;;;(not (p_acceptableLandingCondition aerodrome59SurfaceCondition aerodrome59))
+;;;(not (p_acceptableLandingCondition aerodrome59SlopeCondition aerodrome59))
+;;;(not (p_acceptableLandingCondition aerodrome59ObstructionCondition aerodrome59))
+(p_landingSpotClear aerodrome60)
+(p_reachable aerodrome60)
+(p_acceptableLandingCondition aerodrome60SurfaceCondition aerodrome60)
+;;;(not (p_acceptableLandingCondition aerodrome60SlopeCondition aerodrome60))
+;;;(not (p_acceptableLandingCondition aerodrome60ObstructionCondition aerodrome60))
+(p_landingSpotClear aerodrome61)
+(p_reachable aerodrome61)
+;;;(not (p_acceptableLandingCondition aerodrome61SurfaceCondition aerodrome61))
+(p_acceptableLandingCondition aerodrome61SlopeCondition aerodrome61)
+(p_acceptableLandingCondition aerodrome61ObstructionCondition aerodrome61)
+(p_landingSpotClear aerodrome62)
+;;;(not (p_reachable aerodrome62))
+;;;(not (p_acceptableLandingCondition aerodrome62SurfaceCondition aerodrome62))
+;;;(not (p_acceptableLandingCondition aerodrome62SlopeCondition aerodrome62))
+;;;(not (p_acceptableLandingCondition aerodrome62ObstructionCondition aerodrome62))
+(p_landingSpotClear aerodrome63)
+;;;(not (p_reachable aerodrome63))
+;;;(not (p_acceptableLandingCondition aerodrome63SurfaceCondition aerodrome63))
+;;;(not (p_acceptableLandingCondition aerodrome63SlopeCondition aerodrome63))
+(p_acceptableLandingCondition aerodrome63ObstructionCondition aerodrome63)
+;;;(not (p_landingSpotClear aerodrome64))
+;;;(not (p_reachable aerodrome64))
+;;;(not (p_acceptableLandingCondition aerodrome64SurfaceCondition aerodrome64))
+(p_acceptableLandingCondition aerodrome64SlopeCondition aerodrome64)
+;;;(not (p_acceptableLandingCondition aerodrome64ObstructionCondition aerodrome64))
+;;;(not (p_landingSpotClear aerodrome65))
+(p_reachable aerodrome65)
+(p_acceptableLandingCondition aerodrome65SurfaceCondition aerodrome65)
+;;;(not (p_acceptableLandingCondition aerodrome65SlopeCondition aerodrome65))
+(p_acceptableLandingCondition aerodrome65ObstructionCondition aerodrome65)
+(p_landingSpotClear aerodrome66)
+(p_reachable aerodrome66)
+;;;(not (p_acceptableLandingCondition aerodrome66SurfaceCondition aerodrome66))
+;;;(not (p_acceptableLandingCondition aerodrome66SlopeCondition aerodrome66))
+(p_acceptableLandingCondition aerodrome66ObstructionCondition aerodrome66)
+;;;(not (p_landingSpotClear aerodrome67))
+;;;(not (p_reachable aerodrome67))
+;;;(not (p_acceptableLandingCondition aerodrome67SurfaceCondition aerodrome67))
+;;;(not (p_acceptableLandingCondition aerodrome67SlopeCondition aerodrome67))
+;;;(not (p_acceptableLandingCondition aerodrome67ObstructionCondition aerodrome67))
+(p_landingSpotClear aerodrome68)
+;;;(not (p_reachable aerodrome68))
+(p_acceptableLandingCondition aerodrome68SurfaceCondition aerodrome68)
+;;;(not (p_acceptableLandingCondition aerodrome68SlopeCondition aerodrome68))
+;;;(not (p_acceptableLandingCondition aerodrome68ObstructionCondition aerodrome68))
+;;;(not (p_landingSpotClear aerodrome69))
+;;;(not (p_reachable aerodrome69))
+(p_acceptableLandingCondition aerodrome69SurfaceCondition aerodrome69)
+(p_acceptableLandingCondition aerodrome69SlopeCondition aerodrome69)
+;;;(not (p_acceptableLandingCondition aerodrome69ObstructionCondition aerodrome69))
+;;;(not (p_landingSpotClear aerodrome70))
+;;;(not (p_reachable aerodrome70))
+;;;(not (p_acceptableLandingCondition aerodrome70SurfaceCondition aerodrome70))
+(p_acceptableLandingCondition aerodrome70SlopeCondition aerodrome70)
+(p_acceptableLandingCondition aerodrome70ObstructionCondition aerodrome70)
+(p_landingSpotClear aerodrome71)
+;;;(not (p_reachable aerodrome71))
+;;;(not (p_acceptableLandingCondition aerodrome71SurfaceCondition aerodrome71))
+(p_acceptableLandingCondition aerodrome71SlopeCondition aerodrome71)
+;;;(not (p_acceptableLandingCondition aerodrome71ObstructionCondition aerodrome71))
+;;;(not (p_landingSpotClear aerodrome72))
+;;;(not (p_reachable aerodrome72))
+(p_acceptableLandingCondition aerodrome72SurfaceCondition aerodrome72)
+(p_acceptableLandingCondition aerodrome72SlopeCondition aerodrome72)
+(p_acceptableLandingCondition aerodrome72ObstructionCondition aerodrome72)
+(p_landingSpotClear aerodrome73)
+(p_reachable aerodrome73)
+(p_acceptableLandingCondition aerodrome73SurfaceCondition aerodrome73)
+;;;(not (p_acceptableLandingCondition aerodrome73SlopeCondition aerodrome73))
+(p_acceptableLandingCondition aerodrome73ObstructionCondition aerodrome73)
+;;;(not (p_landingSpotClear aerodrome74))
+(p_reachable aerodrome74)
+;;;(not (p_acceptableLandingCondition aerodrome74SurfaceCondition aerodrome74))
+(p_acceptableLandingCondition aerodrome74SlopeCondition aerodrome74)
+;;;(not (p_acceptableLandingCondition aerodrome74ObstructionCondition aerodrome74))
+;;;(not (p_landingSpotClear aerodrome75))
+(p_reachable aerodrome75)
+;;;(not (p_acceptableLandingCondition aerodrome75SurfaceCondition aerodrome75))
+;;;(not (p_acceptableLandingCondition aerodrome75SlopeCondition aerodrome75))
+;;;(not (p_acceptableLandingCondition aerodrome75ObstructionCondition aerodrome75))
+(p_landingSpotClear aerodrome76)
+;;;(not (p_reachable aerodrome76))
+;;;(not (p_acceptableLandingCondition aerodrome76SurfaceCondition aerodrome76))
+(p_acceptableLandingCondition aerodrome76SlopeCondition aerodrome76)
+;;;(not (p_acceptableLandingCondition aerodrome76ObstructionCondition aerodrome76))
+;;;(not (p_landingSpotClear aerodrome77))
+(p_reachable aerodrome77)
+;;;(not (p_acceptableLandingCondition aerodrome77SurfaceCondition aerodrome77))
+(p_acceptableLandingCondition aerodrome77SlopeCondition aerodrome77)
+(p_acceptableLandingCondition aerodrome77ObstructionCondition aerodrome77)
+(p_landingSpotClear aerodrome78)
+(p_reachable aerodrome78)
+(p_acceptableLandingCondition aerodrome78SurfaceCondition aerodrome78)
+(p_acceptableLandingCondition aerodrome78SlopeCondition aerodrome78)
+(p_acceptableLandingCondition aerodrome78ObstructionCondition aerodrome78)
+(p_landingSpotClear aerodrome79)
+;;;(not (p_reachable aerodrome79))
+(p_acceptableLandingCondition aerodrome79SurfaceCondition aerodrome79)
+;;;(not (p_acceptableLandingCondition aerodrome79SlopeCondition aerodrome79))
+;;;(not (p_acceptableLandingCondition aerodrome79ObstructionCondition aerodrome79))
+;;;(not (p_landingSpotClear aerodrome80))
+;;;(not (p_reachable aerodrome80))
+(p_acceptableLandingCondition aerodrome80SurfaceCondition aerodrome80)
+;;;(not (p_acceptableLandingCondition aerodrome80SlopeCondition aerodrome80))
+(p_acceptableLandingCondition aerodrome80ObstructionCondition aerodrome80)
+(p_landingSpotClear aerodrome81)
+;;;(not (p_reachable aerodrome81))
+(p_acceptableLandingCondition aerodrome81SurfaceCondition aerodrome81)
+(p_acceptableLandingCondition aerodrome81SlopeCondition aerodrome81)
+(p_acceptableLandingCondition aerodrome81ObstructionCondition aerodrome81)
+(p_landingSpotClear aerodrome82)
+(p_reachable aerodrome82)
+;;;(not (p_acceptableLandingCondition aerodrome82SurfaceCondition aerodrome82))
+(p_acceptableLandingCondition aerodrome82SlopeCondition aerodrome82)
+;;;(not (p_acceptableLandingCondition aerodrome82ObstructionCondition aerodrome82))
+;;;(not (p_landingSpotClear aerodrome83))
+;;;(not (p_reachable aerodrome83))
+(p_acceptableLandingCondition aerodrome83SurfaceCondition aerodrome83)
+;;;(not (p_acceptableLandingCondition aerodrome83SlopeCondition aerodrome83))
+;;;(not (p_acceptableLandingCondition aerodrome83ObstructionCondition aerodrome83))
+;;;(not (p_landingSpotClear aerodrome84))
+;;;(not (p_reachable aerodrome84))
+(p_acceptableLandingCondition aerodrome84SurfaceCondition aerodrome84)
+(p_acceptableLandingCondition aerodrome84SlopeCondition aerodrome84)
+;;;(not (p_acceptableLandingCondition aerodrome84ObstructionCondition aerodrome84))
+(p_landingSpotClear aerodrome85)
+(p_reachable aerodrome85)
+(p_acceptableLandingCondition aerodrome85SurfaceCondition aerodrome85)
+(p_acceptableLandingCondition aerodrome85SlopeCondition aerodrome85)
+(p_acceptableLandingCondition aerodrome85ObstructionCondition aerodrome85)
+;;;(not (p_landingSpotClear aerodrome86))
+(p_reachable aerodrome86)
+(p_acceptableLandingCondition aerodrome86SurfaceCondition aerodrome86)
+;;;(not (p_acceptableLandingCondition aerodrome86SlopeCondition aerodrome86))
+;;;(not (p_acceptableLandingCondition aerodrome86ObstructionCondition aerodrome86))
+;;;(not (p_landingSpotClear aerodrome87))
+(p_reachable aerodrome87)
+(p_acceptableLandingCondition aerodrome87SurfaceCondition aerodrome87)
+;;;(not (p_acceptableLandingCondition aerodrome87SlopeCondition aerodrome87))
+(p_acceptableLandingCondition aerodrome87ObstructionCondition aerodrome87)
+(p_landingSpotClear aerodrome88)
+(p_reachable aerodrome88)
+(p_acceptableLandingCondition aerodrome88SurfaceCondition aerodrome88)
+;;;(not (p_acceptableLandingCondition aerodrome88SlopeCondition aerodrome88))
+;;;(not (p_acceptableLandingCondition aerodrome88ObstructionCondition aerodrome88))
+(p_landingSpotClear aerodrome89)
+(p_reachable aerodrome89)
+;;;(not (p_acceptableLandingCondition aerodrome89SurfaceCondition aerodrome89))
+;;;(not (p_acceptableLandingCondition aerodrome89SlopeCondition aerodrome89))
+;;;(not (p_acceptableLandingCondition aerodrome89ObstructionCondition aerodrome89))
+(p_landingSpotClear aerodrome90)
+(p_reachable aerodrome90)
+;;;(not (p_acceptableLandingCondition aerodrome90SurfaceCondition aerodrome90))
+;;;(not (p_acceptableLandingCondition aerodrome90SlopeCondition aerodrome90))
+(p_acceptableLandingCondition aerodrome90ObstructionCondition aerodrome90)
+;;;(not (p_landingSpotClear aerodrome91))
+;;;(not (p_reachable aerodrome91))
+(p_acceptableLandingCondition aerodrome91SurfaceCondition aerodrome91)
+(p_acceptableLandingCondition aerodrome91SlopeCondition aerodrome91)
+(p_acceptableLandingCondition aerodrome91ObstructionCondition aerodrome91)
+;;;(not (p_landingSpotClear aerodrome92))
+;;;(not (p_reachable aerodrome92))
+(p_acceptableLandingCondition aerodrome92SurfaceCondition aerodrome92)
+(p_acceptableLandingCondition aerodrome92SlopeCondition aerodrome92)
+;;;(not (p_acceptableLandingCondition aerodrome92ObstructionCondition aerodrome92))
+;;;(not (p_landingSpotClear aerodrome93))
+;;;(not (p_reachable aerodrome93))
+(p_acceptableLandingCondition aerodrome93SurfaceCondition aerodrome93)
+(p_acceptableLandingCondition aerodrome93SlopeCondition aerodrome93)
+(p_acceptableLandingCondition aerodrome93ObstructionCondition aerodrome93)
+(p_landingSpotClear aerodrome94)
+;;;(not (p_reachable aerodrome94))
+;;;(not (p_acceptableLandingCondition aerodrome94SurfaceCondition aerodrome94))
+;;;(not (p_acceptableLandingCondition aerodrome94SlopeCondition aerodrome94))
+;;;(not (p_acceptableLandingCondition aerodrome94ObstructionCondition aerodrome94))
+(p_landingSpotClear aerodrome95)
+;;;(not (p_reachable aerodrome95))
+;;;(not (p_acceptableLandingCondition aerodrome95SurfaceCondition aerodrome95))
+(p_acceptableLandingCondition aerodrome95SlopeCondition aerodrome95)
+(p_acceptableLandingCondition aerodrome95ObstructionCondition aerodrome95)
+(p_landingSpotClear aerodrome96)
+;;;(not (p_reachable aerodrome96))
+(p_acceptableLandingCondition aerodrome96SurfaceCondition aerodrome96)
+(p_acceptableLandingCondition aerodrome96SlopeCondition aerodrome96)
+(p_acceptableLandingCondition aerodrome96ObstructionCondition aerodrome96)
+;;;(not (p_landingSpotClear aerodrome97))
+(p_reachable aerodrome97)
+;;;(not (p_acceptableLandingCondition aerodrome97SurfaceCondition aerodrome97))
+;;;(not (p_acceptableLandingCondition aerodrome97SlopeCondition aerodrome97))
+;;;(not (p_acceptableLandingCondition aerodrome97ObstructionCondition aerodrome97))
+;;;(not (p_landingSpotClear aerodrome98))
+(p_reachable aerodrome98)
+;;;(not (p_acceptableLandingCondition aerodrome98SurfaceCondition aerodrome98))
+(p_acceptableLandingCondition aerodrome98SlopeCondition aerodrome98)
+;;;(not (p_acceptableLandingCondition aerodrome98ObstructionCondition aerodrome98))
+;;;(not (p_landingSpotClear aerodrome99))
+(p_reachable aerodrome99)
+(p_acceptableLandingCondition aerodrome99SurfaceCondition aerodrome99)
+(p_acceptableLandingCondition aerodrome99SlopeCondition aerodrome99)
+(p_acceptableLandingCondition aerodrome99ObstructionCondition aerodrome99)
+;;;(not (p_landingSpotClear aerodrome100))
+(p_reachable aerodrome100)
+;;;(not (p_acceptableLandingCondition aerodrome100SurfaceCondition aerodrome100))
+(p_acceptableLandingCondition aerodrome100SlopeCondition aerodrome100)
+;;;(not (p_acceptableLandingCondition aerodrome100ObstructionCondition aerodrome100))
+(p_landingSpotClear aerodrome101)
+(p_reachable aerodrome101)
+;;;(not (p_acceptableLandingCondition aerodrome101SurfaceCondition aerodrome101))
+(p_acceptableLandingCondition aerodrome101SlopeCondition aerodrome101)
+;;;(not (p_acceptableLandingCondition aerodrome101ObstructionCondition aerodrome101))
+;;;(not (p_landingSpotClear aerodrome102))
+;;;(not (p_reachable aerodrome102))
+(p_acceptableLandingCondition aerodrome102SurfaceCondition aerodrome102)
+(p_acceptableLandingCondition aerodrome102SlopeCondition aerodrome102)
+(p_acceptableLandingCondition aerodrome102ObstructionCondition aerodrome102)
+(p_landingSpotClear aerodrome103)
+(p_reachable aerodrome103)
+;;;(not (p_acceptableLandingCondition aerodrome103SurfaceCondition aerodrome103))
+;;;(not (p_acceptableLandingCondition aerodrome103SlopeCondition aerodrome103))
+;;;(not (p_acceptableLandingCondition aerodrome103ObstructionCondition aerodrome103))
+(p_landingSpotClear aerodrome104)
+;;;(not (p_reachable aerodrome104))
+(p_acceptableLandingCondition aerodrome104SurfaceCondition aerodrome104)
+;;;(not (p_acceptableLandingCondition aerodrome104SlopeCondition aerodrome104))
+;;;(not (p_acceptableLandingCondition aerodrome104ObstructionCondition aerodrome104))
+(p_landingSpotClear aerodrome105)
+;;;(not (p_reachable aerodrome105))
+;;;(not (p_acceptableLandingCondition aerodrome105SurfaceCondition aerodrome105))
+(p_acceptableLandingCondition aerodrome105SlopeCondition aerodrome105)
+(p_acceptableLandingCondition aerodrome105ObstructionCondition aerodrome105)
+;;;(not (p_landingSpotClear aerodrome106))
+(p_reachable aerodrome106)
+(p_acceptableLandingCondition aerodrome106SurfaceCondition aerodrome106)
+;;;(not (p_acceptableLandingCondition aerodrome106SlopeCondition aerodrome106))
+(p_acceptableLandingCondition aerodrome106ObstructionCondition aerodrome106)
+(p_landingSpotClear aerodrome107)
+;;;(not (p_reachable aerodrome107))
+;;;(not (p_acceptableLandingCondition aerodrome107SurfaceCondition aerodrome107))
+;;;(not (p_acceptableLandingCondition aerodrome107SlopeCondition aerodrome107))
+;;;(not (p_acceptableLandingCondition aerodrome107ObstructionCondition aerodrome107))
+(p_landingSpotClear aerodrome108)
+;;;(not (p_reachable aerodrome108))
+(p_acceptableLandingCondition aerodrome108SurfaceCondition aerodrome108)
+;;;(not (p_acceptableLandingCondition aerodrome108SlopeCondition aerodrome108))
+(p_acceptableLandingCondition aerodrome108ObstructionCondition aerodrome108)
+(p_landingSpotClear aerodrome109)
+;;;(not (p_reachable aerodrome109))
+;;;(not (p_acceptableLandingCondition aerodrome109SurfaceCondition aerodrome109))
+;;;(not (p_acceptableLandingCondition aerodrome109SlopeCondition aerodrome109))
+(p_acceptableLandingCondition aerodrome109ObstructionCondition aerodrome109)
+(p_landingSpotClear aerodrome110)
+(p_reachable aerodrome110)
+(p_acceptableLandingCondition aerodrome110SurfaceCondition aerodrome110)
+(p_acceptableLandingCondition aerodrome110SlopeCondition aerodrome110)
+(p_acceptableLandingCondition aerodrome110ObstructionCondition aerodrome110)
+;;;(not (p_landingSpotClear aerodrome111))
+;;;(not (p_reachable aerodrome111))
+;;;(not (p_acceptableLandingCondition aerodrome111SurfaceCondition aerodrome111))
+(p_acceptableLandingCondition aerodrome111SlopeCondition aerodrome111)
+;;;(not (p_acceptableLandingCondition aerodrome111ObstructionCondition aerodrome111))
+(p_landingSpotClear aerodrome112)
+(p_reachable aerodrome112)
+(p_acceptableLandingCondition aerodrome112SurfaceCondition aerodrome112)
+;;;(not (p_acceptableLandingCondition aerodrome112SlopeCondition aerodrome112))
+(p_acceptableLandingCondition aerodrome112ObstructionCondition aerodrome112)
+(p_landingSpotClear aerodrome113)
+;;;(not (p_reachable aerodrome113))
+(p_acceptableLandingCondition aerodrome113SurfaceCondition aerodrome113)
+(p_acceptableLandingCondition aerodrome113SlopeCondition aerodrome113)
+(p_acceptableLandingCondition aerodrome113ObstructionCondition aerodrome113)
+;;;(not (p_landingSpotClear aerodrome114))
+(p_reachable aerodrome114)
+(p_acceptableLandingCondition aerodrome114SurfaceCondition aerodrome114)
+(p_acceptableLandingCondition aerodrome114SlopeCondition aerodrome114)
+;;;(not (p_acceptableLandingCondition aerodrome114ObstructionCondition aerodrome114))
+;;;(not (p_landingSpotClear aerodrome115))
+(p_reachable aerodrome115)
+(p_acceptableLandingCondition aerodrome115SurfaceCondition aerodrome115)
+;;;(not (p_acceptableLandingCondition aerodrome115SlopeCondition aerodrome115))
+(p_acceptableLandingCondition aerodrome115ObstructionCondition aerodrome115)
+;;;(not (p_landingSpotClear aerodrome116))
+;;;(not (p_reachable aerodrome116))
+;;;(not (p_acceptableLandingCondition aerodrome116SurfaceCondition aerodrome116))
+;;;(not (p_acceptableLandingCondition aerodrome116SlopeCondition aerodrome116))
+(p_acceptableLandingCondition aerodrome116ObstructionCondition aerodrome116)
+(p_landingSpotClear aerodrome117)
+;;;(not (p_reachable aerodrome117))
+(p_acceptableLandingCondition aerodrome117SurfaceCondition aerodrome117)
+(p_acceptableLandingCondition aerodrome117SlopeCondition aerodrome117)
+;;;(not (p_acceptableLandingCondition aerodrome117ObstructionCondition aerodrome117))
+(p_landingSpotClear aerodrome118)
+;;;(not (p_reachable aerodrome118))
+(p_acceptableLandingCondition aerodrome118SurfaceCondition aerodrome118)
+(p_acceptableLandingCondition aerodrome118SlopeCondition aerodrome118)
+;;;(not (p_acceptableLandingCondition aerodrome118ObstructionCondition aerodrome118))
+;;;(not (p_landingSpotClear aerodrome119))
+;;;(not (p_reachable aerodrome119))
+(p_acceptableLandingCondition aerodrome119SurfaceCondition aerodrome119)
+;;;(not (p_acceptableLandingCondition aerodrome119SlopeCondition aerodrome119))
+(p_acceptableLandingCondition aerodrome119ObstructionCondition aerodrome119)
+;;;(not (p_landingSpotClear aerodrome120))
+(p_reachable aerodrome120)
+;;;(not (p_acceptableLandingCondition aerodrome120SurfaceCondition aerodrome120))
+(p_acceptableLandingCondition aerodrome120SlopeCondition aerodrome120)
+(p_acceptableLandingCondition aerodrome120ObstructionCondition aerodrome120)
+;;;(not (p_landingSpotClear aerodrome121))
+;;;(not (p_reachable aerodrome121))
+;;;(not (p_acceptableLandingCondition aerodrome121SurfaceCondition aerodrome121))
+(p_acceptableLandingCondition aerodrome121SlopeCondition aerodrome121)
+(p_acceptableLandingCondition aerodrome121ObstructionCondition aerodrome121)
+;;;(not (p_landingSpotClear aerodrome122))
+(p_reachable aerodrome122)
+;;;(not (p_acceptableLandingCondition aerodrome122SurfaceCondition aerodrome122))
+(p_acceptableLandingCondition aerodrome122SlopeCondition aerodrome122)
+;;;(not (p_acceptableLandingCondition aerodrome122ObstructionCondition aerodrome122))
+(p_landingSpotClear aerodrome123)
+(p_reachable aerodrome123)
+;;;(not (p_acceptableLandingCondition aerodrome123SurfaceCondition aerodrome123))
+(p_acceptableLandingCondition aerodrome123SlopeCondition aerodrome123)
+(p_acceptableLandingCondition aerodrome123ObstructionCondition aerodrome123)
+(p_landingSpotClear aerodrome124)
+;;;(not (p_reachable aerodrome124))
+;;;(not (p_acceptableLandingCondition aerodrome124SurfaceCondition aerodrome124))
+(p_acceptableLandingCondition aerodrome124SlopeCondition aerodrome124)
+(p_acceptableLandingCondition aerodrome124ObstructionCondition aerodrome124)
+;;;(not (p_landingSpotClear aerodrome125))
+(p_reachable aerodrome125)
+(p_acceptableLandingCondition aerodrome125SurfaceCondition aerodrome125)
+(p_acceptableLandingCondition aerodrome125SlopeCondition aerodrome125)
+(p_acceptableLandingCondition aerodrome125ObstructionCondition aerodrome125)
+;;;(not (p_landingSpotClear aerodrome126))
+(p_reachable aerodrome126)
+(p_acceptableLandingCondition aerodrome126SurfaceCondition aerodrome126)
+(p_acceptableLandingCondition aerodrome126SlopeCondition aerodrome126)
+(p_acceptableLandingCondition aerodrome126ObstructionCondition aerodrome126)
+(p_landingSpotClear aerodrome127)
+(p_reachable aerodrome127)
+(p_acceptableLandingCondition aerodrome127SurfaceCondition aerodrome127)
+(p_acceptableLandingCondition aerodrome127SlopeCondition aerodrome127)
+(p_acceptableLandingCondition aerodrome127ObstructionCondition aerodrome127)
+;;;(not (p_landingSpotClear aerodrome128))
+;;;(not (p_reachable aerodrome128))
+(p_acceptableLandingCondition aerodrome128SurfaceCondition aerodrome128)
+;;;(not (p_acceptableLandingCondition aerodrome128SlopeCondition aerodrome128))
+;;;(not (p_acceptableLandingCondition aerodrome128ObstructionCondition aerodrome128))
+(p_landingSpotClear aerodrome129)
+;;;(not (p_reachable aerodrome129))
+;;;(not (p_acceptableLandingCondition aerodrome129SurfaceCondition aerodrome129))
+;;;(not (p_acceptableLandingCondition aerodrome129SlopeCondition aerodrome129))
+(p_acceptableLandingCondition aerodrome129ObstructionCondition aerodrome129)
+(p_landingSpotClear aerodrome130)
+;;;(not (p_reachable aerodrome130))
+;;;(not (p_acceptableLandingCondition aerodrome130SurfaceCondition aerodrome130))
+;;;(not (p_acceptableLandingCondition aerodrome130SlopeCondition aerodrome130))
+(p_acceptableLandingCondition aerodrome130ObstructionCondition aerodrome130)
+(p_landingSpotClear aerodrome131)
+;;;(not (p_reachable aerodrome131))
+(p_acceptableLandingCondition aerodrome131SurfaceCondition aerodrome131)
+;;;(not (p_acceptableLandingCondition aerodrome131SlopeCondition aerodrome131))
+(p_acceptableLandingCondition aerodrome131ObstructionCondition aerodrome131)
+;;;(not (p_landingSpotClear aerodrome132))
+;;;(not (p_reachable aerodrome132))
+;;;(not (p_acceptableLandingCondition aerodrome132SurfaceCondition aerodrome132))
+(p_acceptableLandingCondition aerodrome132SlopeCondition aerodrome132)
+(p_acceptableLandingCondition aerodrome132ObstructionCondition aerodrome132)
+;;;(not (p_landingSpotClear aerodrome133))
+(p_reachable aerodrome133)
+(p_acceptableLandingCondition aerodrome133SurfaceCondition aerodrome133)
+;;;(not (p_acceptableLandingCondition aerodrome133SlopeCondition aerodrome133))
+;;;(not (p_acceptableLandingCondition aerodrome133ObstructionCondition aerodrome133))
+(p_landingSpotClear aerodrome134)
+(p_reachable aerodrome134)
+;;;(not (p_acceptableLandingCondition aerodrome134SurfaceCondition aerodrome134))
+;;;(not (p_acceptableLandingCondition aerodrome134SlopeCondition aerodrome134))
+(p_acceptableLandingCondition aerodrome134ObstructionCondition aerodrome134)
+(p_landingSpotClear aerodrome135)
+(p_reachable aerodrome135)
+(p_acceptableLandingCondition aerodrome135SurfaceCondition aerodrome135)
+;;;(not (p_acceptableLandingCondition aerodrome135SlopeCondition aerodrome135))
+(p_acceptableLandingCondition aerodrome135ObstructionCondition aerodrome135)
+;;;(not (p_landingSpotClear aerodrome136))
+;;;(not (p_reachable aerodrome136))
+;;;(not (p_acceptableLandingCondition aerodrome136SurfaceCondition aerodrome136))
+;;;(not (p_acceptableLandingCondition aerodrome136SlopeCondition aerodrome136))
+;;;(not (p_acceptableLandingCondition aerodrome136ObstructionCondition aerodrome136))
+(p_landingSpotClear aerodrome137)
+(p_reachable aerodrome137)
+;;;(not (p_acceptableLandingCondition aerodrome137SurfaceCondition aerodrome137))
+;;;(not (p_acceptableLandingCondition aerodrome137SlopeCondition aerodrome137))
+(p_acceptableLandingCondition aerodrome137ObstructionCondition aerodrome137)
+;;;(not (p_landingSpotClear aerodrome138))
+;;;(not (p_reachable aerodrome138))
+;;;(not (p_acceptableLandingCondition aerodrome138SurfaceCondition aerodrome138))
+(p_acceptableLandingCondition aerodrome138SlopeCondition aerodrome138)
+(p_acceptableLandingCondition aerodrome138ObstructionCondition aerodrome138)
+;;;(not (p_landingSpotClear aerodrome139))
+;;;(not (p_reachable aerodrome139))
+(p_acceptableLandingCondition aerodrome139SurfaceCondition aerodrome139)
+;;;(not (p_acceptableLandingCondition aerodrome139SlopeCondition aerodrome139))
+;;;(not (p_acceptableLandingCondition aerodrome139ObstructionCondition aerodrome139))
+;;;(not (p_landingSpotClear aerodrome140))
+(p_reachable aerodrome140)
+(p_acceptableLandingCondition aerodrome140SurfaceCondition aerodrome140)
+(p_acceptableLandingCondition aerodrome140SlopeCondition aerodrome140)
+;;;(not (p_acceptableLandingCondition aerodrome140ObstructionCondition aerodrome140))
+(p_landingSpotClear aerodrome141)
+;;;(not (p_reachable aerodrome141))
+;;;(not (p_acceptableLandingCondition aerodrome141SurfaceCondition aerodrome141))
+;;;(not (p_acceptableLandingCondition aerodrome141SlopeCondition aerodrome141))
+;;;(not (p_acceptableLandingCondition aerodrome141ObstructionCondition aerodrome141))
+(p_landingSpotClear aerodrome142)
+;;;(not (p_reachable aerodrome142))
+(p_acceptableLandingCondition aerodrome142SurfaceCondition aerodrome142)
+(p_acceptableLandingCondition aerodrome142SlopeCondition aerodrome142)
+;;;(not (p_acceptableLandingCondition aerodrome142ObstructionCondition aerodrome142))
+;;;(not (p_landingSpotClear aerodrome143))
+;;;(not (p_reachable aerodrome143))
+(p_acceptableLandingCondition aerodrome143SurfaceCondition aerodrome143)
+;;;(not (p_acceptableLandingCondition aerodrome143SlopeCondition aerodrome143))
+;;;(not (p_acceptableLandingCondition aerodrome143ObstructionCondition aerodrome143))
+;;;(not (p_landingSpotClear aerodrome144))
+(p_reachable aerodrome144)
+;;;(not (p_acceptableLandingCondition aerodrome144SurfaceCondition aerodrome144))
+;;;(not (p_acceptableLandingCondition aerodrome144SlopeCondition aerodrome144))
+;;;(not (p_acceptableLandingCondition aerodrome144ObstructionCondition aerodrome144))
+(p_landingSpotClear aerodrome145)
+(p_reachable aerodrome145)
+(p_acceptableLandingCondition aerodrome145SurfaceCondition aerodrome145)
+(p_acceptableLandingCondition aerodrome145SlopeCondition aerodrome145)
+;;;(not (p_acceptableLandingCondition aerodrome145ObstructionCondition aerodrome145))
+(p_landingSpotClear aerodrome146)
+;;;(not (p_reachable aerodrome146))
+(p_acceptableLandingCondition aerodrome146SurfaceCondition aerodrome146)
+(p_acceptableLandingCondition aerodrome146SlopeCondition aerodrome146)
+;;;(not (p_acceptableLandingCondition aerodrome146ObstructionCondition aerodrome146))
+;;;(not (p_landingSpotClear aerodrome147))
+;;;(not (p_reachable aerodrome147))
+;;;(not (p_acceptableLandingCondition aerodrome147SurfaceCondition aerodrome147))
+;;;(not (p_acceptableLandingCondition aerodrome147SlopeCondition aerodrome147))
+(p_acceptableLandingCondition aerodrome147ObstructionCondition aerodrome147)
+;;;(not (p_landingSpotClear aerodrome148))
+(p_reachable aerodrome148)
+(p_acceptableLandingCondition aerodrome148SurfaceCondition aerodrome148)
+(p_acceptableLandingCondition aerodrome148SlopeCondition aerodrome148)
+(p_acceptableLandingCondition aerodrome148ObstructionCondition aerodrome148)
+;;;(not (p_landingSpotClear aerodrome149))
+;;;(not (p_reachable aerodrome149))
+(p_acceptableLandingCondition aerodrome149SurfaceCondition aerodrome149)
+;;;(not (p_acceptableLandingCondition aerodrome149SlopeCondition aerodrome149))
+;;;(not (p_acceptableLandingCondition aerodrome149ObstructionCondition aerodrome149))
+(p_landingSpotClear aerodrome150)
+;;;(not (p_reachable aerodrome150))
+(p_acceptableLandingCondition aerodrome150SurfaceCondition aerodrome150)
+;;;(not (p_acceptableLandingCondition aerodrome150SlopeCondition aerodrome150))
+;;;(not (p_acceptableLandingCondition aerodrome150ObstructionCondition aerodrome150))
+(p_landingSpotClear aerodrome151)
+;;;(not (p_reachable aerodrome151))
+;;;(not (p_acceptableLandingCondition aerodrome151SurfaceCondition aerodrome151))
+;;;(not (p_acceptableLandingCondition aerodrome151SlopeCondition aerodrome151))
+;;;(not (p_acceptableLandingCondition aerodrome151ObstructionCondition aerodrome151))
+;;;(not (p_landingSpotClear aerodrome152))
+(p_reachable aerodrome152)
+(p_acceptableLandingCondition aerodrome152SurfaceCondition aerodrome152)
+(p_acceptableLandingCondition aerodrome152SlopeCondition aerodrome152)
+;;;(not (p_acceptableLandingCondition aerodrome152ObstructionCondition aerodrome152))
+(p_landingSpotClear aerodrome153)
+(p_reachable aerodrome153)
+(p_acceptableLandingCondition aerodrome153SurfaceCondition aerodrome153)
+;;;(not (p_acceptableLandingCondition aerodrome153SlopeCondition aerodrome153))
+;;;(not (p_acceptableLandingCondition aerodrome153ObstructionCondition aerodrome153))
+(p_landingSpotClear aerodrome154)
+(p_reachable aerodrome154)
+(p_acceptableLandingCondition aerodrome154SurfaceCondition aerodrome154)
+(p_acceptableLandingCondition aerodrome154SlopeCondition aerodrome154)
+(p_acceptableLandingCondition aerodrome154ObstructionCondition aerodrome154)
+;;;(not (p_landingSpotClear aerodrome155))
+;;;(not (p_reachable aerodrome155))
+(p_acceptableLandingCondition aerodrome155SurfaceCondition aerodrome155)
+(p_acceptableLandingCondition aerodrome155SlopeCondition aerodrome155)
+;;;(not (p_acceptableLandingCondition aerodrome155ObstructionCondition aerodrome155))
+(p_landingSpotClear aerodrome156)
+;;;(not (p_reachable aerodrome156))
+(p_acceptableLandingCondition aerodrome156SurfaceCondition aerodrome156)
+(p_acceptableLandingCondition aerodrome156SlopeCondition aerodrome156)
+(p_acceptableLandingCondition aerodrome156ObstructionCondition aerodrome156)
+(p_landingSpotClear aerodrome157)
+(p_reachable aerodrome157)
+;;;(not (p_acceptableLandingCondition aerodrome157SurfaceCondition aerodrome157))
+;;;(not (p_acceptableLandingCondition aerodrome157SlopeCondition aerodrome157))
+;;;(not (p_acceptableLandingCondition aerodrome157ObstructionCondition aerodrome157))
+(p_landingSpotClear aerodrome158)
+;;;(not (p_reachable aerodrome158))
+(p_acceptableLandingCondition aerodrome158SurfaceCondition aerodrome158)
+;;;(not (p_acceptableLandingCondition aerodrome158SlopeCondition aerodrome158))
+;;;(not (p_acceptableLandingCondition aerodrome158ObstructionCondition aerodrome158))
+;;;(not (p_landingSpotClear aerodrome159))
+;;;(not (p_reachable aerodrome159))
+(p_acceptableLandingCondition aerodrome159SurfaceCondition aerodrome159)
+(p_acceptableLandingCondition aerodrome159SlopeCondition aerodrome159)
+;;;(not (p_acceptableLandingCondition aerodrome159ObstructionCondition aerodrome159))
+(p_landingSpotClear aerodrome160)
+;;;(not (p_reachable aerodrome160))
+(p_acceptableLandingCondition aerodrome160SurfaceCondition aerodrome160)
+(p_acceptableLandingCondition aerodrome160SlopeCondition aerodrome160)
+(p_acceptableLandingCondition aerodrome160ObstructionCondition aerodrome160)
+(p_landingSpotClear aerodrome161)
+(p_reachable aerodrome161)
+(p_acceptableLandingCondition aerodrome161SurfaceCondition aerodrome161)
+(p_acceptableLandingCondition aerodrome161SlopeCondition aerodrome161)
+(p_acceptableLandingCondition aerodrome161ObstructionCondition aerodrome161)
+(p_landingSpotClear aerodrome162)
+;;;(not (p_reachable aerodrome162))
+;;;(not (p_acceptableLandingCondition aerodrome162SurfaceCondition aerodrome162))
+(p_acceptableLandingCondition aerodrome162SlopeCondition aerodrome162)
+;;;(not (p_acceptableLandingCondition aerodrome162ObstructionCondition aerodrome162))
+(p_landingSpotClear aerodrome163)
+(p_reachable aerodrome163)
+;;;(not (p_acceptableLandingCondition aerodrome163SurfaceCondition aerodrome163))
+(p_acceptableLandingCondition aerodrome163SlopeCondition aerodrome163)
+(p_acceptableLandingCondition aerodrome163ObstructionCondition aerodrome163)
+(p_landingSpotClear aerodrome164)
+;;;(not (p_reachable aerodrome164))
+;;;(not (p_acceptableLandingCondition aerodrome164SurfaceCondition aerodrome164))
+(p_acceptableLandingCondition aerodrome164SlopeCondition aerodrome164)
+(p_acceptableLandingCondition aerodrome164ObstructionCondition aerodrome164)
+;;;(not (p_landingSpotClear aerodrome165))
+(p_reachable aerodrome165)
+(p_acceptableLandingCondition aerodrome165SurfaceCondition aerodrome165)
+(p_acceptableLandingCondition aerodrome165SlopeCondition aerodrome165)
+;;;(not (p_acceptableLandingCondition aerodrome165ObstructionCondition aerodrome165))
+(p_landingSpotClear aerodrome166)
+;;;(not (p_reachable aerodrome166))
+;;;(not (p_acceptableLandingCondition aerodrome166SurfaceCondition aerodrome166))
+(p_acceptableLandingCondition aerodrome166SlopeCondition aerodrome166)
+(p_acceptableLandingCondition aerodrome166ObstructionCondition aerodrome166)
+;;;(not (p_landingSpotClear aerodrome167))
+;;;(not (p_reachable aerodrome167))
+;;;(not (p_acceptableLandingCondition aerodrome167SurfaceCondition aerodrome167))
+(p_acceptableLandingCondition aerodrome167SlopeCondition aerodrome167)
+;;;(not (p_acceptableLandingCondition aerodrome167ObstructionCondition aerodrome167))
+(p_landingSpotClear aerodrome168)
+;;;(not (p_reachable aerodrome168))
+;;;(not (p_acceptableLandingCondition aerodrome168SurfaceCondition aerodrome168))
+;;;(not (p_acceptableLandingCondition aerodrome168SlopeCondition aerodrome168))
+;;;(not (p_acceptableLandingCondition aerodrome168ObstructionCondition aerodrome168))
+;;;(not (p_landingSpotClear aerodrome169))
+;;;(not (p_reachable aerodrome169))
+(p_acceptableLandingCondition aerodrome169SurfaceCondition aerodrome169)
+(p_acceptableLandingCondition aerodrome169SlopeCondition aerodrome169)
+(p_acceptableLandingCondition aerodrome169ObstructionCondition aerodrome169)
+;;;(not (p_landingSpotClear aerodrome170))
+(p_reachable aerodrome170)
+(p_acceptableLandingCondition aerodrome170SurfaceCondition aerodrome170)
+(p_acceptableLandingCondition aerodrome170SlopeCondition aerodrome170)
+;;;(not (p_acceptableLandingCondition aerodrome170ObstructionCondition aerodrome170))
+;;;(not (p_landingSpotClear aerodrome171))
+(p_reachable aerodrome171)
+;;;(not (p_acceptableLandingCondition aerodrome171SurfaceCondition aerodrome171))
+(p_acceptableLandingCondition aerodrome171SlopeCondition aerodrome171)
+;;;(not (p_acceptableLandingCondition aerodrome171ObstructionCondition aerodrome171))
+(p_landingSpotClear aerodrome172)
+(p_reachable aerodrome172)
+(p_acceptableLandingCondition aerodrome172SurfaceCondition aerodrome172)
+;;;(not (p_acceptableLandingCondition aerodrome172SlopeCondition aerodrome172))
+(p_acceptableLandingCondition aerodrome172ObstructionCondition aerodrome172)
+(p_landingSpotClear aerodrome173)
+;;;(not (p_reachable aerodrome173))
+(p_acceptableLandingCondition aerodrome173SurfaceCondition aerodrome173)
+(p_acceptableLandingCondition aerodrome173SlopeCondition aerodrome173)
+;;;(not (p_acceptableLandingCondition aerodrome173ObstructionCondition aerodrome173))
+(p_landingSpotClear aerodrome174)
+;;;(not (p_reachable aerodrome174))
+(p_acceptableLandingCondition aerodrome174SurfaceCondition aerodrome174)
+(p_acceptableLandingCondition aerodrome174SlopeCondition aerodrome174)
+;;;(not (p_acceptableLandingCondition aerodrome174ObstructionCondition aerodrome174))
+;;;(not (p_landingSpotClear aerodrome175))
+;;;(not (p_reachable aerodrome175))
+;;;(not (p_acceptableLandingCondition aerodrome175SurfaceCondition aerodrome175))
+(p_acceptableLandingCondition aerodrome175SlopeCondition aerodrome175)
+(p_acceptableLandingCondition aerodrome175ObstructionCondition aerodrome175)
+(p_landingSpotClear aerodrome176)
+;;;(not (p_reachable aerodrome176))
+;;;(not (p_acceptableLandingCondition aerodrome176SurfaceCondition aerodrome176))
+;;;(not (p_acceptableLandingCondition aerodrome176SlopeCondition aerodrome176))
+(p_acceptableLandingCondition aerodrome176ObstructionCondition aerodrome176)
+(p_landingSpotClear aerodrome177)
+(p_reachable aerodrome177)
+(p_acceptableLandingCondition aerodrome177SurfaceCondition aerodrome177)
+(p_acceptableLandingCondition aerodrome177SlopeCondition aerodrome177)
+(p_acceptableLandingCondition aerodrome177ObstructionCondition aerodrome177)
+(p_landingSpotClear aerodrome178)
+;;;(not (p_reachable aerodrome178))
+(p_acceptableLandingCondition aerodrome178SurfaceCondition aerodrome178)
+;;;(not (p_acceptableLandingCondition aerodrome178SlopeCondition aerodrome178))
+;;;(not (p_acceptableLandingCondition aerodrome178ObstructionCondition aerodrome178))
+;;;(not (p_landingSpotClear aerodrome179))
+;;;(not (p_reachable aerodrome179))
+(p_acceptableLandingCondition aerodrome179SurfaceCondition aerodrome179)
+(p_acceptableLandingCondition aerodrome179SlopeCondition aerodrome179)
+;;;(not (p_acceptableLandingCondition aerodrome179ObstructionCondition aerodrome179))
+;;;(not (p_landingSpotClear aerodrome180))
+;;;(not (p_reachable aerodrome180))
+;;;(not (p_acceptableLandingCondition aerodrome180SurfaceCondition aerodrome180))
+;;;(not (p_acceptableLandingCondition aerodrome180SlopeCondition aerodrome180))
+(p_acceptableLandingCondition aerodrome180ObstructionCondition aerodrome180)
+;;;(not (p_landingSpotClear aerodrome181))
+(p_reachable aerodrome181)
+;;;(not (p_acceptableLandingCondition aerodrome181SurfaceCondition aerodrome181))
+;;;(not (p_acceptableLandingCondition aerodrome181SlopeCondition aerodrome181))
+(p_acceptableLandingCondition aerodrome181ObstructionCondition aerodrome181)
+(p_landingSpotClear aerodrome182)
+;;;(not (p_reachable aerodrome182))
+;;;(not (p_acceptableLandingCondition aerodrome182SurfaceCondition aerodrome182))
+(p_acceptableLandingCondition aerodrome182SlopeCondition aerodrome182)
+(p_acceptableLandingCondition aerodrome182ObstructionCondition aerodrome182)
+;;;(not (p_landingSpotClear aerodrome183))
+(p_reachable aerodrome183)
+(p_acceptableLandingCondition aerodrome183SurfaceCondition aerodrome183)
+;;;(not (p_acceptableLandingCondition aerodrome183SlopeCondition aerodrome183))
+;;;(not (p_acceptableLandingCondition aerodrome183ObstructionCondition aerodrome183))
+;;;(not (p_landingSpotClear aerodrome184))
+(p_reachable aerodrome184)
+;;;(not (p_acceptableLandingCondition aerodrome184SurfaceCondition aerodrome184))
+(p_acceptableLandingCondition aerodrome184SlopeCondition aerodrome184)
+;;;(not (p_acceptableLandingCondition aerodrome184ObstructionCondition aerodrome184))
+(p_landingSpotClear aerodrome185)
+;;;(not (p_reachable aerodrome185))
+;;;(not (p_acceptableLandingCondition aerodrome185SurfaceCondition aerodrome185))
+;;;(not (p_acceptableLandingCondition aerodrome185SlopeCondition aerodrome185))
+(p_acceptableLandingCondition aerodrome185ObstructionCondition aerodrome185)
+;;;(not (p_landingSpotClear aerodrome186))
+(p_reachable aerodrome186)
+(p_acceptableLandingCondition aerodrome186SurfaceCondition aerodrome186)
+;;;(not (p_acceptableLandingCondition aerodrome186SlopeCondition aerodrome186))
+;;;(not (p_acceptableLandingCondition aerodrome186ObstructionCondition aerodrome186))
+;;;(not (p_landingSpotClear aerodrome187))
+(p_reachable aerodrome187)
+(p_acceptableLandingCondition aerodrome187SurfaceCondition aerodrome187)
+(p_acceptableLandingCondition aerodrome187SlopeCondition aerodrome187)
+;;;(not (p_acceptableLandingCondition aerodrome187ObstructionCondition aerodrome187))
+;;;(not (p_landingSpotClear aerodrome188))
+(p_reachable aerodrome188)
+;;;(not (p_acceptableLandingCondition aerodrome188SurfaceCondition aerodrome188))
+(p_acceptableLandingCondition aerodrome188SlopeCondition aerodrome188)
+;;;(not (p_acceptableLandingCondition aerodrome188ObstructionCondition aerodrome188))
+(p_landingSpotClear aerodrome189)
+;;;(not (p_reachable aerodrome189))
+;;;(not (p_acceptableLandingCondition aerodrome189SurfaceCondition aerodrome189))
+(p_acceptableLandingCondition aerodrome189SlopeCondition aerodrome189)
+;;;(not (p_acceptableLandingCondition aerodrome189ObstructionCondition aerodrome189))
+;;;(not (p_landingSpotClear aerodrome190))
+(p_reachable aerodrome190)
+(p_acceptableLandingCondition aerodrome190SurfaceCondition aerodrome190)
+(p_acceptableLandingCondition aerodrome190SlopeCondition aerodrome190)
+(p_acceptableLandingCondition aerodrome190ObstructionCondition aerodrome190)
+;;;(not (p_landingSpotClear aerodrome191))
+(p_reachable aerodrome191)
+(p_acceptableLandingCondition aerodrome191SurfaceCondition aerodrome191)
+(p_acceptableLandingCondition aerodrome191SlopeCondition aerodrome191)
+(p_acceptableLandingCondition aerodrome191ObstructionCondition aerodrome191)
+(p_landingSpotClear aerodrome192)
+;;;(not (p_reachable aerodrome192))
+(p_acceptableLandingCondition aerodrome192SurfaceCondition aerodrome192)
+;;;(not (p_acceptableLandingCondition aerodrome192SlopeCondition aerodrome192))
+(p_acceptableLandingCondition aerodrome192ObstructionCondition aerodrome192)
+;;;(not (p_landingSpotClear aerodrome193))
+;;;(not (p_reachable aerodrome193))
+;;;(not (p_acceptableLandingCondition aerodrome193SurfaceCondition aerodrome193))
+(p_acceptableLandingCondition aerodrome193SlopeCondition aerodrome193)
+(p_acceptableLandingCondition aerodrome193ObstructionCondition aerodrome193)
+(p_landingSpotClear aerodrome194)
+(p_reachable aerodrome194)
+;;;(not (p_acceptableLandingCondition aerodrome194SurfaceCondition aerodrome194))
+;;;(not (p_acceptableLandingCondition aerodrome194SlopeCondition aerodrome194))
+;;;(not (p_acceptableLandingCondition aerodrome194ObstructionCondition aerodrome194))
+(p_landingSpotClear aerodrome195)
+(p_reachable aerodrome195)
+(p_acceptableLandingCondition aerodrome195SurfaceCondition aerodrome195)
+;;;(not (p_acceptableLandingCondition aerodrome195SlopeCondition aerodrome195))
+;;;(not (p_acceptableLandingCondition aerodrome195ObstructionCondition aerodrome195))
+(p_landingSpotClear aerodrome196)
+;;;(not (p_reachable aerodrome196))
+(p_acceptableLandingCondition aerodrome196SurfaceCondition aerodrome196)
+;;;(not (p_acceptableLandingCondition aerodrome196SlopeCondition aerodrome196))
+;;;(not (p_acceptableLandingCondition aerodrome196ObstructionCondition aerodrome196))
+;;;(not (p_landingSpotClear aerodrome197))
+(p_reachable aerodrome197)
+(p_acceptableLandingCondition aerodrome197SurfaceCondition aerodrome197)
+;;;(not (p_acceptableLandingCondition aerodrome197SlopeCondition aerodrome197))
+;;;(not (p_acceptableLandingCondition aerodrome197ObstructionCondition aerodrome197))
+(p_landingSpotClear aerodrome198)
+(p_reachable aerodrome198)
+(p_acceptableLandingCondition aerodrome198SurfaceCondition aerodrome198)
+;;;(not (p_acceptableLandingCondition aerodrome198SlopeCondition aerodrome198))
+;;;(not (p_acceptableLandingCondition aerodrome198ObstructionCondition aerodrome198))
+;;;(not (p_landingSpotClear aerodrome199))
+;;;(not (p_reachable aerodrome199))
+(p_acceptableLandingCondition aerodrome199SurfaceCondition aerodrome199)
+(p_acceptableLandingCondition aerodrome199SlopeCondition aerodrome199)
+(p_acceptableLandingCondition aerodrome199ObstructionCondition aerodrome199)
+;;;(not (p_landingSpotClear aerodrome200))
+;;;(not (p_reachable aerodrome200))
+(p_acceptableLandingCondition aerodrome200SurfaceCondition aerodrome200)
+;;;(not (p_acceptableLandingCondition aerodrome200SlopeCondition aerodrome200))
+;;;(not (p_acceptableLandingCondition aerodrome200ObstructionCondition aerodrome200))
+    )
+    (:goal
+		(and
+			(p_airplaneLanded)
+		)
+	)
+)
+    

@@ -1,0 +1,667 @@
+
+; The SharpSAT domain models the problem #SAT. This problem is to compute the number of 
+; different variable assignments ("models") which satisfy a given propositional formula.
+; Another term for the problem is (exact) model counting. The complexity class of #SAT, 
+; named #P, is (handwavingly) somewhere between NP and PSPACE and therefore not considered
+; as hard as HTN planning. Nevertheless, a hierarchical planning model for #SAT is 
+; appealing due to the problem's natural hierarchical structure, its comparably simple 
+; formulation, and a number of interesting search properties (see below).
+
+; We express instances of #SAT as TOHTN planning instances. The hierarchical model is 
+; based on the straight forward recursive CDP algorithm by Birnbaum and Lozinskii in "The 
+; Good Old Davis-Putnam Procedure Helps Counting Models" (JAIR '99), which is a modified 
+; DPLL search procedure. When finding a model at decision depth d, the procedure does not
+; terminate (as DPLL) but instead adds 2^(#vars - d) to its global model count and 
+; continues its search. We implemented propagation and backtracking of variable decisions
+; deterministically such that the only decisions a planner can make is choosing a literal
+; to branch on (or, if unit clauses are present, which one to satisfy first). The domain
+; does NOT have any dead-ends (DPLL backtracking is performed with explicit subtasks); 
+; however, the branching choices a planner makes can result in substantial differences 
+; with respect to the effective search space size. Therefore, informative heuristics and/
+; or restarts with different decision-making have the potential to make a big difference.
+; The hierarchy's depth is limited to O(#vars + #clauses) levels until all variables are
+; assigned.
+
+; The encoder script associated with this domain file can take SAT instances in the DIMACS
+; CNF format. Assumptions are: (a) There is no empty clause in the input. (b) There is no
+; clause in the input which features a particular variable more than once (rendering the
+; clause tautologic or partially redundant).
+
+; A found plan can be transformed in linear time with the associated decoder script. This
+; linear-time procedure just looks for specific actions "A_OUTPUT_EXPONENTIAL_COUNT d" and
+; adds 2^(#vars - d) to a model counter for each such action.
+
+; D. Schreiber <dominik.schreiber@kit.edu> 2023
+
+(define (domain sharpsat)
+
+(:requirements :typing)
+
+(:types
+  literal clause number - object
+)
+
+(:constants
+  n0 n1 n2 - number ; further numbers to be defined in problem file
+)
+
+(:predicates
+  (SUCCESSOR ?n ?nplusone - number)
+
+  (CLAUSE_COUNT ?n - number)
+  (OPPOSITE ?l ?lneg - literal)
+  (LIT_IN_CLAUSE ?l - literal ?c - clause)
+  
+  (OCCURRENCE_INDEX ?l - literal ?c - clause ?n - number)
+  (OCCURRENCE_COUNT ?l - literal ?n - number)
+  
+  (assigned ?l - literal)
+  
+  (clause_length ?c - clause ?n - number)
+  (satisfied ?c - clause)
+  (satisfying_lit ?c - clause ?l - literal)
+  
+  (empty_clause_present)
+  (unit_clause_count ?n - number)
+  (satisfied_clause_count ?n - number)
+)
+
+
+; tasks, ordered from abstract to concrete
+
+; LEVEL 0 TASKS
+(:task count-models :parameters (?d - number))
+
+; LEVEL 1 TASKS
+(:task propagate-same-polarity :parameters (?l - literal ?firstocc - number))
+(:task propagate-opposite-polarity :parameters (?lneg - literal ?firstocc - number))
+(:task backtrack-same-polarity :parameters (?l - literal ?firstocc - number))
+(:task backtrack-opposite-polarity :parameters (?lneg - literal ?firstocc - number))
+
+; LEVEL 2 TASKS
+(:task propagate-clause-same-polarity :parameters (?l - literal ?c - clause))
+(:task propagate-clause-opposite-polarity :parameters (?c - clause))
+(:task backtrack-clause-same-polarity :parameters (?l - literal ?c - clause))
+(:task backtrack-clause-opposite-polarity :parameters (?c - clause))
+
+; LEVEL 3 TASKS
+(:task satisfy-clause :parameters (?l - literal ?c - clause))
+(:task unsatisfy-clause :parameters (?l - literal ?c - clause))
+(:task decrement-clause-size :parameters (?c - clause))
+(:task increment-clause-size :parameters (?c - clause))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; LEVEL 0 METHODS
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; top-level recursive algorithm with four cases
+; (exactly one of which is possible at any given time)
+
+; all clauses satisfied: add model count corresponding to decision level
+(:method m_count-models_empty-formula
+  :parameters (?d ?clausecount - number)
+  :task (count-models ?d)
+  :precondition (and
+    (CLAUSE_COUNT ?clausecount)
+    (satisfied_clause_count ?clausecount)
+  )
+  :ordered-subtasks (and 
+    (A_OUTPUT_EXPONENTIAL_COUNT ?d)
+  )
+)
+
+; unsatisfiable: add model count of zero
+(:method m_count-models_empty-clause
+  :parameters (?d - number ?c - clause)
+  :task (count-models ?d)
+  :precondition (and
+    (empty_clause_present)
+    (clause_length ?c n0)
+  )
+  :ordered-subtasks (and 
+    ; "add zero"
+  )
+)
+
+; unit clause: apply decision, count models recursively
+(:method m_count-models_unit-clause
+  :parameters (?d ?dplusone - number ?clausecount - number ?c - clause ?l ?lneg - literal 
+    ?nposoccs ?nnegoccs - number)
+  :task (count-models ?d)
+  :precondition (and
+    (SUCCESSOR ?d ?dplusone)
+    (CLAUSE_COUNT ?clausecount)
+    (not (satisfied_clause_count ?clausecount))
+    (not (empty_clause_present))
+    
+    (not (unit_clause_count n0))
+    (clause_length ?c n1)
+    (LIT_IN_CLAUSE ?l ?c)
+    (not (assigned ?l))
+    (OPPOSITE ?l ?lneg)
+    (OCCURRENCE_COUNT ?l ?nposoccs)
+    (OCCURRENCE_COUNT ?lneg ?nnegoccs)
+  )
+  :ordered-subtasks (and
+    (A_MARK_VAR_ASSIGNED ?l ?lneg)
+    (propagate-same-polarity ?l n1)
+    (propagate-opposite-polarity ?lneg n1)
+    (count-models ?dplusone)
+    (backtrack-opposite-polarity ?lneg n1)
+    (backtrack-same-polarity ?l n1)
+    (A_UNMARK_VAR_ASSIGNED ?l ?lneg)
+  )
+)
+
+; "else" case: split on some variable
+(:method m_count-models_split
+  :parameters (?d ?dplusone - number ?clausecount - number ?l ?lneg - literal 
+    ?nposoccs ?nnegoccs - number)
+  :task (count-models ?d)
+  :precondition (and
+    (SUCCESSOR ?d ?dplusone)
+    (CLAUSE_COUNT ?clausecount)
+    (not (satisfied_clause_count ?clausecount))
+    (not (empty_clause_present))
+    (unit_clause_count n0)
+    
+    (not (assigned ?l))
+    (OPPOSITE ?l ?lneg)
+    (OCCURRENCE_COUNT ?l ?nposoccs)
+    (OCCURRENCE_COUNT ?lneg ?nnegoccs)
+  )
+  :ordered-subtasks (and
+    (A_MARK_VAR_ASSIGNED ?l ?lneg)
+    
+    (propagate-same-polarity ?l n1)
+    (propagate-opposite-polarity ?lneg n1)
+    (count-models ?dplusone)
+    (backtrack-opposite-polarity ?lneg n1)
+    (backtrack-same-polarity ?l n1)
+    
+    (propagate-same-polarity ?lneg n1)
+    (propagate-opposite-polarity ?l n1)
+    (count-models ?dplusone)
+    (backtrack-opposite-polarity ?l n1)
+    (backtrack-same-polarity ?lneg n1)
+    
+    (A_UNMARK_VAR_ASSIGNED ?l ?lneg)
+  )
+)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; LEVEL 1 METHODS
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; recursive unfolding of propagating through all occurrences of a variable
+
+; propagating through same-polarity occurrences
+(:method m_propagate_same_polarity_end
+  :parameters (?l - literal ?firstocc - number)
+  :task (propagate-same-polarity ?l ?firstocc)
+  :precondition (and
+    (OCCURRENCE_COUNT ?l n0)
+  )
+  :ordered-subtasks (and
+  )
+)
+(:method m_propagate_same_polarity_single
+  :parameters (?l - literal ?firstocc - number ?c - clause)
+  :task (propagate-same-polarity ?l ?firstocc)
+  :precondition (and
+    (OCCURRENCE_INDEX ?l ?c ?firstocc)
+    (OCCURRENCE_COUNT ?l ?firstocc)
+  )
+  :ordered-subtasks (and
+    (propagate-clause-same-polarity ?l ?c)
+  )
+)
+(:method m_propagate_same_polarity_linear
+  :parameters (?l - literal ?firstocc ?nextocc - number ?c - clause)
+  :task (propagate-same-polarity ?l ?firstocc)
+  :precondition (and
+    (OCCURRENCE_INDEX ?l ?c ?firstocc)
+    (SUCCESSOR ?firstocc ?nextocc)
+    (not (OCCURRENCE_COUNT ?l ?firstocc))
+  )
+  :ordered-subtasks (and
+    (propagate-clause-same-polarity ?l ?c)
+    (propagate-same-polarity ?l ?nextocc)
+  )
+)
+
+; propagating through opposite-polarity occurrences
+(:method m_propagate_opposite_polarity_end
+  :parameters (?lneg - literal ?firstocc - number)
+  :task (propagate-opposite-polarity ?lneg ?firstocc)
+  :precondition (and
+    (OCCURRENCE_COUNT ?lneg n0)
+  )
+  :ordered-subtasks (and
+  )
+)
+(:method m_propagate_opposite_polarity_single
+  :parameters (?lneg - literal ?firstocc - number ?c - clause)
+  :task (propagate-opposite-polarity ?lneg ?firstocc)
+  :precondition (and
+    (OCCURRENCE_INDEX ?lneg ?c ?firstocc)
+    (OCCURRENCE_COUNT ?lneg ?firstocc)
+  )
+  :ordered-subtasks (and
+    (propagate-clause-opposite-polarity ?c)
+  )
+)
+(:method m_propagate_opposite_polarity_linear
+  :parameters (?lneg - literal ?firstocc ?nextocc - number ?c - clause)
+  :task (propagate-opposite-polarity ?lneg ?firstocc)
+  :precondition (and
+    (OCCURRENCE_INDEX ?lneg ?c ?firstocc)
+    (SUCCESSOR ?firstocc ?nextocc)
+    (not (OCCURRENCE_COUNT ?lneg ?firstocc))
+  )
+  :ordered-subtasks (and
+    (propagate-clause-opposite-polarity ?c)
+    (propagate-opposite-polarity ?lneg ?nextocc)
+  )
+)
+
+; recursive unfolding of backtracking on all occurrences of a variable
+
+; backtracking through same-polarity occurrences
+(:method m_backtrack_same_polarity_end
+  :parameters (?l - literal ?firstocc - number)
+  :task (backtrack-same-polarity ?l ?firstocc)
+  :precondition (and
+    (OCCURRENCE_COUNT ?l n0)
+  )
+  :ordered-subtasks (and
+  )
+)
+(:method m_backtrack_same_polarity_single
+  :parameters (?l - literal ?firstocc - number ?c - clause)
+  :task (backtrack-same-polarity ?l ?firstocc)
+  :precondition (and
+    (OCCURRENCE_INDEX ?l ?c ?firstocc)
+    (OCCURRENCE_COUNT ?l ?firstocc)
+  )
+  :ordered-subtasks (and
+    (backtrack-clause-same-polarity ?l ?c)
+  )
+)
+(:method m_backtrack_same_polarity_linear
+  :parameters (?l - literal ?firstocc ?nextocc - number ?c - clause)
+  :task (backtrack-same-polarity ?l ?firstocc)
+  :precondition (and
+    (OCCURRENCE_INDEX ?l ?c ?firstocc)
+    (SUCCESSOR ?firstocc ?nextocc)
+    (not (OCCURRENCE_COUNT ?l ?firstocc))
+  )
+  :ordered-subtasks (and
+    (backtrack-clause-same-polarity ?l ?c)
+    (backtrack-same-polarity ?l ?nextocc)
+  )
+)
+
+; backtracking through opposite-polarity occurrences
+(:method m_backtrack_opposite_polarity_end
+  :parameters (?lneg - literal ?firstocc - number)
+  :task (backtrack-opposite-polarity ?lneg ?firstocc)
+  :precondition (and
+    (OCCURRENCE_COUNT ?lneg n0)
+  )
+  :ordered-subtasks (and
+  )
+)
+(:method m_backtrack_opposite_polarity_single
+  :parameters (?lneg - literal ?firstocc - number ?c - clause)
+  :task (backtrack-opposite-polarity ?lneg ?firstocc)
+  :precondition (and
+    (OCCURRENCE_INDEX ?lneg ?c ?firstocc)
+    (OCCURRENCE_COUNT ?lneg ?firstocc)
+  )
+  :ordered-subtasks (and
+    (backtrack-clause-opposite-polarity ?c)
+  )
+)
+(:method m_backtrack_opposite_polarity_linear
+  :parameters (?lneg - literal ?firstocc ?nextocc - number ?c - clause)
+  :task (backtrack-opposite-polarity ?lneg ?firstocc)
+  :precondition (and
+    (OCCURRENCE_INDEX ?lneg ?c ?firstocc)
+    (SUCCESSOR ?firstocc ?nextocc)
+    (not (OCCURRENCE_COUNT ?lneg ?firstocc))
+  )
+  :ordered-subtasks (and
+    (backtrack-clause-opposite-polarity ?c)
+    (backtrack-opposite-polarity ?lneg ?nextocc)
+  )
+)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; LEVEL 2 METHODS
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; Case distinction for individual propagation and backtrack steps
+
+; Propagate through a clause which is already satisfied: noop
+(:method m_propagate-clause_same_polarity_skip_satisfied
+  :parameters (?l - literal ?c - clause)
+  :task (propagate-clause-same-polarity ?l ?c)
+  :precondition (and
+    (satisfied ?c)
+  )
+  :ordered-subtasks (and
+  )
+)
+(:method m_propagate-clause_opposite_polarity_skip_satisfied
+  :parameters (?c - clause)
+  :task (propagate-clause-opposite-polarity ?c)
+  :precondition (and
+    (satisfied ?c)
+  )
+  :ordered-subtasks (and
+  )
+)
+
+; Propagate through a same-polarity clause: mark it satisfied
+(:method m_propagate-clause_via_satisfy
+  :parameters (?l - literal ?c - clause)
+  :task (propagate-clause-same-polarity ?l ?c)
+  :precondition (and
+    (not (satisfied ?c))
+  )
+  :ordered-subtasks (and
+    (satisfy-clause ?l ?c)
+  )
+)
+
+; Propagate through an opposite-polarity clause: decrement its size
+(:method m_propagate-clause_via_eliminate
+  :parameters (?c - clause)
+  :task (propagate-clause-opposite-polarity ?c)
+  :precondition (and
+    (not (satisfied ?c))
+  )
+  :ordered-subtasks (and
+    (decrement-clause-size ?c)
+  )
+)
+
+; Backtrack through a same-polarity clause which is satisfied 
+; due to another literal: skip
+(:method m_backtrack-clause_same_polarity_skip_satisfied
+  :parameters (?l - literal ?c - clause)
+  :task (backtrack-clause-same-polarity ?l ?c)
+  :precondition (and
+    (satisfied ?c)
+    (not (satisfying_lit ?c ?l))
+  )
+  :ordered-subtasks (and
+  )
+)
+
+; Backtrack through an opposite-polarity clause which is satisfied: noop
+(:method m_backtrack-clause_opposite_polarity_skip_satisfied
+  :parameters (?c - clause)
+  :task (backtrack-clause-opposite-polarity ?c)
+  :precondition (and
+    (satisfied ?c)
+  )
+  :ordered-subtasks (and
+  )
+)
+
+; Backtrack through a same-polarity clause which is satisfied due to this lit:
+; unmark the clause as satisfied
+(:method m_backtrack-clause_via_satisfy
+  :parameters (?l - literal ?c - clause)
+  :task (backtrack-clause-same-polarity ?l ?c)
+  :precondition (and
+    (satisfied ?c)
+    (satisfying_lit ?c ?l)
+  )
+  :ordered-subtasks (and
+    (unsatisfy-clause ?l ?c)
+  )
+)
+
+; Backtrack through an opposite-polarity clause: increment its size again
+(:method m_backtrack-clause_via_eliminate
+  :parameters (?c - clause)
+  :task (backtrack-clause-opposite-polarity ?c)
+  :precondition (and
+    (not (satisfied ?c))
+  )
+  :ordered-subtasks (and
+    (increment-clause-size ?c)
+  )
+)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; LEVEL 3 METHODS
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; Marking a clause as satisfied
+
+; Unit clause: need to decrement unit clause count
+(:method m_satisfy_unit_clause
+  :parameters (?l - literal ?c - clause ?globsatcount ?globsatcountplusone ?unitcount ?unitcountplusone - number)
+  :task (satisfy-clause ?l ?c)
+  :precondition (and
+    (satisfied_clause_count ?globsatcount)
+    (SUCCESSOR ?globsatcount ?globsatcountplusone)
+    (unit_clause_count ?unitcountplusone)
+    (SUCCESSOR ?unitcount ?unitcountplusone)
+    (clause_length ?c n1)
+  )
+  :ordered-subtasks (and
+    (A_SATISFY_CLAUSE ?c ?l ?globsatcount ?globsatcountplusone)
+    (A_UPDATE_UNIT_CLAUSE_COUNT ?unitcountplusone ?unitcount)
+  )
+)
+; Non-unit clause
+(:method m_satisfy_nonunit_clause
+  :parameters (?l - literal ?c - clause ?globsatcount ?globsatcountplusone - number)
+  :task (satisfy-clause ?l ?c)
+  :precondition (and
+    (satisfied_clause_count ?globsatcount)
+    (SUCCESSOR ?globsatcount ?globsatcountplusone)
+    (not (clause_length ?c n1))
+  )
+  :ordered-subtasks (and
+    (A_SATISFY_CLAUSE ?c ?l ?globsatcount ?globsatcountplusone)
+  )
+)
+
+; Unmarking a clause as satisfied
+
+; Unit clause: need to increment unit clause count
+(:method m_unsatisfy_unit_clause
+  :parameters (?l - literal ?c - clause ?globsatcount ?globsatcountplusone ?unitcount ?unitcountplusone - number)
+  :task (unsatisfy-clause ?l ?c)
+  :precondition (and
+    (satisfied_clause_count ?globsatcountplusone)
+    (SUCCESSOR ?globsatcount ?globsatcountplusone)
+    (unit_clause_count ?unitcount)
+    (SUCCESSOR ?unitcount ?unitcountplusone)
+    (clause_length ?c n1)
+  )
+  :ordered-subtasks (and
+    (A_UPDATE_UNIT_CLAUSE_COUNT ?unitcount ?unitcountplusone)
+    (A_UNSATISFY_CLAUSE ?c ?l ?globsatcountplusone ?globsatcount)
+  )
+)
+; Non-unit clause
+(:method m_unsatisfy_nonunit_clause
+  :parameters (?l - literal ?c - clause ?globsatcount ?globsatcountplusone - number)
+  :task (unsatisfy-clause ?l ?c)
+  :precondition (and
+    (satisfied_clause_count ?globsatcountplusone)
+    (SUCCESSOR ?globsatcount ?globsatcountplusone)
+    (not (clause_length ?c n1))
+  )
+  :ordered-subtasks (and
+    (A_UNSATISFY_CLAUSE ?c ?l ?globsatcountplusone ?globsatcount)
+  )
+)
+
+; Eliminating a literal from a clause, decrementing its size
+
+; Eliminate a literal from a unit clause, rendering it an empty clause
+(:method m_decrement_unit_clause_size
+  :parameters (?c - clause ?unitcount ?unitcountplusone - number)
+  :task (decrement-clause-size ?c)
+  :precondition (and
+    (clause_length ?c n1)
+    (unit_clause_count ?unitcountplusone)
+    (SUCCESSOR ?unitcount ?unitcountplusone)    
+  )
+  :ordered-subtasks (and
+    (A_UPDATE_CLAUSE_LENGTH ?c n1 n0)
+    (A_UPDATE_UNIT_CLAUSE_COUNT ?unitcountplusone ?unitcount)
+    (A_MARK_EMPTY_CLAUSE_PRESENT)
+  )
+)
+; Eliminate a literal from a binary clause, rendering it a unit clause
+(:method m_decrement_binary_clause_size
+  :parameters (?c - clause ?unitcount ?unitcountplusone - number)
+  :task (decrement-clause-size ?c)
+  :precondition (and
+    (clause_length ?c n2)
+    (unit_clause_count ?unitcount)
+    (SUCCESSOR ?unitcount ?unitcountplusone)    
+  )
+  :ordered-subtasks (and
+    (A_UPDATE_CLAUSE_LENGTH ?c n2 n1)
+    (A_UPDATE_UNIT_CLAUSE_COUNT ?unitcount ?unitcountplusone)
+  )
+)
+; Eliminate a literal from a clause of size > 2
+(:method m_decrement_large_clause_size
+  :parameters (?c - clause ?clslen ?clslenminusone - number)
+  :task (decrement-clause-size ?c)
+  :precondition (and
+    (not (clause_length ?c n0))
+    (not (clause_length ?c n1))
+    (not (clause_length ?c n2))
+    (clause_length ?c ?clslen)
+    (SUCCESSOR ?clslenminusone ?clslen)
+  )
+  :ordered-subtasks (and
+    (A_UPDATE_CLAUSE_LENGTH ?c ?clslen ?clslenminusone)
+  )
+)
+
+; Restoring a literal from a clause, incrementing its size
+
+; Restore a literal from an empty clause, rendering it a unit clause
+(:method m_increment_empty_clause_size
+  :parameters (?c - clause ?unitcount ?unitcountplusone - number)
+  :task (increment-clause-size ?c)
+  :precondition (and
+    (clause_length ?c n0)
+    (unit_clause_count ?unitcount)
+    (SUCCESSOR ?unitcount ?unitcountplusone)
+  )
+  :ordered-subtasks (and
+    (A_UNMARK_EMPTY_CLAUSE_PRESENT)
+    (A_UPDATE_UNIT_CLAUSE_COUNT ?unitcount ?unitcountplusone)
+    (A_UPDATE_CLAUSE_LENGTH ?c n0 n1)
+  )
+)
+; Restore a literal from a unit clause, rendering it a binary clause
+(:method m_increment_unit_clause_size
+  :parameters (?c - clause ?unitcount ?unitcountplusone - number)
+  :task (increment-clause-size ?c)
+  :precondition (and
+    (clause_length ?c n1)
+    (unit_clause_count ?unitcountplusone)
+    (SUCCESSOR ?unitcount ?unitcountplusone)
+  )
+  :ordered-subtasks (and
+    (A_UPDATE_UNIT_CLAUSE_COUNT ?unitcountplusone ?unitcount)
+    (A_UPDATE_CLAUSE_LENGTH ?c n1 n2)
+  )
+)
+; Restore a literal from an clause of length > 1
+(:method m_increment_large_clause_size
+  :parameters (?c - clause ?clslen ?clslenplusone - number)
+  :task (increment-clause-size ?c)
+  :precondition (and
+    (not (clause_length ?c n0))
+    (not (clause_length ?c n1))
+    (clause_length ?c ?clslen)
+    (SUCCESSOR ?clslen ?clslenplusone)
+  )
+  :ordered-subtasks (and
+    (A_UPDATE_CLAUSE_LENGTH ?c ?clslen ?clslenplusone)
+  )
+)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; ACTIONS
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; maintain implicit stack of decisions / "trail"
+(:action A_MARK_VAR_ASSIGNED
+  :parameters (?l ?lneg - literal)
+  :precondition (and (not (assigned ?l)) (not (assigned ?lneg)))
+  :effect (and (assigned ?l) (assigned ?lneg))
+)
+(:action A_UNMARK_VAR_ASSIGNED
+  :parameters (?l ?lneg - literal)
+  :precondition (and (assigned ?l) (assigned ?lneg))
+  :effect (and (not (assigned ?l)) (not (assigned ?lneg)))
+)
+
+; toggle whether an empty clause is present
+(:action A_MARK_EMPTY_CLAUSE_PRESENT
+  :parameters ()
+  :precondition (and (not (empty_clause_present)))
+  :effect (and (empty_clause_present))
+)
+(:action A_UNMARK_EMPTY_CLAUSE_PRESENT
+  :parameters ()
+  :precondition (and (empty_clause_present))
+  :effect (and (not (empty_clause_present)))
+)
+
+; update number of (non-satisfied) unit clauses
+(:action A_UPDATE_UNIT_CLAUSE_COUNT
+  :parameters (?before ?after - number)
+  :precondition (and (unit_clause_count ?before))
+  :effect (and (not (unit_clause_count ?before)) (unit_clause_count ?after))
+)
+
+; update a clause's length (when eliminating or restoring an eliminated literal)
+(:action A_UPDATE_CLAUSE_LENGTH
+  :parameters (?c - clause ?clslen ?clslennew - number)
+  :precondition (and (clause_length ?c ?clslen))
+  :effect (and (not (clause_length ?c ?clslen)) (clause_length ?c ?clslennew))
+)
+
+; mark / unmark clause as satisfied
+(:action A_SATISFY_CLAUSE
+  :parameters (?c - clause ?l - literal ?globsatcount ?globsatcountplusone - number)
+  :precondition (and (not (satisfied ?c)) (satisfied_clause_count ?globsatcount) (SUCCESSOR ?globsatcount ?globsatcountplusone))
+  :effect (and (satisfied ?c) (satisfying_lit ?c ?l) (not (satisfied_clause_count ?globsatcount)) (satisfied_clause_count ?globsatcountplusone))
+)
+(:action A_UNSATISFY_CLAUSE
+  :parameters (?c - clause ?l - literal ?globsatcount ?globsatcountminusone - number)
+  :precondition (and (satisfied ?c) (satisfying_lit ?c ?l) (satisfied_clause_count ?globsatcount) (SUCCESSOR ?globsatcountminusone ?globsatcount))
+  :effect (and (not (satisfied ?c)) (not (satisfying_lit ?c ?l)) (not (satisfied_clause_count ?globsatcount)) (satisfied_clause_count ?globsatcountminusone))
+)
+
+; output action: signals that 2^(nvars - d) further models have been found.
+(:action A_OUTPUT_EXPONENTIAL_COUNT
+  :parameters (?d - number)
+  :precondition (and )
+  :effect (and )
+)
+
+)

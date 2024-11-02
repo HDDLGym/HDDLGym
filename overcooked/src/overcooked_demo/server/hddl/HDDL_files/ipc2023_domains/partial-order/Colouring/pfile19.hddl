@@ -1,0 +1,34 @@
+(define (problem tiling-19)
+  (:domain game)
+  (:objects
+    n0 n1 n2 n3 - number
+ c0 c1 IGN - colour
+  )
+  (:init
+    (next n0 n1)
+    (next n1 n2)
+    (next n2 n3)
+    (max n3)
+    (min n0)
+    (cur_colour_next IGN)
+    (isIGN IGN)
+    (colok IGN c0)
+    (colok IGN c1)
+    (colok c0 c0)
+    (colok c1 c1)
+    (tile c0 c0 c0 c0 n1)
+    (tile c0 c0 c0 c1 n1)
+    (tile c0 c0 c1 c0 n1)
+    (tile c0 c1 c0 c1 n1)
+    (tile c0 c1 c1 c0 n2)
+    (tile c1 c0 c0 c0 n3)
+  )
+  (:htn
+    :tasks (and
+      (rows n0)
+      (start_line n0)
+      (start_line n1)
+      (start_line n2)
+    )
+  )
+)

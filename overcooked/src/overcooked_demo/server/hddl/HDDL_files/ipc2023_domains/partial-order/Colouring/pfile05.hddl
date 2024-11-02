@@ -1,0 +1,33 @@
+(define (problem tiling-5)
+  (:domain game)
+  (:objects
+    n0 n1 n2 n3 n4 n5 n6 n7 n8 n9 - number
+ c0 IGN - colour
+  )
+  (:init
+    (next n0 n1)
+    (next n1 n2)
+    (next n2 n3)
+    (next n3 n4)
+    (next n4 n5)
+    (next n5 n6)
+    (next n6 n7)
+    (next n7 n8)
+    (next n8 n9)
+    (max n3)
+    (min n0)
+    (cur_colour_next IGN)
+    (isIGN IGN)
+    (colok IGN c0)
+    (colok c0 c0)
+    (tile c0 c0 c0 c0 n9)
+  )
+  (:htn
+    :tasks (and
+      (rows n0)
+      (start_line n0)
+      (start_line n1)
+      (start_line n2)
+    )
+  )
+)

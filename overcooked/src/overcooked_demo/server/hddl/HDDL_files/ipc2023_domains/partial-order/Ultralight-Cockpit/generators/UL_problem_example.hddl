@@ -1,0 +1,159 @@
+(define (problem pilotfit)
+    (:domain lowfuel)
+    (:objects
+		; ----- cabin accessories
+		fireExtinguisher - FireExtinguisher
+		; ----- aircraft parts
+		magnetos - Magnetos 
+		engine - Engine
+		fuelGauge - FuelGauge
+		master - Master
+		mixtureControl - MixtureControl
+		throttle - Throttle
+		heater - CabinHeater
+		cabin - Cabin
+		airvent - Airvent
+		flaps - Flaps
+		landingGear - LandingGear
+		safetyBelt - SafetyBelt
+		stick - Stick
+		trim - Trim
+		aileron - Aileron
+		rudder - Rudder
+		electricalSystem - ElectricalSystem		
+		nose - Nose
+		; ----- message to the ATC
+		mayday - MaydayMessage
+		fireOnStartMessage - FireOnStartMessage 
+		electricalFireOnGroundMessage - ElectricalFireOnGroundMessage 
+		electricalFireOnFlightMessage - ElectricalFireOnFlightMessage 
+		cabinFireOnFlightMessage - CabinFireOnFlightMessage
+		; ----- locations
+		aerodrome1 - LandingSpot
+		aerodrome2 - LandingSpot
+		aerodrome3 - LandingSpot
+		aerodrome4 - LandingSpot
+		aerodrome5 - LandingSpot
+		runwayAerodrome1 - Runway
+		; ----- control parameters			 
+		heading - Heading
+        pitchRate - PitchRate
+        correctCruisingAirSpeed - Airspeed
+		speedZeroKmh - AirspeedHalt
+		airspeed120kmh - AirspeedForLanding
+		airspeed100kmh - AirspeedOnFinal
+		airspeed125kmh - AirSpeedFlyOver
+		groundSpeed90kmh - GroundSpeedTakeoff
+		speed115kmh - AirspeedTakeOffClimb
+		minAltitude150ft - AltitudeTakeOffClimb
+        propellerRatio - PropellerRatio
+        cruisingAltitude - Altitude
+		altitude150ft - AltitudeFlyOver
+		power3000rpm - PowerBeforeLanding
+		altitude30ft - LandingAltitude1
+		altitude2ft - LandingAltitude2
+		thrustLevel - Thrust
+		throttleRatioTakeOffClimb - ThrottleRatioTakeOffClimb
+		; ----- Parts positions
+		flapsOnPositionOne - FlapsPositionOne
+		flapsLandingPosition - FlapsLandingPosition
+		flapsPositionUp - FlapsPositionUp
+		stickBackwards - StickLandingPosition
+		aileronNeutralPosition - AileronNeutralPosition
+		rudderOppositePosition - RudderOppositePosition
+		trimNeutral - TrimAfterLandingPosition
+		noseDown - NoseDown
+		noseLiftedSlightly - NoseLiftedSlightly
+		; ----- External conditions
+		windSpeedCondition - WindSpeedCondition
+		windDirectionCondition - WindDirectionCondition
+		headingCondition - HeadingCondition
+		airspeedCondition - AirspeedCondition
+		aerodrome1SurfaceCondition - LandingSpotSurfaceCondition
+		aerodrome1SlopeCondition - LandingSpotSlopeCondition
+		aerodrome1ObstructionCondition - LandingSpotObstructionCondition
+		aerodrome2SurfaceCondition - LandingSpotSurfaceCondition
+		aerodrome2SlopeCondition - LandingSpotSlopeCondition
+		aerodrome2ObstructionCondition - LandingSpotObstructionCondition
+		aerodrome3SurfaceCondition - LandingSpotSurfaceCondition
+		aerodrome3SlopeCondition - LandingSpotSlopeCondition
+		aerodrome3ObstructionCondition - LandingSpotObstructionCondition
+		aerodrome4SurfaceCondition - LandingSpotSurfaceCondition
+		aerodrome4SlopeCondition - LandingSpotSlopeCondition
+		aerodrome4ObstructionCondition - LandingSpotObstructionCondition
+		aerodrome5SurfaceCondition - LandingSpotSurfaceCondition
+		aerodrome5SlopeCondition - LandingSpotSlopeCondition
+		aerodrome5ObstructionCondition - LandingSpotObstructionCondition
+    )
+
+		
+		
+		
+    (:htn
+        :tasks
+        (and
+			(precautionary_land)
+        )
+        :ordering
+        ()
+        :constraints
+        ()
+    )
+
+    ; (:htn :tasks (tlt));; generic stuff
+    (:init
+	
+		; turned on during in-flight
+		(p_isOn engine)
+		(p_isOn mixtureControl)
+		(p_pilotInAirplane)
+		(p_isOn fuelGauge)
+		(p_isOn magnetos)
+		(p_isOn master)
+		(p_isOpen throttle)
+		(p_isOn heater)
+		(not (p_isOpen airvent))
+		(p_extinguisherExist fireExtinguisher)
+				
+		; flight phases	
+		(p_landingSpotClear aerodrome1)
+		(not (p_reachable aerodrome1))
+		(p_acceptableLandingCondition aerodrome1SurfaceCondition aerodrome1)
+		(p_acceptableLandingCondition aerodrome1SlopeCondition aerodrome1)
+		(p_acceptableLandingCondition aerodrome1ObstructionCondition aerodrome1)
+		
+		(p_landingSpotClear aerodrome2)
+		(p_reachable aerodrome2)
+		(p_acceptableLandingCondition aerodrome2SurfaceCondition aerodrome2)
+		(not (p_acceptableLandingCondition aerodrome2SlopeCondition aerodrome2))
+		(p_acceptableLandingCondition aerodrome2ObstructionCondition aerodrome2)
+		
+		(p_landingSpotClear aerodrome3)
+		(p_reachable aerodrome3)
+		(p_acceptableLandingCondition aerodrome3SurfaceCondition aerodrome3)
+		(p_acceptableLandingCondition aerodrome3SlopeCondition aerodrome3)
+		(not (p_acceptableLandingCondition aerodrome3ObstructionCondition aerodrome3))
+		
+		(p_landingSpotClear aerodrome4)
+		(p_reachable aerodrome4)
+		(p_acceptableLandingCondition aerodrome4SurfaceCondition aerodrome4)
+		(p_acceptableLandingCondition aerodrome4SlopeCondition aerodrome4)
+		(p_acceptableLandingCondition aerodrome4ObstructionCondition aerodrome4)
+		
+		
+		(p_landingSpotClear aerodrome5)
+		(not (p_reachable aerodrome5))
+		(p_acceptableLandingCondition aerodrome5SurfaceCondition aerodrome5)
+		(not (p_acceptableLandingCondition aerodrome5SlopeCondition aerodrome5))
+		(p_acceptableLandingCondition aerodrome5ObstructionCondition aerodrome5)
+		
+
+    )
+	(:goal
+		(and
+			(p_airplaneLanded)
+		)
+	)
+
+)
+

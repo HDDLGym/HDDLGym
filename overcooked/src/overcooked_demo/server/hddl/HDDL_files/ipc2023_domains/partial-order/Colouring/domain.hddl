@@ -1,0 +1,353 @@
+(define (domain tiling)
+(:requirements :hierarchy :typing :equality)
+
+
+(:types number colour - object)
+;;;(:constants Y N - status U D L R - direction)
+
+
+(:task deleting :parameters (?x - number))
+(:task checking :parameters (?x - number))
+(:task stepping :parameters (?x - number))
+
+(:task start_line :parameters (?x - number))
+(:task line :parameters (?c - colour))
+(:task rows :parameters (?x - number))
+(:task cells :parameters (?x - number))
+(:task tile_choice :parameters (?c ?cc - colour))
+(:task satisfy :parameters ())
+
+(:predicates
+	(next ?x ?y - number)
+	(hasCounter ?x - number)
+	(min ?x - number)
+	(max ?x - number)
+	(cur_colour_tape ?c - colour)
+	(cur_colour_next ?c - colour)
+	(isIGN ?c - colour)
+	(tape)
+	(tape2)
+	(tile ?c1 ?c2 ?c3 ?c4 - colour ?n - number)
+	(colok ?c1 ?c2 - colour)
+	;(on ?x ?y - coord ?s - status)
+)
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; row generators
+(:method row_start
+  :parameters (?c ?cc ?ccc - number ?curcol ?IGN - colour)
+  :task (rows ?c)
+  :precondition (and (min ?ccc) (next ?c ?cc) (isIGN ?IGN))
+  :ordered-subtasks (and
+    (reset_col_next ?IGN ?curcol)
+	(cells ?ccc)
+	(rows ?cc)
+  )
+)
+
+(:method no_row
+  :parameters (?c - number)
+  :task (rows ?c)
+  :precondition (and (max ?c))
+  :ordered-subtasks (and
+	(satisfy)
+  )
+)
+
+(:method satisfy_something
+  :parameters (?col2 - colour)
+  :task (satisfy)
+  :ordered-subtasks (and
+	(set_tape2)
+	(set_colour2 ?col2)
+    (delete_tape2)
+	(satisfy)
+  )
+)
+
+(:method no_satisfy
+  :parameters ()
+  :task (satisfy)
+  :ordered-subtasks (and
+  )
+)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; line generators
+(:method line_start
+  :parameters (?c - number ?curcol ?IGN - colour)
+  :task (start_line ?c)
+  :precondition (and (isIGN ?IGN))
+  :ordered-subtasks (and
+	(stepping ?c)
+    (set_colour ?IGN)
+    (get_colour_tape ?curcol)
+	(line ?curcol)
+  )
+)
+
+
+(:method next_line
+  :parameters (?c - number ?oldcol ?curcol - colour)
+  :task (line ?oldcol)
+  :precondition (and (min ?c))
+  :ordered-subtasks (and
+	(stepping ?c)
+    (set_colour ?oldcol)
+    (get_colour_tape ?curcol)
+	(line ?curcol)
+  )
+)
+
+(:method no_line
+  :parameters (?c - colour)
+  :task (line ?c)
+  :ordered-subtasks (and
+  )
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; cells
+
+
+(:method cell_content_create
+  :parameters (?c ?n ?nn - number ?col1 ?col2 ?colDown - colour)
+  :task (cells ?n)
+  :precondition (and (min ?c) (next ?n ?nn) (colok ?colDown ?col1))
+  :ordered-subtasks (and
+	 (deleting ?c)
+     (set_tape)
+     (delete_tape)
+	 (checking ?c)
+	 (get_colour ?colDown)
+	 (tile_choice ?col1 ?col2)
+	 ;; synchronize with the tape .. TODO ---------------------------------------------
+     (set_tape2)
+	 (set_colour2 ?col2)
+     (delete_tape2)
+     (cells ?nn)
+  )
+)
+
+
+(:method choose_tile_to_place
+  :parameters (?cc ?col1 ?col2 ?col3 ?col4 - colour ?n ?nn - number)
+  :task (tile_choice ?col3 ?col4)
+  :ordered-subtasks (and
+	(do_tile ?cc ?col1 ?col2 ?col3 ?col4 ?n ?nn)
+  )
+)
+
+
+(:method cell_content_end
+  :parameters (?c - number)
+  :task (cells ?c)
+  :precondition (and (max ?c))
+  :ordered-subtasks (and
+  )
+)
+
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; methods for repeading actions in order
+(:method round_steps
+  :parameters (?c ?cc - number)
+  :task (stepping ?c)
+  :ordered-subtasks (and
+	(count_steps ?c ?cc)
+	(stepping ?cc)
+  )
+)
+
+(:method round_steps_end
+  :parameters (?c - number)
+  :task (stepping ?c)
+  :precondition (and (max ?c))
+  :ordered-subtasks (and
+  )
+)
+
+
+(:method round_delete
+  :parameters (?c ?cc - number)
+  :task (deleting ?c)
+  :ordered-subtasks (and
+	(count_delete ?c ?cc)
+	(deleting ?cc)
+  )
+)
+
+(:method round_delete_end
+  :parameters (?c - number)
+  :task (deleting ?c)
+  :precondition (and (max ?c))
+  :ordered-subtasks (and
+  )
+)
+
+
+(:method round_check
+  :parameters (?c ?cc - number)
+  :task (checking ?c)
+  :ordered-subtasks (and
+	(count_check ?c ?cc)
+	(checking ?cc)
+  )
+)
+
+(:method round_check_end
+  :parameters (?c - number)
+  :task (checking ?c)
+  :precondition (and (max ?c))
+  :ordered-subtasks (and
+  )
+)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(:action count_steps
+	:parameters (?c ?cc - number)
+	:precondition (and
+		(next ?c ?cc)
+		(tape)
+	)
+	:effect (and
+		(hasCounter ?c)
+	)
+)
+
+(:action count_delete
+	:parameters (?c ?cc - number)
+	:precondition (and
+		(next ?c ?cc)
+	)
+	:effect (and
+		(not (hasCounter ?c))
+	)
+)
+
+(:action count_check
+	:parameters (?c ?cc - number)
+	:precondition (and
+		(next ?c ?cc)
+		(hasCounter ?c)
+	)
+	:effect (and
+	)
+)
+
+
+
+(:action set_colour
+	:parameters (?c - colour)
+	:precondition (and
+		(tape)
+	)
+	:effect (and
+		(cur_colour_tape ?c)
+	)
+)
+
+(:action set_colour2
+	:parameters (?c - colour)
+	:precondition (and
+		(tape2)
+	)
+	:effect (and
+		(cur_colour_tape ?c)
+	)
+)
+
+(:action get_colour
+	:parameters (?c - colour)
+	:precondition (and
+		(cur_colour_tape ?c)
+	)
+	:effect (and
+		(not (cur_colour_tape ?c))
+	)
+)
+
+
+(:action get_colour_tape
+	:parameters (?c - colour)
+	:precondition (and
+		(tape2)
+		(cur_colour_tape ?c)
+	)
+	:effect (and
+		(not (cur_colour_tape ?c))
+	)
+)
+
+(:action set_tape
+	:parameters ()
+	:precondition (and
+	)
+	:effect (and
+		(tape)
+	)
+)
+
+(:action delete_tape
+	:parameters ()
+	:precondition (and
+	)
+	:effect (and
+		(not (tape))
+	)
+)
+
+(:action set_tape2
+	:parameters ()
+	:precondition (and
+	)
+	:effect (and
+		(tape2)
+	)
+)
+
+(:action delete_tape2
+	:parameters ()
+	:precondition (and
+	)
+	:effect (and
+		(not (tape2))
+	)
+)
+
+
+(:action reset_col_next
+	:parameters (?col1 ?col2 - colour)
+	:precondition (and
+		(cur_colour_next ?col2)
+	)
+	:effect (and
+		(cur_colour_next ?col1)
+		(not (cur_colour_next ?col2))
+	)
+)
+
+
+(:action do_tile
+	:parameters (?col1cur ?col1 ?col2 ?col3 ?col4 - colour ?n ?nn - number)
+	:precondition (and
+		(tile ?col1 ?col2 ?col3 ?col4 ?n)
+		(next ?nn ?n)
+		(not (min ?n))
+		(cur_colour_next ?col1cur)
+		(colok ?col1cur ?col1)
+	)
+	:effect (and
+		(not (tile ?col1 ?col2 ?col3 ?col4 ?n))
+		(tile ?col1 ?col2 ?col3 ?col4 ?nn)
+		(not (cur_colour_next ?col1cur))
+		(cur_colour_next ?col2)
+	)
+)
+
+
+)

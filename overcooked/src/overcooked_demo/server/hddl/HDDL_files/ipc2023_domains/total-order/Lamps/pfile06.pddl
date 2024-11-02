@@ -1,0 +1,37 @@
+(define (problem game-6)
+  (:domain game)
+  (:objects
+    l0 l1 l2 - coord
+  )
+  (:init
+    (on l0 l0 N)
+    (on l0 l1 Y)
+    (on l0 l2 N)
+    (on l1 l0 Y)
+    (on l1 l1 Y)
+    (on l1 l2 N)
+    (on l2 l0 N)
+    (on l2 l1 Y)
+    (on l2 l2 Y)
+    (next l0 l1)
+    (next l1 l2)
+    (max l2)
+    (min l0)
+  )
+  (:htn
+    :tasks (and
+      (play)
+    )
+  )
+  (:goal (and
+    (on l0 l0 N)
+    (on l0 l1 Y)
+    (on l0 l2 N)
+    (on l1 l0 Y)
+    (on l1 l1 Y)
+    (on l1 l2 N)
+    (on l2 l0 Y)
+    (on l2 l1 Y)
+    (on l2 l2 Y)
+  ))
+)
