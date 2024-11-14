@@ -1342,8 +1342,8 @@ class Literal:
         elif self.is_not:
             return not self.child_clauses[0].check_literal(state, debug=debug)
         elif self.is_when:
-            assert len(self.child_clauses) !=2, "Need 2 clauses after when, this has {} clauses".format(len(self.child_clauses))
-            return self.child_clauses[0].check_literal(state, debug=debug) or self.child_clauses[1].check_literal(state, debug=debug)
+            assert len(self.child_clauses) !=2, "Need 2 clauses after when, this literal {} has {} clauses".format(self.literal_str,len(self.child_clauses))
+            return not self.child_clauses[0].check_literal(state, debug=debug) or self.child_clauses[1].check_literal(state, debug=debug)
         else: #this is atom
             if self.is_compare:
                 items = self.literal_str.split(" ")
