@@ -197,10 +197,18 @@ def generate_lifted_predicate(predicates_str, debug=False):
     gen_pre_list.append(LiftedPredicate(pre,debug))
   return gen_pre_list
 
-def generate_object_dict(types_str, objects_str):
-  '''generate a object_dict {type: list(all object in types)}
-  input: types_str (from domain), objects_str (from problem)
-  output: type_object_dict (object_dict), supertype_type_dict (type_dict)
+def generate_object_dict(types_str, objects_str, constant_str=''):
+  '''Generate dictionaries for objects/constants and type hierarchy in HDDL.
+
+    Inputs:
+        types_str (str): The types section from an HDDL domain file.
+        objects_str (str): The objects section from an HDDL problem file.
+        constant_str (str, optional): The constants section from an HDDL domain file. Default is an empty string.
+
+    Outputs:
+        tuple:
+            - type_object_dict: {type: list of all objects and constants in the type}.
+            - supertype_type_dict: {supertype: list of all relevant types}.
   '''
   # 1. generate type_dict using info from types_str
   types_str = types_str[len('types')+1:]
@@ -250,6 +258,13 @@ def generate_object_dict(types_str, objects_str):
   objects_str = objects_str.replace(')','')
   objects_str = objects_str.replace('\t', ' ')
   com_list = objects_str.split(' ')
+  if len(constant_str) != 0:
+    constant_str = constant_str[len('constants'):]
+    constant_str = constant_str.replace('\n', '')
+    constant_str = constant_str.replace(')','')
+    constant_str = constant_str.replace('\t',' ')
+    com_list += constant_str.split(' ')
+  
   next_is_type = False
   all_keys = set(type_dict.keys())
   for a in type_dict.values():
