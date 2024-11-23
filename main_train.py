@@ -20,8 +20,8 @@ def parse_arguments():
   parser = argparse.ArgumentParser()
   parser.add_argument('--dvc', type=str, default='cuda', help='running device: cuda or cpu')
   # parser.add_argument('--EnvIdex', type=int, default=0, help='CP-v1, LLd-v2')
-  parser.add_argument('--domain', type=str, default=str(script_dir / "HDDL_files/ipc2023_domains/Transport/transport_domain_hddlgym_with_collab.hddl"), help='Which domain HDDL file to load?')
-  parser.add_argument('--problem', type=str, default=str(script_dir / "HDDL_files/ipc2023_domains/Transport/pfile01.hddl"), help='Which problem HDDL file to load?')
+  parser.add_argument('--domain', type=str, default=str(script_dir / "HDDL_files/Overcooked_specialization/overcooked_short_domain.hddl"), help='Which domain HDDL file to load?')
+  parser.add_argument('--problem', type=str, default=str(script_dir / "HDDL_files/Overcooked_specialization/overcooked_short_prob2.hddl"), help='Which problem HDDL file to load?')
   parser.add_argument('--write', type=str2bool, default=False, help='Use SummaryWriter to record the training')
   parser.add_argument('--render', type=str2bool, default=False, help='Render or Not')
   parser.add_argument('--Loadmodel', type=str2bool, default=False, help='Load pretrained model or Not')
@@ -32,6 +32,7 @@ def parse_arguments():
   parser.add_argument('--Max_train_steps', type=int, default=5e7, help='Max training steps')
   parser.add_argument('--save_interval', type=int, default=1e3, help='Model saving interval, in steps.')
   parser.add_argument('--eval_interval', type=int, default=1e3, help='Model evaluating interval, in steps.')
+  parser.add_argument('--planner_time_limit', type=int, default=5, help='The time limit (in seconds) for running the planner for each agent at each step')
 
   parser.add_argument('--gamma', type=float, default=0.99, help='Discounted Factor')
   parser.add_argument('--lambd', type=float, default=0.95, help='GAE Factor')
@@ -127,14 +128,17 @@ def main_train(opt, debug=False):
                 # print("step: ",step)
                 if opt.use_central_planner:
                   # 5.1. If plan with centralized planner:
-                  env.agents = centralized_planner(env, all_agents = env.agents, all_policies = policy_list, debug=debug, deterministic=False, device=opt.dvc)
+                  env.agents = centralized_planner(env, all_agents = env.agents, all_policies = policy_list,\
+                   debug=debug, deterministic=False, device=opt.dvc, time_limit=opt.planner_time_limit)
                 else:
                   # 5.2 run decentralized plan for each agent to get action for each agent at each step
                   for ag in env.agents:
                     # belief_other_agents = copy.deepcopy(env.agents)
                     # belief_other_agents.remove(ag)
                     belief_other_agents = [] # comment this line if want manually embed belief to be groundtruth
-                    ag.decentralize_planner_agent(env, belief_other_agents = belief_other_agents,agent_policy = policy, other_agent_policy_list = [policy]*(len(env.agents)-1), device=opt.dvc, deterministic=False)
+                    ag.decentralize_planner_agent(env, belief_other_agents = belief_other_agents,agent_policy = policy,\
+                     other_agent_policy_list = [policy]*(len(env.agents)-1), device=opt.dvc, deterministic=False, \
+                     time_limit=opt.planner_time_limit)
 
                 ############
                 #extract action and convert to dict of string
@@ -239,11 +243,14 @@ def main_train(opt, debug=False):
                     plt.plot(c_loss_list, 'r')
                     plt.title("Actic Loss and Critic Loss")
                     plt.close(fig)
-                    fig.savefig('./loss_plot.png')
+                    fig_dir = script_dir / 'model'
+                    if not os.path.exists(fig_dir):
+                        os.makedirs(fig_dir)
+                    fig.savefig(str(fig_dir / 'loss_plot.png'))
 
                 '''Record & log'''
                 if total_steps % opt.eval_interval == 0 and total_steps>0:
-                    score = evaluate_policy(eval_env, policy, turns=1, opt=opt) # evaluate the policy for 3 times, and get averaged result
+                    score = evaluate_policy(eval_env, policy, turns=1, opt=opt) # evaluate the policy for 'turns' times, and get averaged result
                     if opt.write: writer.add_scalar('ep_r', score, global_step=total_steps)
                     print('EnvName:',opt.problem,'seed:',opt.seed,'steps: {}k'.format(int(total_steps/1000)),'score:', score)
 
@@ -282,24 +289,30 @@ def evaluate_model(opt):
 
     eval_env.close()
 
-opt = parse_arguments()
-opt.domain = str(script_dir / "HDDL_files/Overcooked_specialization/overcooked_short_domain.hddl")
-opt.problem = str(script_dir / "HDDL_files/Overcooked_specialization/overcooked_short_prob2.hddl")
 
 ### Call main_train:
 if __name__ == "__main__":
     opt = parse_arguments()
-#     opt.domain = str(script_dir / "HDDL_files/Overcooked_specialization/overcooked_short_domain.hddl")
-#     opt.problem = str(script_dir / "HDDL_files/Overcooked_specialization/overcooked_short_prob2.hddl")
+    script_dir = Path(os.path.dirname(os.path.abspath(__file__)))
+    # If you want to overwrite domain and problem files (so the command is shorter), follows are examples:
+    # 1. Overcooked domain:
+    # opt.domain = str(script_dir / "HDDL_files/Overcooked_specialization/overcooked_short_domain.hddl")
+    # opt.problem = str(script_dir / "HDDL_files/Overcooked_specialization/overcooked_short_prob2.hddl")
+    # 2. Transport domain with collaboration:
     # opt.domain = str(script_dir / "HDDL_files/ipc2023_domains/Transport/transport_domain_hddlgym_with_collab.hddl")
     # opt.problem = str(script_dir / "HDDL_files/ipc2023_domains/Transport/transport_collab_pfile01.hddl")
+    # 3. Satellite domain:
     # opt.domain = str(script_dir / "HDDL_files/ipc2023_domains/Satellite/domain_hddlgym.hddl")
     # opt.problem = str(script_dir / "HDDL_files/ipc2023_domains/Satellite/2obs-1sat-2mod.hddl")
+
     print(opt.problem)
     main_train(opt, debug=opt.debug)
+
+    # If want to evaluate the model instead of training: comment the previous line and call the following line
+    # Make sure to have correct model ID (which is the number of training steps in its name) by including "--Model <ID>" in the command
     # evaluate_model(opt)
 
 
 # command line:
-# python main_train.py --domain /overcooked_short_domain.hddl --problem ./overcooked_short_prob2.hddl --dvc cpu
+# python main_train.py --domain ./HDDL_files/overcooked_short_domain.hddl --problem ./HDDL_files/overcooked_short_prob2.hddl --dvc cpu
 
