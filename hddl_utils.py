@@ -1233,7 +1233,6 @@ class Precondition:
 #         pre_lit_str = pre_lit_str[:pre_lit_str.rindex(')')]
         if pre_lit_str.replace(' ','') == '':
           self.precondition_str = None
-        print("precondition literal str:",pre_lit_str)
         self.precondition_literal = Literal(pre_lit_str)
         self.grounded_precondition_literal = None
 
