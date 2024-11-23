@@ -3,7 +3,7 @@ from hddl_utils import extract_full_str, extract_dynamic_predicates, generate_ob
 from hddl_utils import HTN, Method, Action, clean_str, extract_object_list, Task
 # Main parser function:
 
-def main_parser(domain_file, prob_file, debug=True):
+def main_parser(domain_file, prob_file, debug=False):
     '''
     inputs: domain and problem filename (strings of directories of the files)
     outputs: dictionary of following elements:
@@ -21,7 +21,7 @@ def main_parser(domain_file, prob_file, debug=True):
     '''
     domain_hddl = read_hddl(domain_file)
     prob_hddl = read_hddl(prob_file)
-    domain_headers = ['requirements','types','predicates','task','method','action']
+    domain_headers = ['requirements','types','constants','predicates','task','method','action']
     problem_headers = ['objects', 'htn', 'init', 'goal']
     domain_com_dict = split_components(domain_hddl, domain_headers, split_character = '(:')
     prob_com_dict = split_components(prob_hddl, problem_headers, split_character = '(:')
@@ -47,7 +47,11 @@ def main_parser(domain_file, prob_file, debug=True):
 
     # 2. Generate list of types (domain_hddl)
     # 3. Generate list of objects (domain and problem)
-    type_object_dict, supertype_type_dict = generate_object_dict(domain_com_dict['types'][0], prob_com_dict['objects'][0])
+    if len(domain_com_dict['constants'])>0:
+      constants_str = domain_com_dict['constants'][0]
+    else:
+      constants_str = ''
+    type_object_dict, supertype_type_dict = generate_object_dict(domain_com_dict['types'][0], prob_com_dict['objects'][0], constant_str = constants_str)
     types_list = list(type_object_dict.keys())
     objects_list = set()
     for t in types_list:
