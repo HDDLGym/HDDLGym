@@ -36,6 +36,7 @@ def centralized_planner(world, main_agent_index=0, all_agents = [], all_policies
   # 0. Common parameters:
   if not device:
       device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+      print("setting device to ",device)
   infeasible_com_list = list()
   if len(all_agents) != len(world.agents):
     agents = world.agents
@@ -57,6 +58,7 @@ def centralized_planner(world, main_agent_index=0, all_agents = [], all_policies
   all_operators = list(all_operators)
   observation_num = get_observation_one_hot_vector(world.current_state, all_operators, world.env_dictionary, device = device)
   agent_reach_action = [] # list of name of agents who have reach their action in their task_method_hierarchy
+  print("---Running while loop until all agents reach action...")
   while len(agent_reach_action) < len(agents):
     valid_operators_dict = dict()
     # 1. Find a valid list of operator of the agent, giving the current hierarchy, use policy to find prob list of them
@@ -161,7 +163,7 @@ def centralized_planner(world, main_agent_index=0, all_agents = [], all_policies
     # Note: assume that we use policy of the main agent to get probability for all operators of all agents (including belief of other agents)
     prob_list = main_policy.select_action(observation_one_hot_vector, value=True)
     for com in valid_operator_combination_list:
-      com_values = get_grounded_prob_list_from_policy_output(com, prob_list, world.env_dictionary)
+      com_values = get_grounded_prob_list_from_policy_output(com, prob_list, world.env_dictionary,device=device)
       valid_prob_list.append(torch.prod(com_values))
     # normalize:
     if debug:
@@ -209,7 +211,7 @@ def centralized_planner(world, main_agent_index=0, all_agents = [], all_policies
         agent_prob_oper_list = agent_policy.select_action(observation_one_hot_vector, value=True)
         prob_op_list = []
         related_opers = [chosen_combination[com_i] for com_i in related_oper_indices]
-        prob_op_list = get_grounded_prob_list_from_policy_output(related_opers, agent_prob_oper_list, world.env_dictionary)
+        prob_op_list = get_grounded_prob_list_from_policy_output(related_opers, agent_prob_oper_list, world.env_dictionary,device=device)
         #normalize:
         prob_op_list = prob_op_list/(torch.sum(prob_op_list).item()+1e-20)
         if deterministic:
