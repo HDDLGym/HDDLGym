@@ -9,14 +9,19 @@ import random
 import itertools
 import copy
 import torch
+import time
 
 
-def centralized_planner(world, main_agent_index=0, all_agents = [], all_policies = [], debug=False, deterministic=False, device = False):
+def centralized_planner(world, main_agent_index=0, all_agents = [], all_policies = [], debug=False, deterministic=False, device = False, time_limit = 60):
   ''' This function plan the next operators of all agents up until all of them reach actions
   inputs:
   - world: using info of world.current_state, world.env_ditionary dict
   - all_agents: list of instances of Agent, if empty (default), set it to copy.deepcopy(world.agents)
   - all_policies: list of policies of all agents, if empty (default), use random policy for all of them
+  - debug: boolean
+  - deterministic: boolean, indicate whether choose the operators based on their probability or have some randomness with the prob
+  - device: for torch device
+  - time_limit: int, end the planner for this step if spending more than time_limit seconds, the hierarchy of each agent be ['none agent-name']
   outputs:
   - list of all Agent instances that have updated hierarchies
 
@@ -57,7 +62,17 @@ def centralized_planner(world, main_agent_index=0, all_agents = [], all_policies
   all_operators = list(all_operators)
   observation_num = get_observation_one_hot_vector(world.current_state, all_operators, world.env_dictionary, device = device)
   agent_reach_action = [] # list of name of agents who have reach their action in their task_method_hierarchy
+  if debug: print("---Start while loop...")
+  time_start = time.time()
   while len(agent_reach_action) < len(agents):
+    elapsed_time = time.time() - time_start
+    if elapsed_time > time_limit:
+      print("Centralized Planner's running time has reach the time limit of {} seconds, setting incomplete agents' hierarchy to ['none']!".format(time_limit))
+      for agent in agents:
+        if agent.name not in agent_reach_action:
+          agent.task_method_hierarchy = ['none '+agent.name]
+          agent.prob_hierarchy = [1]
+      break # break the while loop
     valid_operators_dict = dict()
     # 1. Find a valid list of operator of the agent, giving the current hierarchy, use policy to find prob list of them
     current_hierachy = []
@@ -163,12 +178,12 @@ def centralized_planner(world, main_agent_index=0, all_agents = [], all_policies
     # Note: assume that we use policy of the main agent to get probability for all operators of all agents (including belief of other agents)
     prob_list = main_policy.select_action(observation_one_hot_vector, value=True)
     for com in valid_operator_combination_list:
-      com_values = get_grounded_prob_list_from_policy_output(com, prob_list, world.env_dictionary)
+      com_values = get_grounded_prob_list_from_policy_output(com, prob_list, world.env_dictionary, device=device)
       valid_prob_list.append(torch.prod(com_values))
     # normalize:
-    if debug:
-      print('valid Prob list:', valid_prob_list)
-      print("valid operator com:", valid_operator_combination_list)
+    # if debug:
+    #   print('valid Prob list:', valid_prob_list)
+    #   print("valid operator com:", valid_operator_combination_list)
     valid_prob_list = torch.tensor(valid_prob_list,device=device)
     valid_prob_list = valid_prob_list/(torch.sum(valid_prob_list)+1e-20)
     # valid_prob_list = valid_prob_list.tolist()
@@ -219,7 +234,7 @@ def centralized_planner(world, main_agent_index=0, all_agents = [], all_policies
         #   prob_op_list.append(agent_prob_oper_list[op_index])
         #7.22:
         related_opers = [chosen_combination[com_i] for com_i in related_oper_indices]
-        prob_op_list = get_grounded_prob_list_from_policy_output(related_opers, agent_prob_oper_list, world.env_dictionary)
+        prob_op_list = get_grounded_prob_list_from_policy_output(related_opers, agent_prob_oper_list, world.env_dictionary, device=device)
         # end 7.22
         #normalize:
         prob_op_list = prob_op_list/(torch.sum(prob_op_list).item()+1e-20)
