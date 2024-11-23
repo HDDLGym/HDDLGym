@@ -101,7 +101,7 @@ class Agent():
 
     return
   
-  def decentralize_planner_agent(self, world, belief_other_agents = [], agent_policy = None, other_agent_policy_list = [], debug=False, deterministic=False, device=False):
+  def decentralize_planner_agent(self, world, belief_other_agents = [], agent_policy = None, other_agent_policy_list = [], debug=False, deterministic=False, device=False, time_limit=5):
     '''This function choose the next operators for the hierarchy, until it reachs action
     inputs:
     - world: mainly for world.state, world.env
@@ -120,7 +120,8 @@ class Agent():
     list_agents = [self] + self.belief_other_agents
     policy_list = [agent_policy] + other_agent_policy_list
     assert len(list_agents) == len(policy_list), "policy list (len of {}) doesn't match with number of agents {}".format(len(policy_list), len(list_agents))
-    list_agents = centralized_planner(world, main_agent_index = 0,all_agents = list_agents, all_policies = policy_list, debug=debug, deterministic=deterministic, device=device)
+    list_agents = centralized_planner(world, main_agent_index = 0,all_agents = list_agents, all_policies = policy_list, debug=debug,\
+     deterministic=deterministic, device=device, time_limit = time_limit)
     self = list_agents[0]
     self.belief_other_agents = list_agents[1:]
     if debug:
