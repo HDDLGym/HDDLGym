@@ -20,7 +20,7 @@ from threading import Lock, Timer
 import game
 from flask import Flask, jsonify, render_template, request, redirect, url_for, session
 from flask_socketio import SocketIO, emit, join_room, leave_room, disconnect
-from flask_session import Session
+# from flask_session import Session
 from game import Game, OvercookedGame
 from utils import ThreadSafeDict, ThreadSafeSet
 import time
@@ -127,8 +127,8 @@ game._configure(MAX_GAME_LENGTH, AGENT_DIR)
 app = Flask(__name__, template_folder=os.path.join("static", "templates"))
 app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY')
 app.config["DEBUG"] = os.getenv("FLASK_ENV", "production") == "development"
-app.config['SESSION_TYPE'] = 'filesystem'
-Session(app)
+# app.config['SESSION_TYPE'] = 'filesystem'
+# Session(app)
 socketio = SocketIO(app, async_mode='eventlet', cors_allowed_origins="*", logger=app.config["DEBUG"])
 
 active_users = 0

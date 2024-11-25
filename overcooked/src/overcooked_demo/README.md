@@ -7,6 +7,8 @@ GITHUB_TOKEN=<YOUR-GITHUB-TOKEN>
 REPO_URL=<GITHUB-URL-OF-THIS-REPO>
 ```
 
+For example: REPO_URL = 'github.com/HDDLGym/HDDLGym.git''
+
 (2) Run:
 ```bash
 sudo docker compose build

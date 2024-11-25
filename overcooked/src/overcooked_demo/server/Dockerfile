@@ -21,7 +21,7 @@ RUN pip install --upgrade pip \
     && if [ "$BUILD_ENV" = "production" ] ; then pip install eventlet ; fi
 
 
-RUN git clone --recursive https://${GITHUB_TOKEN}@${REPO_URL} --branch hddl --single-branch /temp_overcooked_ai \
+RUN git clone --recursive https://${GITHUB_TOKEN}@${REPO_URL} --branch main --single-branch /temp_overcooked_ai \
     && mkdir -p /overcooked_ai \
     && cp -a /temp_overcooked_ai/overcooked/. /overcooked_ai/ \
     && echo "import os; DATA_DIR=os.path.abspath('.')" >> /overcooked_ai/src/human_aware_rl/data_dir.py \

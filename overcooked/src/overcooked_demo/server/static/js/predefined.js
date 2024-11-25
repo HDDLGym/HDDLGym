@@ -2,7 +2,15 @@
 // Persistent network connection that will be used to transmit real-time data
 document.addEventListener("DOMContentLoaded", function() {
 // window.onload = function() {
-    var socket = io();
+
+    // var socket = io();
+
+    if (typeof io !== 'undefined') {
+        var socket = io();
+        // Rest of your code...
+    } else {
+        console.error("Socket.IO library is not loaded.");
+    }
 
     var config;
     var experimentParams = {
