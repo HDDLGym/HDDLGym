@@ -242,6 +242,7 @@ def main_train(opt, debug=False):
                     plt.subplot(212)
                     plt.plot(c_loss_list, 'r')
                     plt.title("Actic Loss and Critic Loss")
+                    plt.tight_layout()
                     plt.close(fig)
                     fig_dir = script_dir / 'model'
                     if not os.path.exists(fig_dir):
@@ -289,6 +290,9 @@ def evaluate_model(opt):
 
     eval_env.close()
 
+opt = parse_arguments()
+# opt.domain = str(script_dir / "HDDL_files/Overcooked_specialization/overcooked_short_domain.hddl")
+# opt.problem = str(script_dir / "HDDL_files/Overcooked_specialization/overcooked_short_prob2.hddl")
 
 ### Call main_train:
 if __name__ == "__main__":
