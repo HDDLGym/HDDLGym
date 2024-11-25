@@ -16,7 +16,7 @@ def run_hddl_model(opt):
     eval_env.action_space.seed(opt.seed)
     eval_env.observation_space.seed(opt.seed)
 
-    opt.Model = 2
+    # opt.Model = 2
     opt.state_dim = eval_env.observation_space.n
     opt.action_dim = eval_env.action_space.n
     opt.max_e_steps = min(opt.max_step, eval_env._max_episode_steps)
