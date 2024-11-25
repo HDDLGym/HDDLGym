@@ -18,14 +18,14 @@ script_dir = Path(os.path.dirname(os.path.abspath(__file__)))
 def parse_arguments():
   '''Hyperparameter Setting'''
   parser = argparse.ArgumentParser()
-  parser.add_argument('--dvc', type=str, default='cuda', help='running device: cuda or cpu')
+  parser.add_argument('--dvc', type=str, default='cpu', help='running device: cuda or cpu')
   # parser.add_argument('--EnvIdex', type=int, default=0, help='CP-v1, LLd-v2')
   parser.add_argument('--domain', type=str, default=str(script_dir / "HDDL_files/Overcooked_specialization/overcooked_short_domain.hddl"), help='Which domain HDDL file to load?')
   parser.add_argument('--problem', type=str, default=str(script_dir / "HDDL_files/Overcooked_specialization/overcooked_short_prob2.hddl"), help='Which problem HDDL file to load?')
   parser.add_argument('--write', type=str2bool, default=False, help='Use SummaryWriter to record the training')
   parser.add_argument('--render', type=str2bool, default=False, help='Render or Not')
   parser.add_argument('--Loadmodel', type=str2bool, default=False, help='Load pretrained model or Not')
-  parser.add_argument('--Model', type=int, default=300000, help='which model to load')
+  parser.add_argument('--Model', type=int, default=2, help='which model to load')
 
   parser.add_argument('--seed', type=int, default=209, help='random seed')
   parser.add_argument('--T_horizon', type=int, default=2048, help='lenth of long trajectory')
