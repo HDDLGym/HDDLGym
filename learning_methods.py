@@ -163,7 +163,7 @@ def get_probabilities_of_operators(operators_list, agent, current_state, env_dic
     if policy == None:
         return torch.rand(len(operators_list))
     observation_num = agent.get_agent_observation(current_state,env_dictionary)
-    prob_list = subtask_policy.select_action(observation_num, value=True)
+    prob_list = policy.select_action(observation_num, value=True)
     probabilites = get_grounded_prob_list_from_policy_output(operators_list, prob_list, env_dictionary)
     return probabilites
 
@@ -189,7 +189,7 @@ def evaluate_policy(env, policy, turns = 3, opt=None):
                         belief_other_agents.remove(ag)
                         belief_other_agents = [] # comment this line if want manually embed belief to be groundtruth
                         ag.decentralize_planner_agent(env, belief_other_agents = belief_other_agents,agent_policy = policy,\
-                         other_agent_policy_list = [policy]*(len(env.agents)-1), deterministic=True, device=opt.dvc, debug=True)
+                         other_agent_policy_list = [policy]*(len(env.agents)-1), deterministic=True, device=opt.dvc, debug=False)
                     #extract action and convert to dict of string
                     action_dict = {}
                     all_operators = set()
