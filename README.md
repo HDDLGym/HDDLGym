@@ -2,4 +2,4 @@
 
 [Paper](https://ngocla.github.io/files/HDDLGym.pdf)
 
-Please follow the tutorial file **HDDLGym_tutorial.ipynb** to helps walk thru the key aspects of the HDDLGym system.
+Please follow the tutorial file **HDDLGym_tutorial.ipynb** to understand and use the key aspects of the HDDLGym system.
