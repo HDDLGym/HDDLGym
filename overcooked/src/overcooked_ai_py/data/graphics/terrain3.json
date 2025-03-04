@@ -1,0 +1,68 @@
+{"frames": {
+
+"dishes.png":
+{
+	"frame": {"x":914,"y":914,"w":911,"h":911},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":911,"h":911},
+	"sourceSize": {"w":911,"h":911}
+},
+"counter.png":
+{
+	"frame": {"x":914,"y":1827,"w":911,"h":911},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":911,"h":911},
+	"sourceSize": {"w":911,"h":911}
+},
+"floor.png":
+{
+	"frame": {"x":1827,"y":914,"w":911,"h":911},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":911,"h":911},
+	"sourceSize": {"w":911,"h":911}
+},
+"onions.png":
+{
+	"frame": {"x":1,"y":1,"w":912,"h":911},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":912,"h":911},
+	"sourceSize": {"w":912,"h":911}
+},
+"pot.png":
+{
+	"frame": {"x":1,"y":914,"w":911,"h":912},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":911,"h":912},
+	"sourceSize": {"w":911,"h":912}
+},
+"serve.png":
+{
+	"frame": {"x":1827,"y":1827,"w":911,"h":911},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":911,"h":911},
+	"sourceSize": {"w":911,"h":911}
+},
+"tomatoes.png":
+{
+	"frame": {"x":915,"y":1,"w":912,"h":911},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":912,"h":911},
+	"sourceSize": {"w":912,"h":911}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "terrain.png",
+	"format": "RGBA8888",
+	"size": {"w":2739,"h":2739},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:c70cca3dfe5337ceb5da48ca8b9f0971:e028b0a3af1dd1edbbcc134d321a7153:a52c91d73586a2a634ceb55ad22f4949$"
+}
+}
