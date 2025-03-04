@@ -278,7 +278,7 @@ def evaluate_policy(env, policy, turns = 3, opt=None):
                         belief_other_agents.remove(ag)
                         belief_other_agents = [] # comment this line if want manually embed belief to be groundtruth
                         ag.decentralize_planner_agent(env, belief_other_agents = belief_other_agents,agent_policy = policy,\
-                         other_agent_policy_list = [policy]*(len(env.agents)-1), deterministic=True, device=opt.dvc, debug=True)
+                         other_agent_policy_list = [policy]*(len(env.agents)-1), deterministic=True, device=opt.dvc, debug=opt.debug)
                     #extract action and convert to dict of string
                     action_dict = {}
                     all_operators = set()
