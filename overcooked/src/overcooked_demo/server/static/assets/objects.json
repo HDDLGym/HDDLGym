@@ -1,0 +1,83 @@
+{
+	"textures": [
+		{
+			"image": "objects.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 460,
+				"h": 979
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "dish.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 912,
+						"h": 911
+					},
+					"spriteSourceSize": {
+						"x": 227,
+						"y": 276,
+						"w": 458,
+						"h": 259
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 458,
+						"h": 259
+					}
+				},
+				{
+					"filename": "tomato.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 912,
+						"h": 911
+					},
+					"spriteSourceSize": {
+						"x": 312,
+						"y": 326,
+						"w": 288,
+						"h": 259
+					},
+					"frame": {
+						"x": 1,
+						"y": 262,
+						"w": 288,
+						"h": 259
+					}
+				},
+				{
+					"filename": "onion.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 911,
+						"h": 911
+					},
+					"spriteSourceSize": {
+						"x": 321,
+						"y": 228,
+						"w": 269,
+						"h": 455
+					},
+					"frame": {
+						"x": 1,
+						"y": 523,
+						"w": 269,
+						"h": 455
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:c02246d13173f4d9aef47e9e4ec5bb41:ed3bb039ca96e994b9220a43669db363:8d6d12ff4d5234f2a4b19e0a906dbf52$"
+	}
+}
