@@ -1,0 +1,6 @@
+__pycache__/
+model_local/
+model/
+.ipynb_checkpoints/
+HDDL_files/.ipynb_checkpoints/
+jaxmarl/tutorials/.ipynb_checkpoints/
