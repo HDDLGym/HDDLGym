@@ -1,0 +1,35 @@
+(define (problem starcraft-problem)
+  (:domain starcraft)
+
+  ;; Objects in the problem
+  (:objects
+    base - location
+    resource1 resource2 - location
+    enemy-location - location
+    worker1 worker2 - worker
+    barracks - building
+    soldier1 soldier2 soldier3 - unit
+  )
+
+  ;; Initial state of the world
+  (:init
+    (at worker1 base)
+    (at worker2 base)
+    (has-resources resource1)
+    (has-resources resource2)
+    (at barracks base)
+    (is-enemy-at enemy-location)
+  )
+
+  ;; Goal state of the world
+  (:goal
+    (and
+      (resources-collected resource1)
+      (resources-collected resource2)
+      (is-trained soldier1)
+      (is-trained soldier2)
+      (is-trained soldier3)
+      (enemy-defeated)
+    )
+  )
+)

@@ -1,0 +1,190 @@
+(define (domain SR)
+  (:requirements :negative-preconditions :hierarchy :typing)
+  (:types
+        drone firefighter ambulance - agent
+        patient fire - target
+        location - object
+        count - object
+  )
+
+  (:predicates 
+     (conn ?l1 ?l2 - location)
+     (target-at ?x - target ?v - location)
+     (patient-on ?p - patient ?a - ambulance)
+     (at ?a - agent ?l - location)
+     (observed ?l - location)
+     (found ?t - target)
+     (fixed ?f - fire)
+     (free ?a - agent)
+     (hidden ?t - target ?l - location)
+     (blocked ?l - location)
+  )
+
+  
+  (:task search :parameters (?a - agent ?t - target ?l1 ?l2 - location))
+  (:task resolve-accident :parameters (?f - fire ?l - location))
+  (:task rescue :parameters (?p - patient ?a - ambulance ?l - location))
+  (:task get-to :parameters (?a - agent ?l1 ?l2 - location))
+  
+  (:method m-search
+    :parameters (?a - agent ?t - target ?l1 ?l2 - location)
+    :task (search ?a ?t ?l1 ?l2)
+    :precondition (and
+        (not (found ?t))
+        (not (observed ?l2))
+    )
+    :subtasks (and
+        (t1 (get-to ?a ?l1 ?l2))
+        (t2 (observe ?t ?a ?l2)))
+    :ordering (and
+        (t1 < t2))
+  )
+  
+  (:method m-resolve-accident
+    :parameters (?f - fire ?la ?lf - location ?a - firefighter)
+    :task (resolve-accident ?f ?lf)
+    :precondition (target-at ?f ?lf)
+    :ordered-subtasks (and
+        (get-to ?a ?la ?lf)
+        (remove ?f ?a ?lf))
+    )
+  
+  (:method m-recue
+    :parameters (?p - patient ?a - ambulance ?l0 ?l1 ?l2 - location)
+    :task (rescue ?p ?a ?l)
+    :precondition (and
+        (target-at ?p ?l1)
+        (at ?a ?l0))
+    :ordered-subtasks (and
+        (get-to ?a ?l0 ?l1)
+        (pick-up ?p ?a ?l1)
+        (get-to ?a ?l1 ?l2)
+        (drop-off ?p ?a ?l2)
+    )
+  )
+
+  (:method m-get-to-via-neighbor
+    :parameters (?a - agent ?lstart ?lend ?lmid - location)
+    :task (get-to ?a ?lstart ?lend)
+    :precondition (and
+        (at ?a ?lstart)
+        (conn ?lmid ?lend)
+        )
+    :subtasks (and
+        (t1 (get-to ?a ?lstart ?lmid))
+        (t2 (get-to ?a ?lmid ?lend)))
+    :ordering (t1 < t2)
+  )
+
+  (:method m-move-drone
+    :parameters (?d - drone ?lstart ?lend - location)
+    :task (get-to ?d ?lstart ?lend)
+    :precondition (and
+        (at ?d ?lstart)
+        (conn ?lstart ?lend)
+        )
+    :subtasks (move-drone ?d ?lstart ?lend)
+  )
+  (:method m-move-firefighter
+    :parameters (?fa - firefighter ?lstart ?lend - location ?p - patient)
+    :task (get-to ?fa ?lstart ?lend)
+    :precondition (and
+        (at ?fa ?lstart)
+        (conn ?lstart ?lend)
+        (not (target-at ?p ?lend))
+        )
+    :subtasks (move ?fa ?lstart ?lend)
+    )
+
+  (:method m-move-ambulance
+    :parameters (?am - ambulance ?lstart ?lend - location ?f - fire)
+    :task (get-to ?am ?lstart ?lend)
+    :precondition (and
+        (at ?am ?lstart)
+        (conn ?lstart ?lend)
+        (not (target-at ?f ?lend)))
+    :subtasks (move ?am ?lstart ?lend)
+        )
+
+
+  (:action move-drone
+    :parameters (?a - drone ?l1 ?l2 - location)
+    :precondition (and
+        (at ?a ?l1)
+        (conn ?l1 ?l2))
+    :effect (and 
+        (not (at ?a ?l1))
+        (at ?a ?l2))
+  )
+  (:action move
+    :parameters (?a - agent ?l1 ?l2 - location)
+    :precondition (and
+        (at ?a ?l1)
+        (conn ?l1 ?l2))
+    :effect (when
+        (not (blocked ?l2))
+        (and (not (at ?a ?l1)) (at ?a ?l2)))
+  )
+
+  (:action pick-up
+    :parameters (?a - agent ?p - patient ?l - location)
+    :precondition (and
+        (at ?a ?l)
+        (target-at ?p ?l)
+        )
+    :effect (and
+        (not (target-at ?p ?l))
+        (patient-on ?p ?a))
+  )
+  
+  
+  (:action drop-off
+    :parameters (?a - agent ?p - patient ?l - location)
+    :precondition (and
+        (at ?a ?l)
+        (patient-on ?p ?a)
+        )
+    :effect (and
+        (not (patient-on ?p ?a))
+        (target-at ?p ?l))
+  )
+  
+  (:action remove
+    :parameters (?f - fire ?a - firefighter ?lf - location)
+    :precondition (and
+        (at ?a ?lf)
+        (target-at ?f ?lf)
+        )
+    :effect (and
+        (not (target-at ?f ?lf))
+        (fixed ?f)
+        (not (blocked ?lf)))
+  )
+  
+  (:action observe
+    :parameters (?t - target ?a - agent ?l - location)
+    :precondition (and
+        (at ?a ?l)
+        (not (observed ?l))
+        )
+    :effect (and 
+        (when
+            (hidden ?t ?l)
+            (and
+                (not (hidden ?t ?l))
+                (target-at ?t ?l)
+                (found ?t)
+                (not (blocked ?l)))
+        )
+        (observed ?l)
+        )
+    
+  )
+
+  (:action none
+    :parameters (?a - agent)
+    :precondition ()
+    :effect ()
+    )
+
+)
