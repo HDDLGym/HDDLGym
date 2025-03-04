@@ -1,6 +1,5 @@
-This work is under review, and not ready for public consumption.
+# HDDLGym: A Tool for Studying Multi-Agent Hierarchical Problems Defined in HDDL with OpenAI Gym
 
+[Paper](https://ngocla.github.io/files/HDDLGym.pdf)
 
-If you are a reviewer, please use the README.md file in the Supplemental Materials or Appendix of the submission for details on the installation and implementation.
-
-Additionally, there is a tutorial file **HDDLGym_tutorial.ipynb** to helps walk thru the key aspects of the HDDLGym system.
+Please follow the tutorial file **HDDLGym_tutorial.ipynb** to understand and use the key aspects of the HDDLGym system.
