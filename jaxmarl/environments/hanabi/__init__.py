@@ -1,1 +1,0 @@
-from .hanabi import HanabiEnv as Hanabi
