@@ -1,0 +1,977 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<title>LLM-powered HDDL-GUI</title>
+  <script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+  <style>
+    body { font-family: Arial; margin: 15px; height: 100%; overflow: auto; }
+    textarea { width: 100%; font-family: monospace; resize: both;overflow: auto; }
+    .scroll-area { width: 100%; height: 100px; overflow: auto; border: 1px solid #ccc; resize:both; background-color: white;}
+    .frame-box { border: 1px solid #999; height: 280px; width: 100%; overflow: hidden;background-color: white; resize: both; align-items: center;}
+    #cy { width: 99%; height: 100%; overflow: hidden;} 
+    #cy_plan { width: 99%; height: 100%; overflow: hidden;} 
+    .section { 
+        margin-bottom: 15px; 
+        border: 1px solid #ccc; /* Add a light gray border */
+        padding: 10px; /* Add padding inside the section */
+        border-radius: 5px; /* Optional: Add rounded corners */
+        background-color: #f9f9f9; /* Optional: Add a light background color */
+        resize: both; /* Make the section resizable */;
+        height: auto;
+        /* display: flex; */
+        align-items: stretch;
+    }
+    .checkbox-list { width: 99%; height: 280px; display: flex; flex-direction: column; background-color: white; overflow-y: auto; overflow-x: auto;border: 1px solid #999;resize: both;}
+    label {
+        display: inline-block; /* Change label to inline-block to respect width */
+        width: auto; /* Set width appropriately */
+        margin-bottom: 5px; /* Optional: Add spacing below labels */}
+    h2 {
+        text-align: center;
+        font-family: 'Georgia', serif; /* Change the font family */
+        font-size: 25px; /* Adjust the font size */
+        font-weight: bold; /* Make the font bold */
+        color: #1e09bd;
+        margin-bottom: 5px; /* Add spacing below the header */
+        margin-top: 5px; /* Add spacing above the header */
+    }
+    h3 {
+        text-align: center;
+        font-family: 'Georgia', serif; /* Change the font family */
+        font-size: 25px; /* Adjust the font size */
+        font-weight: bold; /* Make the font bold */
+        color: #470202; /* Change the font color */
+        margin-bottom: 5px; /* Add spacing below the header */
+        margin-top: 5px; /* Add spacing above the header */
+    }
+    button {
+        font-size: 16px;
+        color: white;
+        background-color: #007BFF;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 3px;
+        cursor: pointer;
+        margin-bottom:3px;
+        margin-top:3px;
+    }
+    button:hover {
+            background-color: #0555a4;
+        }
+  </style>
+</head>
+<body>
+
+  <h2>LLM-powered HDDL-GUI</h2>
+
+  <div class="section" style="background-color: rgb(226, 247, 226)">
+    <h3>Load HDDL Domain and Problem Files</h3>
+    <!-- <form id="loadForm" enctype="multipart/form-data">
+      Domain File: <input type="file" name="domain" required>
+      Problem File: <input type="file" name="problem" required>
+      <button type="submit">Load</button>
+    </form> -->
+    <div style="display: flex; gap: 10px;">
+    <div style="flex: 1;">
+        <!-- <form id="loadDomainForm" enctype="multipart/form-data">
+            Domain File: <input type="file" name="domain" required>
+            <button type="submit">Load Domain</button>
+        </form> -->
+        <form id="loadDomainForm" enctype="multipart/form-data">
+            <label for="domainFile">Domain File:</label>
+            <input type="file" id="domainFile" name="domain" required>
+            <button id="loadDomainButton" type="submit" onclick="loadDomain(event)">Load Domain</button>
+            <button id="describeDomainButton" type="button" onclick="describeDomain()">Describe Domain</button>
+            <button id="editDomainButton" type="button" onclick="editDomain()">Edit Domain</button>
+            <button id="resetDomainButton" type="button" onclick="resetDomain()">Reset</button>
+            <button id="downloadDomainButton" type="button" onclick="saveToFile()">Download</button>
+            <button id="saveDomainButton" type="button" onclick="saveDomain()" style="display: none;">Save</button>
+            <button id="cancelEditButton" type="button" onclick="cancelEdit()" style="display: none;">Cancel</button>
+          </form>
+        <div class="scroll-area">
+        <pre id="domainText" contenteditable="false">(domain content appears here...)</pre>
+    </div></div>
+    <div style="flex: 1;">
+        <!-- <form id="loadProblemForm" enctype="multipart/form-data">
+            Problem File: <input type="file" name="problem" required>
+            <button type="submit">Load Problem</button>
+        </form> -->
+        <form id="loadProblemForm" enctype="multipart/form-data">
+            <label for="problemFile">Problem File:</label>
+            <input type="file" id="problemFile" name="problem" required>
+            <button type="submit" onclick="loadProblem(event)">Load Problem</button>
+            <button type="button" onclick="describeProblem()">Describe Problem</button>
+          </form>
+        <div class="scroll-area">
+            <pre id="problemText">(problem content appears here...)</pre>
+      </div></div>
+  </div></div>
+
+  <div style="display: flex; gap: 20px;">
+    <div style="flex: 2;">
+    <div class="section" style="background-color: rgb(216, 216, 243)">
+        <h3>HTN Viewer</h3>
+        <div style="display: flex; gap: 10px;">
+            <div style="flex: 2;">
+                <label>Graph Viewer: </label>
+                    <input type="checkbox" id="noOverlapCheckbox" unchecked> Avoid Overlap
+                    <button onclick="viewHTN()">View Domain</button>
+                    <button onclick="filterGraph()">View Selected Operators</button>
+                
+                <div class="frame-box"><div id="cy"></div></div>
+            </div>
+
+            <div style="flex: 1;">
+                <label>Operators:</label>
+                <button onclick="filterGraph()">Graph</button>
+                <button onclick="askLLMOperators()">Text</button>
+                <button id="uncheckedAllOperators" onclick="uncheckedAllOperators()">Uncheck All</button>
+                <button onclick="deleteMethods()">Delete</button>
+                <div class="checkbox-list" id="optionsList">
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <div class="section" style="background-color: rgb(244, 241, 204)">
+      <div style="flex: 1;">
+        <h3>LLM Interactive Area</h3>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
+        <label>Text Output:</label>
+            <button id='feedDomainButton' onclick="describeDomain()" style="display: none;">Feed Domain</button>
+            <button id="feedProblemButton" onclick="describeProblem()" style="display: none;">Feed Problem</button>
+        </div>
+        <textarea id="llmOutput" rows="12" readonly></textarea>
+
+        <label>LLM Query:</label>
+        <textarea id="llmInput" rows="3" placeholder="Describe what you want to ask..."></textarea>
+        <button onclick="askLLM()">Ask LLM</button>
+        <button id="addMethodButton" onclick="addMethod()" >Start Adding Method</button>
+        <button id="confirmButton" onclick="confirmAddMethod()" style="display: none;">Confirm</button>
+        <button id="cancelButton" onclick="cancelAction()" style="display: none;">Cancel</button>
+      </div>
+    </div>
+    
+  </div>
+
+  <!-- Section 3: Plan -->
+  <div class="section" style="background-color: rgb(246, 214, 210)">
+    <h3>Plan</h3>
+    <div style="display: flex; gap: 20px;">
+    <div style="flex: 2;">
+        <div style="display: flex; gap: 20px;">
+        <div style="flex: 2;">
+        <label>Plan Diagram  </label>
+        <input type="checkbox" id="noOverlapCheckboxPlan" unchecked> Avoid Overlap
+        <button onclick="runPlanner()">Run Planner</button>
+        <div class="frame-box" >
+            <div id="cy_plan"></div>
+        </div>
+        </div>
+        <div style="flex: 1;">
+            <label>Plan Steps</label>
+            <button id="showPlanStep" onclick="filterPlanGraph()">Show Steps</button>
+            <button id="uncheckedAllSteps" onclick="uncheckedAllSteps()">Uncheck All</button>
+            <div class="checkbox-list" id="planStepList">
+            </div>
+        </div>
+      </div>
+    </div>
+    
+    <div style="flex: 1;">
+        <label>Previous Plan</label>
+        <textarea id="previousPlanSummary" rows="5" readonly placeholder="Previous plan appears here..."></textarea>
+        <label>Plan Text</label>
+        <textarea id="planText" rows="11" readonly placeholder="Plan result appears here..."></textarea>
+    </div>
+    </div>
+  </div>
+
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="https://unpkg.com/@hpcc-js/wasm@1.4.1/dist/index.min.js" type="javascript/worker"></script>
+    <script src="https://unpkg.com/d3-graphviz@4.0.0/build/d3-graphviz.min.js"></script>
+    <script src="https://unpkg.com/cytoscape-dagre/cytoscape-dagre.js"></script>
+    <script>
+        let graphData = null; // Store the graph data globally
+        let graphPlanData = null; // Store the plan graph data globally
+        let originalDomain = null; // Store the original domain file content
+        let previousDomain = null; // Store the previous domain content for Set to Previous
+        /* var dot, graphviz = d3.select("#cy_plan").graphviz({ // Updated selector
+            width: window.innerWidth * 0.66, // Adjust width to match frame-box
+            height: window.innerHeight * 0.66, // Adjust height to match frame-box
+            fit: true
+        }); */
+        let previous_plan = null; // Store the plan data globally
+        let adding_method = false; // Flag to indicate if we are in the process of adding a method
+        let latest_response = ""; // Store the latest response from the LLM
+        let feedback_adding_method = false; // Flag to indicate if we are still in the process of adding a method
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // Reset the content of planText and previousPlanSummary
+            document.getElementById('planText').textContent = '';
+            document.getElementById('previousPlanSummary').textContent = '';
+        });
+
+        async function loadDomain(e) {
+            e.preventDefault(); // Prevent default form submission
+            const formData = new FormData(document.getElementById('loadDomainForm'));
+            const res = await fetch('/load_domain', { method: 'POST', body: formData });
+
+            if (!res.ok) {
+                const error = await res.text();
+                alert(`Error loading domain: ${error}`);
+                return;
+            }
+            
+
+            const data = await res.json();
+            document.getElementById('domainText').textContent = data.domain || '(no content)';
+            // save to originalDomain:
+            originalDomain = document.getElementById('domainText').textContent;
+            console.log("Original Domain:", originalDomain);
+            previousDomain = originalDomain;
+            viewHTN(); // Automatically view HTN after loading domain
+            // reset llmOutput everytime a new domain is loaded:
+            document.getElementById('llmOutput').value = '';
+            // document.getElementById('llmOutput').value = data.text_output ||'';
+            // Show Feed Domain button
+            document.getElementById('feedDomainButton').style.display = 'inline-block';
+        }
+
+        async function describeDomain() {
+            const domain_text = document.getElementById('domainText').textContent;
+            let query = "Provide a concise description of the following domain:\n" + domain_text;
+            askLLM(optionalInput=query);
+            // Hide Feed Domain button
+            document.getElementById('feedDomainButton').style.display = 'none';
+        }
+        
+
+        function editDomain() {
+            // Save content before editing
+            previousDomain = document.getElementById('domainText').textContent;
+            // Hide Load Domain, Edit Domain, Download, and Reset buttons
+            document.getElementById('editDomainButton').style.display = 'none';
+            document.getElementById('loadDomainButton').style.display = 'none';
+            document.getElementById('describeDomainButton').style.display = 'none';
+            document.getElementById('resetDomainButton').style.display = 'none';
+            document.getElementById('downloadDomainButton').style.display = 'none';
+
+
+            // Show Save and Cancel button
+            document.getElementById('saveDomainButton').style.display = 'inline-block';
+            document.getElementById('cancelEditButton').style.display = 'inline-block';
+            
+
+            const domainText = document.getElementById('domainText');
+            const isEditable = domainText.getAttribute('contenteditable') === 'true';
+
+            if (!isEditable) {
+                domainText.setAttribute('contenteditable', 'true'); // Make editable
+                domainText.style.border = '1px solid #ccc'; // Optional: Add a visual cue
+                domainText.style.backgroundColor = '#f9f9f9'; // Optional: Change background color
+            } 
+            else {
+                domainText.setAttribute('contenteditable', 'false'); // Make readonly again
+                domainText.style.border = 'none'; // Reset styles
+                domainText.style.backgroundColor = 'transparent'; // Reset background color
+            }
+
+        }
+        
+        function saveDomain() {
+            // Hide Save and Cancel button
+            document.getElementById('saveDomainButton').style.display = 'none';
+            document.getElementById('cancelEditButton').style.display = 'none';
+            // Show Load Domain, Edit Domain, and Reset buttons
+            document.getElementById('editDomainButton').style.display = 'inline-block';
+            document.getElementById('loadDomainButton').style.display = 'inline-block';
+            document.getElementById('describeDomainButton').style.display = 'inline-block';
+            document.getElementById('resetDomainButton').style.display = 'inline-block';
+            document.getElementById('downloadDomainButton').style.display = 'inline-block';
+            // Show Feed Domain button because new domain might need to be described
+            document.getElementById('feedDomainButton').style.display = 'inline-block';
+
+            const domainText = document.getElementById('domainText');
+            domainText.setAttribute('contenteditable', 'false'); // Make readonly again
+            domainText.style.border = 'none'; // Reset styles
+            domainText.style.backgroundColor = 'transparent'; // Reset background color
+        }
+
+        function cancelEdit() {
+            // Hide Save and Cancel button
+            document.getElementById('saveDomainButton').style.display = 'none';
+            document.getElementById('cancelEditButton').style.display = 'none';
+            // Show Load Domain, Edit Domain, and Reset buttons
+            document.getElementById('editDomainButton').style.display = 'inline-block';
+            document.getElementById('loadDomainButton').style.display = 'inline-block';
+            document.getElementById('describeDomainButton').style.display = 'inline-block';
+            document.getElementById('resetDomainButton').style.display = 'inline-block';
+            document.getElementById('downloadDomainButton').style.display = 'inline-block';
+
+            let domainText = document.getElementById('domainText');
+            domainText.setAttribute('contenteditable', 'false'); // Make readonly again
+            domainText.style.border = 'none'; // Reset styles
+            domainText.style.backgroundColor = 'transparent'; // Reset background color
+
+            // Revert to previous content
+            domainText.textContent = previousDomain;
+        }
+
+        function resetDomain() {
+            if (!originalDomain) {
+                alert("Original domain file not loaded.");
+                return;
+            }
+            // Save current domain before resetting
+            previousDomain = document.getElementById('domainText').textContent;
+            document.getElementById('domainText').textContent = originalDomain; 
+        }   
+
+        async function loadProblem(e) {
+            e.preventDefault(); // Prevent default form submission
+            const formData = new FormData(document.getElementById('loadProblemForm'));
+            const res = await fetch('/load_problem', { method: 'POST', body: formData });
+
+            if (!res.ok) {
+                const error = await res.text();
+                alert(`Error loading problem: ${error}`);
+                return;
+            }
+
+            const data = await res.json();
+            document.getElementById('problemText').textContent = data.problem || '(no content)';
+            // print description of the problem on the llmOutput text area
+            // document.getElementById('llmOutput').value += '\n***\n' + data.text_output || '';
+            // Show Feed Problem button
+            document.getElementById('feedProblemButton').style.display = 'inline-block';
+        }
+        async function describeProblem() {
+            const problem_text = document.getElementById('problemText').textContent;
+            let query = "Provide a concise description of the following problem:\n" + problem_text;
+            askLLM(optionalInput=query);
+            // Hide Feed Problem button
+            document.getElementById('feedProblemButton').style.display = 'none';
+        }
+        // View HTN and render graph:
+        function viewHTN() {
+            const domain_text = document.getElementById('domainText').textContent;
+            fetch('/view_htn', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ domainText: domain_text })
+            })
+                .then(res => res.json())
+                .then(data => {
+                // document.getElementById('llmOutput').value = data.text_output;
+                renderGraph(data.graph.elements);
+                graphData = data.graph; // Store the graph data for filtering
+                
+                // Generate checkboxes based on graph nodes
+                const optionsList = document.getElementById('optionsList');
+                /* const methodsList = document.getElementById('methodsList'); */
+                optionsList.innerHTML = ''; // Clear existing checkboxes
+                data.graph.elements.forEach(element => {
+                if (element.data && !element.data.source) { // Check if it's a node
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.value = element.data.id;
+
+                    const label = document.createElement('label');
+                    label.style.color = element.data.color || '#000000';
+                    label.textContent = element.data.label || element.data.id;
+                    label.prepend(checkbox);
+
+                    // Append label to the appropriate section based on the type
+                    if (element.data.type === 'task') {
+                        if (!document.getElementById('taskLabel')) {
+                            const taskLabel = document.createElement('h4');
+                            taskLabel.id = 'taskLabel';
+                            taskLabel.textContent = 'Tasks:';
+                            taskLabel.style.color = element.data.color || '#000000';
+                            optionsList.appendChild(taskLabel);
+                        }
+                        optionsList.appendChild(label);
+                        optionsList.appendChild(document.createElement('br'));
+                    } else if (element.data.type === 'method') {
+                        if (!document.getElementById('methodLabel')) {
+                            const methodLabel = document.createElement('h4');
+                            methodLabel.id = 'methodLabel';
+                            methodLabel.textContent = 'Methods:';
+                            methodLabel.style.color = element.data.color || '#000000';
+                            optionsList.appendChild(methodLabel);
+                        }
+                        optionsList.appendChild(label);
+                        optionsList.appendChild(document.createElement('br'));
+                    } else if (element.data.type === 'action') {
+                        if (!document.getElementById('actionLabel')) {
+                            const actionLabel = document.createElement('h4');
+                            actionLabel.id = 'actionLabel';
+                            actionLabel.textContent = 'Actions:';
+                            actionLabel.style.color = element.data.color || '#000000';
+                            optionsList.appendChild(actionLabel);
+                        }
+                        optionsList.appendChild(label);
+                        optionsList.appendChild(document.createElement('br'));
+                    }
+                }
+                });
+            });
+        }
+
+
+
+        function renderGraph(elements) {
+            const overlapCheckbox = document.getElementById('noOverlapCheckbox');
+            const isNoOverlap = overlapCheckbox.checked; // Set the value to a boolean indicating if the checkbox is checked
+            const cy = cytoscape({
+                container: document.getElementById('cy'),
+                elements: elements,
+                style: [
+                {
+                    selector: 'node',
+                    style: {
+                        'label': 'data(label)', // Display the label from the data field
+                        'text-valign': 'center', // Center the label vertically
+                        'text-halign': 'center', // Center the label horizontally
+                        'background-color': 'data(color)', // Use the color from the data field
+                        'color': '#FFFFFF', // Label text color
+                        'shape': 'roundrectangle', // Node shape
+                        'width': 'label', // Dynamically calculate width
+                        'height': 15, // Fixed height
+                        'padding': 5, // Add padding around the label
+                        'font-size': '15px' // Font size for the label
+                    }
+                },            
+                {   selector: 'edge', 
+                    style: { 
+                        'label': 'data(label)', 
+                        'target-arrow-shape': 'triangle', 
+                        'curve-style': 'bezier', 
+                        'line-color': '#aaa', 
+                        'target-arrow-color': '#aaa', 
+                        'arrow-scale': 1, /* Reduce the arrow size to make it shorter */
+                        'control-point-step-size': 1, /* Reduce the step size to make edges shorter */
+                    }
+                }],
+                layout: { name: 'breadthfirst', directed: true, avoidOverlap: isNoOverlap },
+                // layout: { name: 'concentric', concentric: (node) => parseInt(node.data('layer') || 0) },
+                // nodeDimensionsIncludeLabels: true
+            });
+            cy.fit();
+            // Adjust the graph dynamically when the window is resized
+            window.addEventListener('resize', () => {
+                cy.resize(); // Recalculate the container size
+                cy.fit(null, 20); // Fit the graph with padding
+            });
+            // const layout = cy.layout({
+            //         name: 'concentric',
+            //         concentric: (node) => parseInt(node.data('layer') || 0)
+            //         // spaceFactor: 0.1, // Reduce space factor for smaller spacing between nodes
+                    
+            //     });
+            const layout = cy.layout({
+                name: 'breadthfirst',
+                directed: true,
+                avoidOverlap: isNoOverlap, // Avoid overlapping nodes
+                // spaceFactor: 0.1, // Reduce space factor for smaller spacing between nodes
+                
+            });
+                layout.run();
+        }
+        function renderPlanGraph(elements) {
+            console.log('renderPlanGraph called with elements:', elements);
+            const overlapCheckbox = document.getElementById('noOverlapCheckboxPlan');
+            const isNoOverlap = overlapCheckbox.checked; // Set the value to a boolean indicating if the checkbox is checked
+            const cy_plan = cytoscape({
+                container: document.getElementById('cy_plan'),
+                elements: elements,
+                style: [
+                { selector: 'node', 
+                    style: { 'label': 'data(label)', 
+                            'text-valign': 'center', 
+                            'text-halign': 'center', 
+                            'background-color': 'data(color)', 
+                            'color': '#FFFFFF', 
+                            'shape': 'data(shape)', 
+                            'width': 'label', 
+                            'height': 15, /* Increase height */
+                            'padding': 10, /* Increase padding */
+                            'font-size': '20px' /* Increase font size */
+                        } },
+                { selector: 'edge', 
+                    style: { 'label': '', 
+                            'target-arrow-shape': 'triangle', 
+                            'line-color': '#aaa', 
+                            'target-arrow-color': '#aaa',
+                            'arrow-scale': 1.5, /* Reduce the arrow size to make it shorter */
+                            'curve-style': 'bezier',
+                            'control-point-step-size': 5 /* Reduce the step size to make edges shorter */
+                        } 
+                }
+                ],
+                layout: { 
+                    name: 'breadthfirst', 
+                    directed: true, 
+                    // spaceFactor: 10, // Reduce space factor for smaller spacing between nodes
+                    orientation: 'horizontal', // Set orientation to horizontal
+                    depthSort: (a, b) => {console.log('Sorting nodes:', a.data('step'), b.data('step')); 
+                                        return parseInt(a.data('step')) - parseInt(b.data('step'));}, // Sort nodes by step number
+                    avoidOverlap: isNoOverlap, // Avoid overlapping nodes
+                 } // Adjust space factor for better layout
+            });
+
+            const layout = cy_plan.layout({
+                name: 'breadthfirst',
+                directed: true,
+                spaceFactor: 0.1, // Reduce space factor for smaller spacing between nodes
+                orientation: 'horizontal',
+                depthSort: (a, b) => {
+                    console.log('Sorting nodes:', a.data('step'), b.data('step')); // Debug: Log step values
+                    return parseInt(a.data('step')) - parseInt(b.data('step'));
+                },
+                padding: 5,
+                avoidOverlap: isNoOverlap,
+            });
+            layout.run();
+        }
+
+        // Filter graph based on selected operators
+        function filterGraph() {
+            if (!graphData) {
+            alert("No graph data available. Please load the graph first.");
+            return;
+            }
+
+            // Collect checked checkboxes
+            let checkedValues = Array.from(document.querySelectorAll('#optionsList input[type="checkbox"]:checked'))
+            .map(checkbox => checkbox.value);
+            checked_operators_text = "Selected Operators: " + checkedValues.join(", ") + "\n";
+            console.log("Checked Operators:", checkedValues);
+
+            // Find all nodes connected to the checked operators
+            const connectedNodes = new Set(checkedValues); // Start with checked operators
+            graphData.elements.forEach(element => {
+                if (element.data && element.data.source && element.data.target) { // Edge
+                    if (checkedValues.includes(element.data.source)) {
+                        connectedNodes.add(element.data.target); // Add target node
+                    }
+                    if (checkedValues.includes(element.data.target) && element.data.label === '') {
+                        connectedNodes.add(element.data.source); // Add source node
+                    }
+                }
+            });
+            console.log("Connected Nodes:", Array.from(connectedNodes));
+
+            // Filter graph elements based on connected nodes
+            const filteredElements = graphData.elements.filter(element => {
+                if (element.data && !element.data.source) { // Node
+                    return connectedNodes.has(element.data.id);
+                }
+                if (element.data && element.data.source && element.data.target) { // Edge
+                    return connectedNodes.has(element.data.source) && connectedNodes.has(element.data.target) 
+                    && (checkedValues.includes(element.data.source) || checkedValues.includes(element.data.target));
+                }
+                return false;
+            });
+
+            // Render the filtered graph
+            renderGraph(filteredElements);
+            // askLLM("Provide descriptions for the selected operators. " + checked_operators_text);
+        }
+        function filterPlanGraph() {
+            if (!graphPlanData) {
+                alert("No plan graph data available. Please click 'Run Planner' first.");
+                return;
+            }
+
+            // Collect checked checkboxes
+            let checkedValues = Array.from(document.querySelectorAll('#planStepList input[type="checkbox"]:checked'))
+                .map(checkbox => checkbox.value);
+            if (checkedValues.length === 0) {
+                alert("No steps selected.");
+                return;
+            }
+            console.log("Checked Steps:", checkedValues);
+            // Add nodes that are source of the checkedValues until root
+            let checkedNodes = new Set(checkedValues); // Start with checked steps
+            let nodesToProcess = new Set(checkedValues); // Start with the checked values
+            while (nodesToProcess.size > 0) {
+                const currentNode = nodesToProcess.values().next().value; // Get a value from the set
+                nodesToProcess.delete(currentNode); // Remove the current node from the set
+                graphPlanData.forEach(element => {
+                    if (element.data && element.data.source && element.data.target) { // Edge
+                        if (element.data.target === currentNode && !checkedNodes.has(element.data.source)) {
+                            checkedNodes.add(element.data.source); // Add source node
+                            nodesToProcess.add(element.data.source); // Add source node to process next
+                        }
+                    }
+                });
+            }
+            console.log("Checked Nodes and its higher nodes:", Array.from(checkedNodes));
+
+            // Filter graph elements based on checked steps
+            const filteredElements = graphPlanData.filter(element => {
+                if (element.data && !element.data.source) { // Node
+                    return checkedNodes.has(element.data.id);
+                }
+                if (element.data && element.data.source && element.data.target) { // Edge
+                    return checkedNodes.has(element.data.source) && checkedNodes.has(element.data.target);
+                }
+                return false;
+            });
+
+            // Render the filtered plan graph
+            renderPlanGraph(filteredElements);
+
+        }
+        function uncheckedAllOperators() {
+            const checkboxes = document.querySelectorAll('#optionsList input[type="checkbox"]');
+            checkboxes.forEach(checkbox => checkbox.checked = false);
+        }
+        function uncheckedAllSteps() {
+            const checkboxes = document.querySelectorAll('#planStepList input[type="checkbox"]');
+            checkboxes.forEach(checkbox => checkbox.checked = false);
+        }
+
+        async function askLLMOperators() {
+            // Collect checked checkboxes
+            let checkedValues = Array.from(document.querySelectorAll('#optionsList input[type="checkbox"]:checked'))
+                .map(checkbox => checkbox.value);
+            if (checkedValues.length === 0) {
+                alert("No operators selected.");
+                return;
+            }
+            let query = "Provide detailed descriptions for the following operators: " + checkedValues.join(", ");
+            askLLM(optionalInput=query);
+        }
+        
+        async function runPlanner() {
+            const res = await fetch('/run_planner', { method: 'POST' });
+
+            if (!res.ok) {
+                const error = await res.text();
+                alert(`Error running planner: ${error}`);
+                return;
+            }
+
+            const data = await res.json();
+            // print data:
+            console.log("Planner Response:", data);
+            // Update Previous Plan Summary
+            document.getElementById('previousPlanSummary').value = previous_plan || '(no previous plan summary available)';
+            document.getElementById('planText').value = data.text || '(no plan generated)';
+            previous_plan = data.text; // Store the current plan as previous for next run
+            graphPlanData = data.elements; // Store the plan graph data
+            renderPlanGraph(data.elements);
+
+            // Show plan steps in the planStepList
+            const planStepList = document.getElementById('planStepList');
+            planStepList.innerHTML = ''; // Clear existing checkboxes
+            // Assuming `elements` is an array of objects containing `element.data`
+            const sortedElements = data.elements
+                .filter(element => element.data && !element.data.source && element.data.type === 'action') // Filter nodes
+                .sort((a, b) => parseInt(a.data.step) - parseInt(b.data.step)); // Sort by step property
+
+            sortedElements.forEach(element => {
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.value = element.data.id;
+
+                const label = document.createElement('label');
+                label.style.color = element.data.color || '#000000';
+                label.textContent = element.data.label || element.data.id;
+                label.prepend(checkbox);
+
+                planStepList.appendChild(label);
+                planStepList.appendChild(document.createElement('br'));
+            });
+        }
+        
+        async function runPlanner_old_with_image() {
+            try {
+                const res = await fetch('/run_planner', { method: 'POST' });
+                if (!res.ok) {
+                    const error = await res.text();
+                    alert(`Error running planner: ${error}`);
+                    return;
+                }
+
+                const data = await res.json();
+                const { text, diagram_path } = data;
+                // Update Previous Plan Summary
+                document.getElementById('previousPlanSummary').value = previous_plan || 'No previous plan summary available';
+
+                // Update Plan Text
+                document.getElementById('planText').value = text || 'No plan text returned';
+                previous_plan = text; // Store the current plan as previous for next run
+
+                // // Update Previous Plan Summary
+                // document.getElementById('previousPlanSummary').value = previousPlanSummary || 'No previous plan summary returned';
+
+                // Render Plan Diagram
+                if (diagram_path) {
+                    const cyPlanContainer = document.getElementById('cy_plan');
+                    cyPlanContainer.innerHTML = ''; // Clear existing content
+                    const img = document.createElement('img');
+                    img.src = diagram_path; // Set the image source to the diagram path
+                    img.alt = 'Plan Diagram';
+                    img.style.width = '100%'; // Make the image fit the frame-box
+                    img.style.height = '100%'; // Make the image fit the frame-box
+                    cyPlanContainer.appendChild(img);
+                } else {
+                    alert('No plan diagram returned');
+                }
+            } catch (err) {
+                console.error('Error running planner:', err);
+                alert('Failed to run planner. Please check the console for details.');
+            }
+        }
+
+
+        async function addMethod(){
+            // Hide Ask LLM and Add Method buttons, show Confirm and Cancel buttons
+            document.getElementById('addMethodButton').style.display = 'none';
+            document.getElementById('confirmButton').style.display = 'inline-block';
+            document.getElementById('cancelButton').style.display = 'inline-block';
+            // // Get the method from the LLM output
+            // let llmOutput = document.getElementById('llmOutput').value;
+            // if (!llmOutput) {
+            //     alert("LLM output is empty. Please ask the LLM first.");
+            //     return;
+            // }
+            // const res = await fetch('/add_method', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ method: llmOutput })
+            // });
+            // if (!res.ok) {
+            //     const error = await res.text();
+            //     alert(`Error adding method: ${error}`);
+            //     return;
+            // }
+            // const data = await res.json();
+            // // Update the domain text area with the new domain content
+            // document.getElementById('domainText').textContent = data.domain || '(no content)';
+            // viewHTN(); // Automatically view HTN after adding method
+            // alert("Method added successfully.");
+            // // Update on the LLM output text area saying method added successfully
+            // document.getElementById('llmOutput').value += "\nMethod added successfully.";
+
+            adding_method = true;
+            //Prompt to textarea output            
+            document.getElementById('llmOutput').value += "\n*** Please provide the high-level strategy (method) details so that LLM can translate into the following format:\nMethod Name: <name>\nParameters: <parameters>\nPreconditions: <preconditions>\nSubtasks: <subtasks>\nEffects: <effects>\n";
+        }
+
+        async function confirmAddMethod() {
+            try {
+                // Get the latest response and current domainText
+                const latestResponse = latest_response;
+                const currentDomainText = document.getElementById('domainText').textContent.trim();
+
+                // Validate inputs
+                if (!latestResponse) {
+                    alert('No latest response found. Please ensure there is a response in the LLM Output.');
+                    return;
+                }
+                if (!currentDomainText) {
+                    alert('No domain text found. Please ensure the domain text is loaded.');
+                    return;
+                }
+
+                // Send the data to the back-end
+                const response = await fetch('/add_method', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        latest_response: latestResponse,
+                        domain_text: currentDomainText
+                    })
+                });
+
+                // Check if the response is OK
+                if (!response.ok) {
+                    const error = await response.text();
+                    throw new Error(`Failed to add method: ${error}`);
+                }
+
+                // Parse the returned data
+                const data = await response.json();
+
+                // Update the domainText with the updated domainText from the back-end
+                document.getElementById('domainText').textContent = data.updated_domain_text || '(no content)';
+
+                // Notify the user of success
+                alert('Method added successfully!');
+                // Reset the adding_method flag
+                adding_method = false;
+                feedback_adding_method = false;
+                // Hide Confirm and Cancel buttons and Add Method buttons
+                document.getElementById('confirmButton').style.display = 'none';
+                document.getElementById('cancelButton').style.display = 'none';
+                // Show Ask LLM and Add Method buttons
+                document.getElementById('addMethodButton').style.display = 'inline-block';
+
+                // Alert the user in the llmOutput text area
+                document.getElementById('llmOutput').value += "\n***\nMethod added successfully. You can check the domain text area for the updated domain.";
+            } catch (error) {
+                console.error('Error in confirmAddMethod:', error);
+                alert(`An error occurred: ${error.message}`);
+            }
+        }
+
+        async function deleteMethods() {
+            const checkedMethods = Array.from(document.querySelectorAll('#optionsList input[type="checkbox"]:checked'))
+            .map(checkbox => checkbox.value);
+
+            if (checkedMethods.length === 0) {
+            alert("No methods selected for deletion.");
+            return;
+            }
+            let domainText = document.getElementById('domainText').textContent;
+
+            const res = await fetch('/delete_methods', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ methods: checkedMethods, domainText: domainText  })
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                
+                // Update the domain text area with the new domain content
+                document.getElementById('domainText').textContent = data.updated_domain || '(no content)';
+                // Show success message to the user in llmOutput with the list of deleted methods from data.deleted_methods:
+                document.getElementById('llmOutput').value += `\n***\nMethods deleted successfully: ${data.deleted_methods.join(", ")}`;
+                viewHTN(); // Refresh the HTN view
+                alert("Selected methods deleted successfully.");
+            } else {
+                const error = await res.text();
+                alert(`Error deleting methods: ${error}`);
+            }
+        }
+
+        
+
+        async function askLLM(optionalInput = null) {
+            // Get the query from the llmInput textarea
+            let query = document.getElementById('llmInput').value;
+
+            // Check if the input is empty
+            if (!query.trim()) {
+                if (optionalInput) {
+                    query = optionalInput; // Use the optional input if provided
+                } else {
+                    alert('Please enter a query.');
+                    return;
+                }
+            }
+            if (adding_method && !feedback_adding_method) {
+                query = "Generate a method in HDDL format based on the following description:\n" + query;
+                feedback_adding_method = true;
+            }
+            else if (adding_method && feedback_adding_method) {
+                query = "The previous method did not meet the expectations. Please regenerate the method based on the following feedback:\n" + query;
+            }
+
+
+            // Send the query to the /ask_llm endpoint
+            fetch('/ask_llm', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ query: query }) // Send the query as JSON
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json(); // Parse the JSON response
+            })
+            .then(data => {
+                // Append the response to the llmOutput textarea
+                document.getElementById('llmOutput').value += '\n***\nQUERY:\n  ' + query + '\n\nANSWER:\n' + data.response + '\n';
+                document.getElementById('llmOutput').scrollTop = document.getElementById('llmOutput').scrollHeight; // Scroll to the bottom
+                // Print the response to the console
+                console.log(data.response);
+                latest_response = data.response;
+    
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while communicating with the server.');
+            });
+            // Clear the llmInput textarea
+            document.getElementById('llmInput').value = '';
+            // if still adding_method, instruct user to click Confirm button or Cancel button
+            if (adding_method) {
+                document.getElementById('llmOutput').value += "\n***\nIf the generated method match your expectation, click 'Confirm' to add the method. \nIf not, type your feedback and click 'Ask LLM' to ask LLM to re-generate', or 'Cancel' to discard.";
+            }
+        }
+
+        function cancelAction() {
+            // Perform cancel action logic here (if needed)
+            alert("Action Adding Method canceled!");
+
+            // Hide Cancel and Confirm button, show Ask LLM and Add Method buttons
+            document.getElementById('cancelButton').style.display = 'none';
+            document.getElementById('confirmButton').style.display = 'none';
+            document.getElementById('addMethodButton').style.display = 'inline-block';
+            // Reset flags
+            adding_method = false;
+            feedback_adding_method = false;
+        }
+
+        async function saveToFile() {
+            try {
+                // Get the content from the textarea
+                const content = document.getElementById('domainText').textContent;
+
+                // Check if the browser supports showSaveFilePicker
+                if (window.showSaveFilePicker) {
+                    // Use the File System Access API
+                    const fileHandle = await window.showSaveFilePicker({
+                        suggestedName: 'modified_domain.hddl', // Default file name
+                        types: [
+                            {
+                                description: 'HDDL Files',
+                                accept: { 'text/plain': ['.hddl'] }
+                            }
+                        ]
+                    });
+
+                    // Create a writable stream and write the content to the file
+                    const writableStream = await fileHandle.createWritable();
+                    await writableStream.write(content);
+                    await writableStream.close();
+
+                    alert('File saved successfully!');
+                } else {
+                    // Fallback to the Blob method for unsupported browsers
+                    const blob = new Blob([content], { type: 'text/plain' });
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = 'modified_domain.hddl'; // Default file name
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+
+                    alert('File saved successfully using fallback method!');
+                }
+            } catch (error) {
+                console.error('Error saving file:', error);
+                alert('Failed to save the file.');
+            }
+        }
+        
+        
+    </script>
+
+</body>
+</html>

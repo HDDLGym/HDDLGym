@@ -1,0 +1,74 @@
+
+A method in HDDL defines how to break down a compound task into a sequence (or set) of subtasks. This is essential in Hierarchical Task Network (HTN) planning, where high-level tasks are recursively decomposed into smaller tasks until only primitive actions remain.
+
+Full Method Structure (with Ordering)
+
+(:method
+    <method-name>
+    :parameters (<typed-parameters>)
+    :task (<compound-task>)
+    :precondition (<logical-condition>)
+    :subtasks (
+        (<subtask-id1> (<task1>))
+        (<subtask-id2> (<task2>))
+        ...
+    )
+    :ordering (
+        (< <subtask-id1> <subtask-id2>)
+        (< <subtask-id2> <subtask-id3>)
+        ...
+    )
+)
+
+Components Explained (with Ordering)
+
+- :method — starts the method definition.
+- <method-name> — a unique name for the method.
+- :parameters — variables used in this method, often typed (e.g., ?x - block).
+- :task — the compound task that is being decomposed.
+- :precondition — logical condition (using PDDL-style expressions) that must be true for the method to apply.
+- :subtasks — list of subtasks, each with a unique subtask ID and an associated task (primitive or compound).
+- :ordering — specifies the partial order or sequence in which the subtasks must be executed. This is optional, but highly important when the subtasks are not independent.
+
+Example with Ordered Subtasks
+
+(:method
+    move-object-method
+    :parameters (?obj - object ?from - location ?to - location)
+    :task (move-object ?obj ?from ?to)
+    :precondition (and (at ?obj ?from))
+    :subtasks (
+        (s1 (pickup-object ?obj ?from))
+        (s2 (carry-object ?obj ?from ?to))
+        (s3 (putdown-object ?obj ?to))
+    )
+    :ordering (
+        (< s1 s2)
+        (< s2 s3)
+    )
+)
+
+What This Means:
+
+- We are decomposing the compound task (move-object ?obj ?from ?to).
+- The method defines three subtasks:
+  1. s1: pick up the object from its location
+  2. s2: carry it to the destination
+  3. s3: put it down at the destination
+- The :ordering section ensures that these happen in sequence:
+  - s1 must come before s2
+  - s2 must come before s3
+
+Optionality of Ordering
+
+- If no :ordering is given, the subtasks are considered unordered, meaning they can be executed in any sequence, as long as the overall plan remains valid.
+- You can use partial ordering too — only specify the order between tasks that must happen in a certain order, giving the planner more flexibility.
+
+Summary
+
+| Part         | Purpose |
+|--------------|---------|
+| :task        | The high-level task you're decomposing |
+| :subtasks    | The smaller steps (primitive or compound) |
+| :ordering    | Controls the execution order of the subtasks |
+| :precondition| Guards the method — must be satisfied for it to apply |
