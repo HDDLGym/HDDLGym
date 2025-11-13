@@ -1,0 +1,188 @@
+{
+    "actionArrayList": [
+        {
+            "truck-0": "none truck-0"
+        },
+        {
+            "truck-0": "none truck-0"
+        },
+        {
+            "truck-0": "pick-up truck-0 city-loc-1 package-1 capacity-0 capacity-1"
+        },
+        {
+            "truck-0": "drive truck-0 city-loc-1 city-loc-0"
+        },
+        {
+            "truck-0": "none truck-0"
+        },
+        {
+            "truck-0": "drive truck-0 city-loc-0 city-loc-1"
+        },
+        {
+            "truck-0": "drive truck-0 city-loc-1 city-loc-2"
+        },
+        {
+            "truck-0": "none truck-0"
+        },
+        {
+            "truck-0": "drop truck-0 city-loc-2 package-1 capacity-0 capacity-1"
+        },
+        {
+            "truck-0": "none truck-0"
+        },
+        {
+            "truck-0": "pick-up truck-0 city-loc-2 package-0 capacity-0 capacity-1"
+        },
+        {
+            "truck-0": "drive truck-0 city-loc-2 city-loc-1"
+        },
+        {
+            "truck-0": "drive truck-0 city-loc-1 city-loc-0"
+        },
+        {
+            "truck-0": "none truck-0"
+        },
+        {
+            "truck-0": "drop truck-0 city-loc-0 package-0 capacity-0 capacity-1"
+        }
+    ],
+    "hierarchiesArrayList": [
+        [
+            [
+                "none truck-0"
+            ]
+        ],
+        [
+            [
+                "none truck-0"
+            ]
+        ],
+        [
+            [
+                "deliver package-1 city-loc-2",
+                "m-deliver package-1 city-loc-1 city-loc-2 truck-0",
+                "load truck-0 city-loc-1 package-1",
+                "m-load truck-0 city-loc-1 package-1 capacity-0 capacity-1",
+                "pick-up truck-0 city-loc-1 package-1 capacity-0 capacity-1"
+            ]
+        ],
+        [
+            [
+                "deliver package-1 city-loc-2",
+                "m-deliver package-1 city-loc-1 city-loc-2 truck-0",
+                "get-to truck-0 city-loc-2",
+                "m-drive-to-via truck-0 city-loc-1 city-loc-0 city-loc-2",
+                "get-to truck-0 city-loc-0",
+                "m-drive-to truck-0 city-loc-1 city-loc-0",
+                "drive truck-0 city-loc-1 city-loc-0"
+            ]
+        ],
+        [
+            [
+                "deliver package-1 city-loc-2",
+                "m-deliver package-1 city-loc-1 city-loc-2 truck-0",
+                "get-to truck-0 city-loc-2",
+                "m-drive-to-via truck-0 city-loc-0 city-loc-1 city-loc-2",
+                "get-to truck-0 city-loc-1",
+                "m-drive-to truck-0 city-loc-0 city-loc-1",
+                "none truck-0"
+            ]
+        ],
+        [
+            [
+                "deliver package-1 city-loc-2",
+                "m-deliver package-1 city-loc-1 city-loc-2 truck-0",
+                "get-to truck-0 city-loc-2",
+                "m-drive-to-via truck-0 city-loc-0 city-loc-1 city-loc-2",
+                "get-to truck-0 city-loc-1",
+                "m-drive-to truck-0 city-loc-0 city-loc-1",
+                "drive truck-0 city-loc-0 city-loc-1"
+            ]
+        ],
+        [
+            [
+                "deliver package-1 city-loc-2",
+                "m-deliver package-1 city-loc-1 city-loc-2 truck-0",
+                "get-to truck-0 city-loc-2",
+                "m-drive-to-via truck-0 city-loc-0 city-loc-1 city-loc-2",
+                "drive truck-0 city-loc-1 city-loc-2"
+            ]
+        ],
+        [
+            [
+                "deliver package-1 city-loc-2",
+                "m-deliver package-1 city-loc-1 city-loc-2 truck-0",
+                "unload truck-0 city-loc-2 package-1",
+                "m-unload truck-0 city-loc-2 package-1 capacity-0 capacity-1",
+                "none truck-0"
+            ]
+        ],
+        [
+            [
+                "deliver package-1 city-loc-2",
+                "m-deliver package-1 city-loc-1 city-loc-2 truck-0",
+                "unload truck-0 city-loc-2 package-1",
+                "m-unload truck-0 city-loc-2 package-1 capacity-0 capacity-1",
+                "drop truck-0 city-loc-2 package-1 capacity-0 capacity-1"
+            ]
+        ],
+        [
+            [
+                "deliver package-0 city-loc-0",
+                "m-deliver package-0 city-loc-2 city-loc-0 truck-0",
+                "load truck-0 city-loc-2 package-0",
+                "m-load truck-0 city-loc-2 package-0 capacity-0 capacity-1",
+                "none truck-0"
+            ]
+        ],
+        [
+            [
+                "deliver package-0 city-loc-0",
+                "m-deliver package-0 city-loc-2 city-loc-0 truck-0",
+                "load truck-0 city-loc-2 package-0",
+                "m-load truck-0 city-loc-2 package-0 capacity-0 capacity-1",
+                "pick-up truck-0 city-loc-2 package-0 capacity-0 capacity-1"
+            ]
+        ],
+        [
+            [
+                "deliver package-0 city-loc-0",
+                "m-deliver package-0 city-loc-2 city-loc-0 truck-0",
+                "get-to truck-0 city-loc-0",
+                "m-drive-to-via truck-0 city-loc-2 city-loc-1 city-loc-0",
+                "get-to truck-0 city-loc-1",
+                "m-drive-to truck-0 city-loc-2 city-loc-1",
+                "drive truck-0 city-loc-2 city-loc-1"
+            ]
+        ],
+        [
+            [
+                "deliver package-0 city-loc-0",
+                "m-deliver package-0 city-loc-2 city-loc-0 truck-0",
+                "get-to truck-0 city-loc-0",
+                "m-drive-to-via truck-0 city-loc-2 city-loc-1 city-loc-0",
+                "drive truck-0 city-loc-1 city-loc-0"
+            ]
+        ],
+        [
+            [
+                "deliver package-0 city-loc-0",
+                "m-deliver package-0 city-loc-2 city-loc-0 truck-0",
+                "unload truck-0 city-loc-0 package-0",
+                "m-unload truck-0 city-loc-0 package-0 capacity-0 capacity-1",
+                "none truck-0"
+            ]
+        ],
+        [
+            [
+                "deliver package-0 city-loc-0",
+                "m-deliver package-0 city-loc-2 city-loc-0 truck-0",
+                "unload truck-0 city-loc-0 package-0",
+                "m-unload truck-0 city-loc-0 package-0 capacity-0 capacity-1",
+                "drop truck-0 city-loc-0 package-0 capacity-0 capacity-1"
+            ]
+        ]
+    ],
+    "beliefHierarchy0Array": [],
+    "beliefHierarchy1Array": []
+}

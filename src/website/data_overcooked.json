@@ -1,0 +1,296 @@
+{
+    "actionArrayList": [
+        {
+            "chef1": "none chef1",
+            "chef2": "a-interact chef2 onion-pile empty onion onion onion"
+        },
+        {
+            "chef1": "none chef1",
+            "chef2": "a-interact chef2 pot1 onion empty empty onion-1"
+        },
+        {
+            "chef1": "none chef1",
+            "chef2": "a-interact chef2 pot1 empty empty onion-1 cooking-soup-1-onion"
+        },
+        {
+            "chef1": "a-interact chef1 bowl-pile empty bowl bowl bowl",
+            "chef2": "none chef2"
+        },
+        {
+            "chef1": "wait chef1 pot1 cooking-soup-1-onion-stage3 cooking-soup-1-onion-stage4",
+            "chef2": "none chef2"
+        },
+        {
+            "chef1": "none chef1",
+            "chef2": "none chef2"
+        },
+        {
+            "chef1": "a-interact chef1 pot1 bowl soup-1-onion soup-1-onion empty",
+            "chef2": "none chef2"
+        },
+        {
+            "chef1": "a-interact chef1 delivery soup-1-onion empty empty soup-1-onion",
+            "chef2": "none chef2"
+        }
+    ],
+    "hierarchiesArrayList": [
+        [
+            [
+                "make-soup soup-1-onion delivery",
+                "m-make-soup soup-1-onion pot1 delivery onion onion-1 cooking-soup-1-onion",
+                "add-ingredient pot1 onion onion-1",
+                "m-add-ingredient-1-onion pot1 onion onion-pile onion-1 empty",
+                "none chef1"
+            ],
+            [
+                "make-soup soup-1-onion delivery",
+                "m-make-soup soup-1-onion pot1 delivery onion onion-1 cooking-soup-1-onion",
+                "add-ingredient pot1 onion onion-1",
+                "m-add-ingredient-1-onion pot1 onion onion-pile onion-1 empty",
+                "t-interact chef2 onion-pile onion onion",
+                "m-interact-direct chef2 onion-pile empty onion onion onion",
+                "a-interact chef2 onion-pile empty onion onion onion"
+            ]
+        ],
+        [
+            [
+                "make-soup soup-1-onion delivery",
+                "m-make-soup soup-1-onion pot1 delivery onion onion-1 cooking-soup-1-onion",
+                "add-ingredient pot1 onion onion-1",
+                "m-add-ingredient-1-onion pot1 onion onion-pile onion-1 empty",
+                "none chef1"
+            ],
+            [
+                "make-soup soup-1-onion delivery",
+                "m-make-soup soup-1-onion pot1 delivery onion onion-1 cooking-soup-1-onion",
+                "add-ingredient pot1 onion onion-1",
+                "m-add-ingredient-1-onion pot1 onion onion-pile onion-1 empty",
+                "t-interact chef2 pot1 empty onion-1",
+                "m-interact-direct chef2 pot1 onion empty empty onion-1",
+                "a-interact chef2 pot1 onion empty empty onion-1"
+            ]
+        ],
+        [
+            [
+                "make-soup soup-1-onion delivery",
+                "m-make-soup soup-1-onion pot1 delivery onion onion-1 cooking-soup-1-onion",
+                "cook pot1 onion-1 cooking-soup-1-onion",
+                "m-cook pot1 onion-1 cooking-soup-1-onion chef1 empty",
+                "none chef1"
+            ],
+            [
+                "make-soup soup-1-onion delivery",
+                "m-make-soup soup-1-onion pot1 delivery onion onion-1 cooking-soup-1-onion",
+                "cook pot1 onion-1 cooking-soup-1-onion",
+                "m-cook pot1 onion-1 cooking-soup-1-onion chef2 empty",
+                "a-interact chef2 pot1 empty empty onion-1 cooking-soup-1-onion"
+            ]
+        ],
+        [
+            [
+                "make-soup soup-1-onion delivery",
+                "m-make-soup soup-1-onion pot1 delivery onion onion-1 cooking-soup-1-onion",
+                "deliver soup-1-onion delivery",
+                "m-deliver pot1 delivery bowl-pile soup-1-onion bowl empty",
+                "t-interact chef1 bowl-pile bowl bowl",
+                "m-interact-direct chef1 bowl-pile empty bowl bowl bowl",
+                "a-interact chef1 bowl-pile empty bowl bowl bowl"
+            ],
+            [
+                "make-soup soup-1-onion delivery",
+                "m-make-soup soup-1-onion pot1 delivery onion onion-1 cooking-soup-1-onion",
+                "deliver soup-1-onion delivery",
+                "m-deliver pot1 delivery bowl-pile soup-1-onion bowl empty",
+                "none chef2"
+            ]
+        ],
+        [
+            [
+                "make-soup soup-1-onion delivery",
+                "m-make-soup soup-1-onion pot1 delivery onion onion-1 cooking-soup-1-onion",
+                "deliver soup-1-onion delivery",
+                "m-deliver pot1 delivery bowl-pile soup-1-onion bowl empty",
+                "t-wait-cooking chef1 pot1 soup-1-onion",
+                "m-still-wait-cooking chef1 pot1 soup-1-onion cooking-soup-1-onion-stage3 cooking-soup-1-onion-stage4",
+                "wait chef1 pot1 cooking-soup-1-onion-stage3 cooking-soup-1-onion-stage4"
+            ],
+            [
+                "make-soup soup-1-onion delivery",
+                "m-make-soup soup-1-onion pot1 delivery onion onion-1 cooking-soup-1-onion",
+                "deliver soup-1-onion delivery",
+                "m-deliver pot1 delivery bowl-pile soup-1-onion bowl empty",
+                "none chef2"
+            ]
+        ],
+        [
+            [
+                "make-soup soup-1-onion delivery",
+                "m-make-soup soup-1-onion pot1 delivery onion onion-1 cooking-soup-1-onion",
+                "deliver soup-1-onion delivery",
+                "m-deliver pot1 delivery bowl-pile soup-1-onion bowl empty",
+                "t-wait-cooking chef1 pot1 soup-1-onion",
+                "m-still-wait-cooking chef1 pot1 soup-1-onion cooking-soup-1-onion-stage3 cooking-soup-1-onion-stage4",
+                "none chef1"
+            ],
+            [
+                "make-soup soup-1-onion delivery",
+                "m-make-soup soup-1-onion pot1 delivery onion onion-1 cooking-soup-1-onion",
+                "deliver soup-1-onion delivery",
+                "m-deliver pot1 delivery bowl-pile soup-1-onion bowl empty",
+                "none chef2"
+            ]
+        ],
+        [
+            [
+                "make-soup soup-1-onion delivery",
+                "m-make-soup soup-1-onion pot1 delivery onion onion-1 cooking-soup-1-onion",
+                "deliver soup-1-onion delivery",
+                "m-deliver pot1 delivery bowl-pile soup-1-onion bowl empty",
+                "t-interact chef1 pot1 soup-1-onion empty",
+                "m-interact-direct chef1 pot1 bowl soup-1-onion soup-1-onion empty",
+                "a-interact chef1 pot1 bowl soup-1-onion soup-1-onion empty"
+            ],
+            [
+                "make-soup soup-1-onion delivery",
+                "m-make-soup soup-1-onion pot1 delivery onion onion-1 cooking-soup-1-onion",
+                "deliver soup-1-onion delivery",
+                "m-deliver pot1 delivery bowl-pile soup-1-onion bowl empty",
+                "none chef2"
+            ]
+        ],
+        [
+            [
+                "make-soup soup-1-onion delivery",
+                "m-make-soup soup-1-onion pot1 delivery onion onion-1 cooking-soup-1-onion",
+                "deliver soup-1-onion delivery",
+                "m-deliver pot1 delivery bowl-pile soup-1-onion bowl empty",
+                "t-interact chef1 delivery empty soup-1-onion",
+                "m-interact-direct chef1 delivery soup-1-onion empty empty soup-1-onion",
+                "a-interact chef1 delivery soup-1-onion empty empty soup-1-onion"
+            ],
+            [
+                "make-soup soup-1-onion delivery",
+                "m-make-soup soup-1-onion pot1 delivery onion onion-1 cooking-soup-1-onion",
+                "deliver soup-1-onion delivery",
+                "m-deliver pot1 delivery bowl-pile soup-1-onion bowl empty",
+                "none chef2"
+            ]
+        ]
+    ],
+    "beliefHierarchy0Array": [
+        [
+            "make-soup soup-1-onion delivery",
+            "m-make-soup soup-1-onion pot1 delivery onion onion-1 cooking-soup-1-onion",
+            "add-ingredient pot1 onion onion-1",
+            "m-add-ingredient-1-onion pot1 onion onion-pile onion-1 empty",
+            "t-interact chef2 pot1 empty onion-1",
+            "m-interact-direct chef2 pot1 onion empty empty onion-1",
+            "a-interact chef2 pot1 onion empty empty onion-1"
+        ],
+        [
+            "make-soup soup-1-onion delivery",
+            "m-make-soup soup-1-onion pot1 delivery onion onion-1 cooking-soup-1-onion",
+            "cook pot1 onion-1 cooking-soup-1-onion",
+            "m-cook pot1 onion-1 cooking-soup-1-onion chef2 empty",
+            "a-interact chef2 pot1 empty empty onion-1 cooking-soup-1-onion"
+        ],
+        [
+            "make-soup soup-1-onion delivery",
+            "m-make-soup soup-1-onion pot1 delivery onion onion-1 cooking-soup-1-onion",
+            "deliver soup-1-onion delivery",
+            "m-deliver pot1 delivery bowl-pile soup-1-onion bowl empty",
+            "none chef2"
+        ],
+        [
+            "make-soup soup-1-onion delivery",
+            "m-make-soup soup-1-onion pot1 delivery onion onion-1 cooking-soup-1-onion",
+            "deliver soup-1-onion delivery",
+            "m-deliver pot1 delivery bowl-pile soup-1-onion bowl empty",
+            "none chef2"
+        ],
+        [
+            "make-soup soup-1-onion delivery",
+            "m-make-soup soup-1-onion pot1 delivery onion onion-1 cooking-soup-1-onion",
+            "deliver soup-1-onion delivery",
+            "m-deliver pot1 delivery bowl-pile soup-1-onion bowl empty",
+            "none chef2"
+        ],
+        [
+            "make-soup soup-1-onion delivery",
+            "m-make-soup soup-1-onion pot1 delivery onion onion-1 cooking-soup-1-onion",
+            "deliver soup-1-onion delivery",
+            "m-deliver pot1 delivery bowl-pile soup-1-onion bowl empty",
+            "none chef2"
+        ],
+        [
+            "make-soup soup-1-onion delivery",
+            "m-make-soup soup-1-onion pot1 delivery onion onion-1 cooking-soup-1-onion",
+            "deliver soup-1-onion delivery",
+            "m-deliver pot1 delivery bowl-pile soup-1-onion bowl empty",
+            "none chef2"
+        ],
+        []
+    ],
+    "beliefHierarchy1Array": [
+        [
+            "make-soup soup-1-onion delivery",
+            "m-make-soup soup-1-onion pot1 delivery onion onion-1 cooking-soup-1-onion",
+            "add-ingredient pot1 onion onion-1",
+            "m-add-ingredient-1-onion pot1 onion onion-pile onion-1 empty",
+            "none chef1"
+        ],
+        [
+            "make-soup soup-1-onion delivery",
+            "m-make-soup soup-1-onion pot1 delivery onion onion-1 cooking-soup-1-onion",
+            "cook pot1 onion-1 cooking-soup-1-onion",
+            "m-cook pot1 onion-1 cooking-soup-1-onion chef1 empty",
+            "none chef1"
+        ],
+        [
+            "make-soup soup-1-onion delivery",
+            "m-make-soup soup-1-onion pot1 delivery onion onion-1 cooking-soup-1-onion",
+            "deliver soup-1-onion delivery",
+            "m-deliver pot1 delivery bowl-pile soup-1-onion bowl empty",
+            "t-interact chef1 bowl-pile bowl bowl",
+            "m-interact-direct chef1 bowl-pile empty bowl bowl bowl",
+            "none chef1"
+        ],
+        [
+            "make-soup soup-1-onion delivery",
+            "m-make-soup soup-1-onion pot1 delivery onion onion-1 cooking-soup-1-onion",
+            "deliver soup-1-onion delivery",
+            "m-deliver pot1 delivery bowl-pile soup-1-onion bowl empty",
+            "t-wait-cooking chef1 pot1 soup-1-onion",
+            "m-still-wait-cooking chef1 pot1 soup-1-onion cooking-soup-1-onion-stage3 cooking-soup-1-onion-stage4",
+            "wait chef1 pot1 cooking-soup-1-onion-stage3 cooking-soup-1-onion-stage4"
+        ],
+        [
+            "make-soup soup-1-onion delivery",
+            "m-make-soup soup-1-onion pot1 delivery onion onion-1 cooking-soup-1-onion",
+            "deliver soup-1-onion delivery",
+            "m-deliver pot1 delivery bowl-pile soup-1-onion bowl empty",
+            "t-wait-cooking chef1 pot1 soup-1-onion",
+            "m-still-wait-cooking chef1 pot1 soup-1-onion cooking-soup-1-onion-stage3 cooking-soup-1-onion-stage4",
+            "none chef1"
+        ],
+        [
+            "make-soup soup-1-onion delivery",
+            "m-make-soup soup-1-onion pot1 delivery onion onion-1 cooking-soup-1-onion",
+            "deliver soup-1-onion delivery",
+            "m-deliver pot1 delivery bowl-pile soup-1-onion bowl empty",
+            "t-interact chef1 pot1 soup-1-onion empty",
+            "m-interact-direct chef1 pot1 bowl soup-1-onion soup-1-onion empty",
+            "a-interact chef1 pot1 bowl soup-1-onion soup-1-onion empty"
+        ],
+        [
+            "make-soup soup-1-onion delivery",
+            "m-make-soup soup-1-onion pot1 delivery onion onion-1 cooking-soup-1-onion",
+            "deliver soup-1-onion delivery",
+            "m-deliver pot1 delivery bowl-pile soup-1-onion bowl empty",
+            "t-interact chef1 delivery empty soup-1-onion",
+            "m-interact-direct chef1 delivery soup-1-onion empty empty soup-1-onion",
+            "a-interact chef1 delivery soup-1-onion empty empty soup-1-onion"
+        ],
+        []
+    ]
+}

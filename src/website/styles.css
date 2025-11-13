@@ -1,0 +1,112 @@
+/* General Styles */
+body {
+   font-family: Arial, sans-serif;
+   margin: 20px;
+   background-color: #f4f6f9;
+   color: #333;
+   line-height: 1.6;
+}
+
+h1 {
+   text-align: center;
+   font-size: 2em;
+   margin-bottom: 20px;
+}
+
+/* Navigation Buttons */
+.navigation-buttons {
+   text-align: center;
+   margin-bottom: 20px;
+}
+
+button {
+   padding: 10px 20px;
+   margin: 0 10px;
+   font-size: 16px;
+   border: none;
+   border-radius: 25px;
+   cursor: pointer;
+   background-color: #007BFF;
+   color: white;
+   transition: background-color 0.3s;
+}
+
+button:hover {
+   background-color: #0056b3;
+}
+
+/* Timestep Display */
+#timestep {
+   font-weight: bold;
+   text-align: center;
+   margin-bottom: 30px;
+   font-size: 1.2em;
+   color: #555;
+}
+
+/* Grid Layout for Agents */
+.grid-container {
+   display: grid;
+   grid-template-columns: 1fr 1fr;
+   gap: 20px;
+   padding: 20px;
+}
+
+.agent-column {
+   background-color: #ffffff;
+   padding: 20px;
+   border-radius: 10px;
+   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Headings */
+.agent-column h2 {
+   text-align: center;
+   font-size: 1.5em;
+   color: #007BFF;
+   margin-bottom: 15px;
+}
+
+.section h3 {
+   font-size: 1.2em;
+   margin-top: 10px;
+   color: #444;
+   border-bottom: 2px solid #007BFF;
+   padding-bottom: 5px;
+}
+
+/* Highlighted Keywords */
+/* .highlight {
+   font-weight: bold;
+   color: #d9534f;
+} */
+
+/* Nested Arrays and Lists */
+.nested-array {
+   margin-left: 15px;
+   border-left: 2px solid #ddd;
+   padding-left: 10px;
+   color: #555;
+}
+
+ul {
+   padding-left: 20px;
+   list-style-type: disc;
+   color: #666;
+}
+
+li {
+   margin-bottom: 8px;
+   font-size: 0.95em;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+   .grid-container {
+       grid-template-columns: 1fr;
+   }
+   #timestep, .navigation-buttons {
+       font-size: 1.1em;
+   }
+}
+
