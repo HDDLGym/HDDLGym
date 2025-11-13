@@ -1,6 +1,10 @@
 __pycache__/
 src/model_local/
+src/model/
 .ipynb_checkpoints/
 src/HDDL_files/.ipynb_checkpoints/
 jaxmarl/tutorials/.ipynb_checkpoints/
+HDDL_GUI/.env
+HDDL_GUI/build/
+HDDL_GUI/upload/
 
