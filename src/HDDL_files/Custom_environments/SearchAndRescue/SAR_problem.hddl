@@ -1,0 +1,48 @@
+(define (problem SR_1) 
+    (:domain SR)
+    (:objects
+        victimA victimB - victim
+        am1 - ambulance
+        drone1 - drone
+        l0-0 l0-1 l0-2 l0-3 l0-4 - location
+        l1-0 lwall l1-2 l1-3 l1-4 - location
+    )
+    (:htn
+        :tasks (and
+            (rescue-victim victimA)
+            (rescue-victim victimB)))
+    (:init
+        (at victimA l0-0)
+        (at victimB l1-2)
+        (hospital-at l0-4)
+        (at am1 l0-4)
+        (at drone1 l0-4)
+        
+        (connect l0-0 l0-1)
+        (connect l0-1 l0-0)
+        (connect l0-1 l0-2)
+        (connect l0-2 l0-1)
+        (connect l0-2 l0-3)
+        (connect l0-3 l0-2)
+        (connect l0-3 l0-4)
+        (connect l0-4 l0-3)
+        (drone-connect l1-0 l1-2)
+        (drone-connect l1-2 l1-0)
+        (connect l1-2 l1-3)
+        (connect l1-3 l1-2)
+        (connect l1-3 l1-4)
+        (connect l1-4 l1-3)
+        (connect l0-0 l1-0)
+        (connect l1-0 l0-0)
+        (connect l0-2 l1-2)
+        (connect l1-2 l0-2)
+        (connect l0-3 l1-3)
+        (connect l1-3 l0-3)
+        (connect l0-4 l1-4)
+        (connect l1-4 l0-4)
+
+        (drone-connect l0-4 l1-3)
+        (drone-connect l1-3 l0-4)
+
+    )
+)

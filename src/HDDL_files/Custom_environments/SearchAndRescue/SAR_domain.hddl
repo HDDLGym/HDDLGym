@@ -1,0 +1,172 @@
+(define (domain SR)
+  (:requirements :negative-preconditions :hierarchy :typing)
+  (:types
+        drone ambulance - agent
+        victim - target
+        location - object
+ )
+  (:predicates
+    (at ?agent - agent ?location - location)
+    (at ?target - target ?location - location)
+    (occupied ?ambulance - ambulance)
+    (connect ?location - location ?location - location)
+    (drone-connect ?location - location ?location - location)
+    (found ?target - target)
+    (observed ?location - location)
+    (hospital-at ?location - location)
+    (rescued ?victim - victim)
+ )
+  (:task find-victim
+        :parameters (?victim - victim)
+        :effect (found ?victim)
+ )
+  (:task rescue-victim
+        :parameters (?victim - victim)
+        :effect (rescued ?victim)
+ )
+  (:task t-move-drone
+        :parameters (?drone - drone ?location - location)
+        :effect (at ?drone ?location)
+ )
+  (:task t-move-ambulance
+        :parameters (?am - ambulance ?location - location)
+        :effect (at ?am ?location)
+ )
+  (:method m-move-ambulance
+        :parameters (?am - ambulance ?l1 ?l2 ?l3 - location)
+        :task (t-move-ambulance ?am ?l3)
+        :precondition (and
+            (at ?am ?l1)
+            (connect ?l1 ?l2)
+            (not (= ?l2 ?l3))
+           )
+        :ordered-subtasks (and
+            (move-ambulance ?am ?l1 ?l2)
+            (t-move-ambulance ?am ?l3)
+       )
+ )
+  (:method m-move-ambulance-done
+        :parameters (?am - ambulance ?l - location)
+        :task (t-move-ambulance ?am ?l)
+        :precondition (at ?am ?l)
+        :subtasks ()
+ )
+  (:method find-victim-with-drone
+        :parameters (?victim - victim ?drone - drone ?l1 ?l2 - location)
+        :task (find-victim ?victim)
+        :precondition (and
+            (at ?drone ?l1)
+            (or
+                (connect ?l1 ?l2)
+                (drone-connect ?l1 ?l2)
+           )
+       )
+        :ordered-subtasks (and
+            (move-drone ?l1 ?l2)
+            (observe ?drone ?l2)
+            (find-victim ?victim)
+       )
+ )
+  (:method find-victim-with-ambulance
+        :parameters (?victim - victim ?am - ambulance ?l1 ?l2 - location)
+        :task (find-victim ?victim)
+        :precondition (and
+            (at ?am ?l1)
+            (connect ?l1 ?l2)
+       )
+        :ordered-subtasks (and
+            (move-ambulance ?l1 ?l2)
+            (observe ?am ?l2)
+            (find-victim ?victim)
+       )
+ )
+  (:method find-victim-done
+        :parameters (?victim - victim)
+        :task (find-victim ?victim)
+        :precondition (found ?victim)
+        :subtasks ()
+ )
+  (:method m-rescue-victim
+        :parameters (?victim - victim ?am - ambulance ?victimlocation ?hospitallocation - location)
+        :task (rescue-victim ?victim)
+        :precondition (and
+            (at ?victim ?victimlocation)
+            (hospital-at ?hospitallocation))
+        :ordered-subtasks (and
+            (find-victim ?victim)
+            (t-move-ambulance ?am ?victimlocation)
+            (pick-up ?am ?victim ?victimlocation)
+            (t-move-ambulance ?am ?hospitallocation)
+            (drop-off ?am ?victim ?hospitallocation)
+       )
+ )
+  (:action move-drone
+        :parameters (?drone - drone ?la ?lb - location)
+        :precondition (and
+            (at ?drone ?la)
+            (or
+                (connect ?la ?lb)
+                (drone-connect ?la ?lb))
+       )
+        :effect (and
+            (at ?drone ?lb)
+            (not (at ?drone ?la)))
+ )
+  (:action move-ambulance
+        :parameters (?am - ambulance ?la ?lb - location)
+        :precondition (and
+            (at ?am ?la)
+            (connect ?la ?lb)
+       )
+        :effect (and
+            (not (at ?am ?la))
+            (at ?am ?lb))
+ )
+  (:action pick-up
+        :parameters (?ambulance - ambulance ?victim - victim ?location - location)
+        :precondition (and
+            (at ?ambulance ?location)
+            (at ?victim ?location)
+            (found ?victim)
+            (not (occupied ?ambulance))
+       )
+        :effect (and
+            (at ?victim ?ambulance)
+            (not (at ?victim ?location))
+       )
+ )
+  (:action drop-off
+        :parameters (?ambulance - ambulance ?victim - victim ?location - location)
+        :precondition (and
+            (at ?ambulance ?location)
+            (hospital-at ?location)
+            (occupied ?ambulance)
+       )
+        :effect (and
+            (at ?victim ?location)
+            (rescued ?victim)
+            (not (occupied ?ambulance)))
+ )
+  (:action observe
+        :parameters (?agent - agent ?location - location)
+        :precondition (and
+            (at ?agent ?location)
+       )
+        :effect (observed ?location)
+ )
+  (:action found-target-env-action
+        :parameters (?target - target ?location - location)
+        :precondition (and
+            (at ?target ?location)
+            (not (found ?target))
+            (observed ?location))
+        :effect (and
+            (found ?target)
+       )
+ )
+  (:action none
+        :parameters (?a - agent)
+        :precondition ()
+        :effect ()
+ )
+)

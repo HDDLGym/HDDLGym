@@ -1,0 +1,135 @@
+(define (domain taxi)
+  (:requirements :strips :equality :typing :conditional-effects)
+
+  (:types  
+    taxi - agent
+    location taxi - personlocatable
+    person
+    fuel
+  )
+
+
+  (:predicates
+    (taxistate ?taxi1 - taxi)
+    (tlocation ?taxi1 - taxi ?location1 - location)
+    ;;(insidetaxi ?person1 - person ?taxi1 - taxi)
+    (plocation ?person1 - person ?location1 - personlocatable)
+    (outsidetaxi ?person1 - person)
+    (connects ?location1 - location ?location2 - location)
+    (usefuel ?fuel1 - fuel ?fuel2 - fuel)
+    (fillupfuel ?fuel1 - fuel ?fuel2 - fuel)
+    (tfuel ?taxi1 - taxi ?fuel1 - fuel)
+  )
+
+  (:task move-person
+    :parameters ( ?person - person ?destinition - location)
+    :effect (plocation ?person ?destinition)
+  )
+  (:task move-taxi
+    :parameters (?taxi - taxi ?destinition - location)
+    :effect (tlocation ?taxi ?destinition)
+    )
+
+  (:method m-move-person-1taxi
+    :parameters ( ?taxi - taxi ?person - person ?start ?end - location)
+    :task (move-person ?person ?end)
+    :precondition (and
+        (tlocation ?taxi ?start)
+        (plocation ?person ?start)
+    )
+    :ordered-subtasks (and
+            (move-taxi ?taxi ?start)
+            (getin ?taxi ?start ?person)
+            (move-taxi ?taxi ?end)
+            (getout ?taxi ?end ?person)
+        )
+    
+  )
+  (:method m-move-taxi-via-middle-location
+        :parameters (?taxi - taxi ?start ?mid ?end - location ?fuelstart ?fuelmid - fuel)
+        :task (move-taxi ?taxi ?end)
+        :precondition (and
+            (connects ?start ?mid)
+            (tfuel ?taxi ?fuelstart)
+            (usefuel ?fuelstart ?fuelmid)
+        )
+        :ordered-subtasks (and
+            (move ?taxi ?start ?fuelstart ?mid ?fuelmid)
+            (move-taxi ?taxi ?end)
+        )
+  )
+  (:method m-refuel-and-move-taxi
+        :parameters (?taxi - taxi ?start ?end - location ?fuelstart ?fuelend - fuel)
+        :task (move-taxi ?taxi ?end)
+        :precondition (and
+            (tfuel ?taxi ?fuelstart)
+            (fillupfuel ?fuelstart ?fuelend)
+        )
+        :ordered-subtasks (and
+            (fillfuel ?taxi ?start ?fuelstart ?fuelend)
+            (move-taxi ?taxi ?end)
+        )
+  )
+  
+  (:action getout
+       :parameters ( ?taxi - taxi ?location - location ?person - person)
+       :precondition (and 
+            (taxistate ?taxi)
+            (tlocation ?taxi ?location)
+            (plocation ?person ?taxi)
+       )
+       :effect (and 
+            ;;(not (insidetaxi ?person ?taxi))
+            (outsidetaxi ?person)
+            (plocation ?person ?location)
+        )
+    )
+  (:action getin
+       :parameters ( ?taxi - taxi ?location - location ?person - person)
+       :precondition (and 
+            (taxistate ?taxi)
+            (tlocation ?taxi ?location)
+            (outsidetaxi ?person)
+            (plocation ?person ?location)
+       )
+       :effect (and 
+            (not (outsidetaxi ?person))
+            (plocation ?person ?taxi)
+        )
+    )
+  (:action move
+       :parameters ( ?taxi - taxi ?locationa - location ?fuela - fuel ?locationb - location ?fuelb - fuel)
+       :precondition (and 
+            (taxistate ?taxi)
+            (tlocation ?taxi ?locationa)
+            (tfuel ?taxi ?fuela)
+            (connects ?locationa ?locationb)
+            (usefuel ?fuela ?fuelb)
+       )
+       :effect (and 
+            (not (tlocation ?taxi ?locationa))
+            (not (tfuel ?taxi ?fuela))
+            (tlocation ?taxi ?locationb)
+            (tfuel ?taxi ?fuelb)
+        )
+    )
+  (:action fillfuel
+       :parameters ( ?taxi - taxi ?locationa - location ?fuela - fuel ?fuelb - fuel)
+       :precondition (and 
+            (taxistate ?taxi)
+            (tlocation ?taxi ?locationa)
+            (tfuel ?taxi ?fuela)
+            (fillupfuel ?fuela ?fuelb)
+       )
+       :effect (and 
+            (not (tfuel ?taxi ?fuela))
+            (tfuel ?taxi ?fuelb)
+        )
+    )
+
+  (:action none
+        :parameters (?agent - agent)
+        :precondition ()
+        :effect ()
+  )
+  )
