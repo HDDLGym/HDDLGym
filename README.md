@@ -1,4 +1,5 @@
 # HDDLGym: A Tool for Studying Multi-Agent Hierarchical Problems Defined in HDDL with OpenAI Gym
+## This old branch is just for our record (we will remove this branch soon). Please see the *main* branch for the most updated version of the code.
 
 [Paper](https://ngocla.github.io/files/HDDLGym.pdf)
 
