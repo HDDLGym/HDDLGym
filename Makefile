@@ -26,46 +26,46 @@ run:
 	$(DOCKER_RUN) /bin/bash
 
 run-hddl-gpu0:
-	$(DOCKER_RUN) /bin/bash -c "python3 -u main_train.py --dvc cuda:0 --problem-name overcooked_3agents_collab --monitor-training False --max-e-steps 25 --use-central-planner True"
+	$(DOCKER_RUN) /bin/bash -c "cd src && python3 -u main_train.py --dvc cuda:0 --problem-name overcooked_3agents_collab --monitor-training False --max-e-steps 25 --use-central-planner True"
 
 run-hddl-gpu1: 
-	$(DOCKER_RUN) /bin/bash -c "python3 -u main_train.py --dvc cuda:1 --problem-name transport_1agent_no_collab --monitor-training False --max-e-steps 25"
+	$(DOCKER_RUN) /bin/bash -c "cd src && python3 -u main_train.py --dvc cuda:1 --problem-name transport_1agent_no_collab --monitor-training False --max-e-steps 25"
 
 run-transport-1agent-collab:
-	$(DOCKER_RUN) /bin/bash -c "python3 -u main_train.py --dvc cuda:0 --problem-name transport_1agent_collab --monitor-training False --max-e-steps 25"
+	$(DOCKER_RUN) /bin/bash -c "cd src && python3 -u main_train.py --dvc cuda:0 --problem-name transport_1agent_collab --monitor-training False --max-e-steps 25"
 
 run-transport-2agents-no-collab:
-	$(DOCKER_RUN) /bin/bash -c "python3 -u main_train.py --dvc cuda:1 --problem-name transport_2agents_no_collab --monitor-training False --max-e-steps 50"
+	$(DOCKER_RUN) /bin/bash -c "cd src && python3 -u main_train.py --dvc cuda:1 --problem-name transport_2agents_no_collab --monitor-training False --max-e-steps 50"
 
 run-transport-2agents-collab:
-	$(DOCKER_RUN) /bin/bash -c "python3 -u main_train.py --dvc cuda:0 --problem-name transport_2agents_collab --monitor-training False --max-e-steps 50"
+	$(DOCKER_RUN) /bin/bash -c "cd src && python3 -u main_train.py --dvc cuda:0 --problem-name transport_2agents_collab --monitor-training False --max-e-steps 50"
 
 run-transport-3agents-no-collab:
-	$(DOCKER_RUN) /bin/bash -c "python3 -u main_train.py --dvc cuda:1 --problem-name transport_3agents_no_collab --monitor-training False --max-e-steps 60 --use-central-planner True"
+	$(DOCKER_RUN) /bin/bash -c "cd src && python3 -u main_train.py --dvc cuda:1 --problem-name transport_3agents_no_collab --monitor-training False --max-e-steps 60 --use-central-planner True"
 
 run-satellite-2obs-2sat-1mod:
-	$(DOCKER_RUN) /bin/bash -c "python3 -u main_train.py --dvc cuda:1 --problem-name satellite_2obs_2sat_1mod --monitor-training False --max-e-steps 50 --use-central-planner True"
+	$(DOCKER_RUN) /bin/bash -c "cd src && python3 -u main_train.py --dvc cuda:1 --problem-name satellite_2obs_2sat_1mod --monitor-training False --max-e-steps 50 --use-central-planner True"
 
 run-satellite-3obs-3sat-1mod:
-	$(DOCKER_RUN) /bin/bash -c "python3 -u main_train.py --dvc cuda:1 --problem-name satellite_3obs_3sat_1mod --monitor-training False --max-e-steps 60 --use-central-planner True"
+	$(DOCKER_RUN) /bin/bash -c "cd src && python3 -u main_train.py --dvc cuda:1 --problem-name satellite_3obs_3sat_1mod --monitor-training False --max-e-steps 60 --use-central-planner True"
 
 run-rover-1agent:
-	$(DOCKER_RUN) /bin/bash -c "python3 -u main_train.py --dvc cuda:0 --problem-name rover_1agent --monitor-training False --max-e-steps 50"
+	$(DOCKER_RUN) /bin/bash -c "cd src && python3 -u main_train.py --dvc cuda:0 --problem-name rover_1agent --monitor-training False --max-e-steps 50"
 
 run-rover-2agents:
-	$(DOCKER_RUN) /bin/bash -c "python3 -u main_train.py --dvc cuda:0 --problem-name rover_2agents --monitor-training False --max-e-steps 70 --use-central-planner True"
+	$(DOCKER_RUN) /bin/bash -c "cd src && python3 -u main_train.py --dvc cuda:0 --problem-name rover_2agents --monitor-training False --max-e-steps 70 --use-central-planner True"
 
 run-rover-3agents:
-	$(DOCKER_RUN) /bin/bash -c "python3 -u main_train.py --dvc cuda:0 --problem-name rover_3agents --monitor-training False --max-e-steps 90 --use-central-planner True"
+	$(DOCKER_RUN) /bin/bash -c "cd src && python3 -u main_train.py --dvc cuda:0 --problem-name rover_3agents --monitor-training False --max-e-steps 90 --use-central-planner True"
 
 run-evaluation-transport-3agents-no-collab:
-	$(DOCKER_RUN) /bin/bash -c "python3 -u main_train.py --dvc cuda:0 --problem-name transport_3agents_no_collab --monitor-training False --max-e-steps 100 --use-central-planner True --run-training False --Loadmodel True --Model 1143000"
+	$(DOCKER_RUN) /bin/bash -c "cd src && python3 -u main_train.py --dvc cuda:0 --problem-name transport_3agents_no_collab --monitor-training False --max-e-steps 100 --use-central-planner True --run-training False --Loadmodel True --Model 1143000"
 
 run-evaluation-transport-2agents-collab:
-	$(DOCKER_RUN) /bin/bash -c "python3 -u main_train.py --dvc cuda:1 --problem-name transport_2agents_collab --monitor-training False --max-e-steps 100 --use-central-planner True --run-training False --Loadmodel True --Model 4328000"
+	$(DOCKER_RUN) /bin/bash -c "cd src && python3 -u main_train.py --dvc cuda:1 --problem-name transport_2agents_collab --monitor-training False --max-e-steps 100 --use-central-planner True --run-training False --Loadmodel True --Model 4328000"
 
 run-pretrain-eval-all:
-	$(DOCKER_RUN) /bin/bash -c "python3 -u pretrain_analysis.py"
+	$(DOCKER_RUN) /bin/bash -c "cd src && python3 -u pretrain_analysis.py"
 
 uest:
 	$(DOCKER_RUN) /bin/bash -c "pytest ./tests/"
