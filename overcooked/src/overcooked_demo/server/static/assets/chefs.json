@@ -1,0 +1,1028 @@
+{
+	"textures": [
+		{
+			"image": "128_chefs.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 1156,
+				"h": 512
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "chef1_east_dish.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 18,
+						"y": 1,
+						"w": 106,
+						"h": 126
+					},
+					"frame": {
+						"x": 1,
+						"y": 1,
+						"w": 106,
+						"h": 126
+					}
+				},
+				{
+					"filename": "chef1_east_soup_onion.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 18,
+						"y": 1,
+						"w": 106,
+						"h": 126
+					},
+					"frame": {
+						"x": 1,
+						"y": 129,
+						"w": 106,
+						"h": 126
+					}
+				},
+				{
+					"filename": "chef1_east_soup_tomato.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 18,
+						"y": 1,
+						"w": 106,
+						"h": 126
+					},
+					"frame": {
+						"x": 1,
+						"y": 257,
+						"w": 106,
+						"h": 126
+					}
+				},
+				{
+					"filename": "chef1_west_dish.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 1,
+						"w": 106,
+						"h": 126
+					},
+					"frame": {
+						"x": 1,
+						"y": 385,
+						"w": 106,
+						"h": 126
+					}
+				},
+				{
+					"filename": "chef1_west_soup_onion.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 1,
+						"w": 106,
+						"h": 126
+					},
+					"frame": {
+						"x": 109,
+						"y": 1,
+						"w": 106,
+						"h": 126
+					}
+				},
+				{
+					"filename": "chef1_west_soup_tomato.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 1,
+						"w": 106,
+						"h": 126
+					},
+					"frame": {
+						"x": 109,
+						"y": 129,
+						"w": 106,
+						"h": 126
+					}
+				},
+				{
+					"filename": "chef2_east_dish.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 18,
+						"y": 1,
+						"w": 106,
+						"h": 126
+					},
+					"frame": {
+						"x": 109,
+						"y": 257,
+						"w": 106,
+						"h": 126
+					}
+				},
+				{
+					"filename": "chef2_east_soup_onion.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 18,
+						"y": 1,
+						"w": 106,
+						"h": 126
+					},
+					"frame": {
+						"x": 109,
+						"y": 385,
+						"w": 106,
+						"h": 126
+					}
+				},
+				{
+					"filename": "chef2_east_soup_tomato.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 18,
+						"y": 1,
+						"w": 106,
+						"h": 126
+					},
+					"frame": {
+						"x": 217,
+						"y": 1,
+						"w": 106,
+						"h": 126
+					}
+				},
+				{
+					"filename": "chef2_west_dish.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 1,
+						"w": 106,
+						"h": 126
+					},
+					"frame": {
+						"x": 217,
+						"y": 129,
+						"w": 106,
+						"h": 126
+					}
+				},
+				{
+					"filename": "chef2_west_soup_onion.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 1,
+						"w": 106,
+						"h": 126
+					},
+					"frame": {
+						"x": 217,
+						"y": 257,
+						"w": 106,
+						"h": 126
+					}
+				},
+				{
+					"filename": "chef2_west_soup_tomato.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 5,
+						"y": 1,
+						"w": 106,
+						"h": 126
+					},
+					"frame": {
+						"x": 217,
+						"y": 385,
+						"w": 106,
+						"h": 126
+					}
+				},
+				{
+					"filename": "chef1_east_tomato.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 18,
+						"y": 1,
+						"w": 103,
+						"h": 126
+					},
+					"frame": {
+						"x": 325,
+						"y": 1,
+						"w": 103,
+						"h": 126
+					}
+				},
+				{
+					"filename": "chef1_west_tomato.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 8,
+						"y": 1,
+						"w": 103,
+						"h": 126
+					},
+					"frame": {
+						"x": 325,
+						"y": 129,
+						"w": 103,
+						"h": 126
+					}
+				},
+				{
+					"filename": "chef2_east_tomato.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 18,
+						"y": 1,
+						"w": 103,
+						"h": 126
+					},
+					"frame": {
+						"x": 325,
+						"y": 257,
+						"w": 103,
+						"h": 126
+					}
+				},
+				{
+					"filename": "chef2_west_tomato.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 8,
+						"y": 1,
+						"w": 103,
+						"h": 126
+					},
+					"frame": {
+						"x": 325,
+						"y": 385,
+						"w": 103,
+						"h": 126
+					}
+				},
+				{
+					"filename": "chef1_east_onion.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 18,
+						"y": 1,
+						"w": 101,
+						"h": 126
+					},
+					"frame": {
+						"x": 430,
+						"y": 1,
+						"w": 101,
+						"h": 126
+					}
+				},
+				{
+					"filename": "chef1_west_onion.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 10,
+						"y": 1,
+						"w": 101,
+						"h": 126
+					},
+					"frame": {
+						"x": 430,
+						"y": 129,
+						"w": 101,
+						"h": 126
+					}
+				},
+				{
+					"filename": "chef2_east_onion.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 18,
+						"y": 1,
+						"w": 101,
+						"h": 126
+					},
+					"frame": {
+						"x": 430,
+						"y": 257,
+						"w": 101,
+						"h": 126
+					}
+				},
+				{
+					"filename": "chef2_west_onion.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 10,
+						"y": 1,
+						"w": 101,
+						"h": 126
+					},
+					"frame": {
+						"x": 430,
+						"y": 385,
+						"w": 101,
+						"h": 126
+					}
+				},
+				{
+					"filename": "chef1_north_dish.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 29,
+						"y": 2,
+						"w": 99,
+						"h": 125
+					},
+					"frame": {
+						"x": 533,
+						"y": 1,
+						"w": 99,
+						"h": 125
+					}
+				},
+				{
+					"filename": "chef1_north_onion.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 29,
+						"y": 2,
+						"w": 99,
+						"h": 125
+					},
+					"frame": {
+						"x": 533,
+						"y": 128,
+						"w": 99,
+						"h": 125
+					}
+				},
+				{
+					"filename": "chef1_north_soup_onion.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 29,
+						"y": 2,
+						"w": 99,
+						"h": 125
+					},
+					"frame": {
+						"x": 533,
+						"y": 255,
+						"w": 99,
+						"h": 125
+					}
+				},
+				{
+					"filename": "chef1_north_soup_tomato.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 29,
+						"y": 2,
+						"w": 99,
+						"h": 125
+					},
+					"frame": {
+						"x": 533,
+						"y": 382,
+						"w": 99,
+						"h": 125
+					}
+				},
+				{
+					"filename": "chef1_north_tomato.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 29,
+						"y": 2,
+						"w": 99,
+						"h": 125
+					},
+					"frame": {
+						"x": 634,
+						"y": 1,
+						"w": 99,
+						"h": 125
+					}
+				},
+				{
+					"filename": "chef2_north_dish.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 29,
+						"y": 2,
+						"w": 99,
+						"h": 125
+					},
+					"frame": {
+						"x": 634,
+						"y": 128,
+						"w": 99,
+						"h": 125
+					}
+				},
+				{
+					"filename": "chef2_north_onion.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 29,
+						"y": 2,
+						"w": 99,
+						"h": 125
+					},
+					"frame": {
+						"x": 634,
+						"y": 255,
+						"w": 99,
+						"h": 125
+					}
+				},
+				{
+					"filename": "chef2_north_soup_onion.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 29,
+						"y": 2,
+						"w": 99,
+						"h": 125
+					},
+					"frame": {
+						"x": 634,
+						"y": 382,
+						"w": 99,
+						"h": 125
+					}
+				},
+				{
+					"filename": "chef2_north_soup_tomato.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 29,
+						"y": 2,
+						"w": 99,
+						"h": 125
+					},
+					"frame": {
+						"x": 735,
+						"y": 1,
+						"w": 99,
+						"h": 125
+					}
+				},
+				{
+					"filename": "chef2_north_tomato.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 29,
+						"y": 2,
+						"w": 99,
+						"h": 125
+					},
+					"frame": {
+						"x": 735,
+						"y": 128,
+						"w": 99,
+						"h": 125
+					}
+				},
+				{
+					"filename": "chef1_east.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 18,
+						"y": 1,
+						"w": 91,
+						"h": 126
+					},
+					"frame": {
+						"x": 735,
+						"y": 255,
+						"w": 91,
+						"h": 126
+					}
+				},
+				{
+					"filename": "chef1_west.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 20,
+						"y": 1,
+						"w": 91,
+						"h": 126
+					},
+					"frame": {
+						"x": 735,
+						"y": 383,
+						"w": 91,
+						"h": 126
+					}
+				},
+				{
+					"filename": "chef2_east.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 18,
+						"y": 1,
+						"w": 91,
+						"h": 126
+					},
+					"frame": {
+						"x": 828,
+						"y": 255,
+						"w": 91,
+						"h": 126
+					}
+				},
+				{
+					"filename": "chef2_west.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 20,
+						"y": 1,
+						"w": 91,
+						"h": 126
+					},
+					"frame": {
+						"x": 828,
+						"y": 383,
+						"w": 91,
+						"h": 126
+					}
+				},
+				{
+					"filename": "chef1_north.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 24,
+						"y": 2,
+						"w": 82,
+						"h": 125
+					},
+					"frame": {
+						"x": 836,
+						"y": 1,
+						"w": 82,
+						"h": 125
+					}
+				},
+				{
+					"filename": "chef2_north.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 24,
+						"y": 2,
+						"w": 82,
+						"h": 125
+					},
+					"frame": {
+						"x": 836,
+						"y": 128,
+						"w": 82,
+						"h": 125
+					}
+				},
+				{
+					"filename": "chef1_south.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 24,
+						"y": 2,
+						"w": 80,
+						"h": 125
+					},
+					"frame": {
+						"x": 920,
+						"y": 1,
+						"w": 80,
+						"h": 125
+					}
+				},
+				{
+					"filename": "chef1_south_dish.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 24,
+						"y": 2,
+						"w": 80,
+						"h": 125
+					},
+					"frame": {
+						"x": 920,
+						"y": 128,
+						"w": 80,
+						"h": 125
+					}
+				},
+				{
+					"filename": "chef1_south_soup_onion.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 24,
+						"y": 2,
+						"w": 80,
+						"h": 125
+					},
+					"frame": {
+						"x": 921,
+						"y": 255,
+						"w": 80,
+						"h": 125
+					}
+				},
+				{
+					"filename": "chef1_south_soup_tomato.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 24,
+						"y": 2,
+						"w": 80,
+						"h": 125
+					},
+					"frame": {
+						"x": 921,
+						"y": 382,
+						"w": 80,
+						"h": 125
+					}
+				},
+				{
+					"filename": "chef2_south.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 24,
+						"y": 2,
+						"w": 80,
+						"h": 125
+					},
+					"frame": {
+						"x": 1002,
+						"y": 1,
+						"w": 80,
+						"h": 125
+					}
+				},
+				{
+					"filename": "chef2_south_dish.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 24,
+						"y": 2,
+						"w": 80,
+						"h": 125
+					},
+					"frame": {
+						"x": 1002,
+						"y": 128,
+						"w": 80,
+						"h": 125
+					}
+				},
+				{
+					"filename": "chef2_south_soup_onion.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 24,
+						"y": 2,
+						"w": 80,
+						"h": 125
+					},
+					"frame": {
+						"x": 1003,
+						"y": 255,
+						"w": 80,
+						"h": 125
+					}
+				},
+				{
+					"filename": "chef2_south_soup_tomato.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 24,
+						"y": 2,
+						"w": 80,
+						"h": 125
+					},
+					"frame": {
+						"x": 1003,
+						"y": 382,
+						"w": 80,
+						"h": 125
+					}
+				},
+				{
+					"filename": "chef1_south_onion.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 29,
+						"y": 2,
+						"w": 70,
+						"h": 125
+					},
+					"frame": {
+						"x": 1084,
+						"y": 1,
+						"w": 70,
+						"h": 125
+					}
+				},
+				{
+					"filename": "chef1_south_tomato.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 29,
+						"y": 2,
+						"w": 70,
+						"h": 125
+					},
+					"frame": {
+						"x": 1084,
+						"y": 128,
+						"w": 70,
+						"h": 125
+					}
+				},
+				{
+					"filename": "chef2_south_onion.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 29,
+						"y": 2,
+						"w": 70,
+						"h": 125
+					},
+					"frame": {
+						"x": 1085,
+						"y": 255,
+						"w": 70,
+						"h": 125
+					}
+				},
+				{
+					"filename": "chef2_south_tomato.png",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 128,
+						"h": 128
+					},
+					"spriteSourceSize": {
+						"x": 29,
+						"y": 2,
+						"w": 70,
+						"h": 125
+					},
+					"frame": {
+						"x": 1085,
+						"y": 382,
+						"w": 70,
+						"h": 125
+					}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "https://www.codeandweb.com/texturepacker",
+		"version": "3.0",
+		"smartupdate": "$TexturePacker:SmartUpdate:67ce5f529c49c7f873909a63ff56017c:3d4d9df87f121a2a4705d0bc701251d6:ae22ab9c06c9e48f2feba48b9c3641bb$"
+	}
+}
